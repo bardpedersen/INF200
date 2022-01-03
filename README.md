@@ -1,18 +1,18 @@
 # BioSim A17 Peder Bård
 
-#Description
+# Description
 January project for INF200 January 2022. This program is simulating the ecosystem on an island with one species of carnivores and one spice of herbivores. The island has three types of land dessert, low land and high land. The island is surrounded by water so no animals can migrate. To read the full task look in INF200_H21_BioSimJan_v1.pdf.
 
 
-#Testing
+# Testing
+The testing can be found in the tests directory 
+
+# Visuals
 
 
-#Visuals
-
-
-
-#Needs
-Inf200 Enviorment:
+# Needs
+We used Inf200 Enviorment, put together by Hans Ekkehard Plesser.
+The Enviorment consist of: 
 name: inf200
 channels:
   - defaults
