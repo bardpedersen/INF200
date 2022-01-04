@@ -46,7 +46,7 @@ class Herbivore:
 
     def growing_up(self):
         """
-        Makes the animal one year older
+        Makes the animal a year older
         """
         self.age += 1
 
