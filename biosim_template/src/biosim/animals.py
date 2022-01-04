@@ -1,3 +1,4 @@
+
 """
 Animals class for biosim
 """
@@ -10,14 +11,25 @@ Class describing hebrivores
 :param 
 """
 class Herbivore:
-
+    """
+    class containing animals of species herbivores
+    the params dictionary contains all the "static" parameters of the species
+    """
     params = {
-        phi_age: 0.6,
-        phi_weight: 0.1,
-        a_half: 40.0,
-        w_half = 10.0,
-        beta = 0.9,
-        mu = 0.25
+        'w_birth': 8.0,
+        'sigma_birth': 1.5,
+        'beta': 0.9,
+        'eta': 0.05,
+        'a_half': 40.0,
+        'phi_age': 0.6,
+        'w_half': 10.0,
+        'phi_weight': 0.1,
+        'mu': 0.25,
+        'gamma': 0.2,
+        'zeta': 3.5,
+        'xi': 1.2,
+        'omega': 0.4,
+        'F':10
         }
 
     def __init__(self,age, weight, fitness=None):
@@ -40,8 +52,8 @@ class Herbivore:
         if self.weight <= 0:
             self.fitness = 0
         else:
-            q_plus = 1/(1 + m*exp(self.params[phi_age]*(self.age -self.params[a_half])))
-            q_minus =  1/(1 + m*exp(self.params[phi_weight]*(self.weight - self.params[w_half])))
+            q_plus = 1/(1 + m.exp(self.params[phi_age]*(self.age -self.params[a_half])))
+            q_minus =  1/(1 + m.exp(self.params[phi_weight]*(self.weight - self.params[w_half])))
             self.fitness = q_plus*q_minus
 
     def growing_up(self):
@@ -54,7 +66,6 @@ class Herbivore:
         """
         Calculates the gain of weigth by an animal eating
         :param fodder: food accsessable to the animal
-        :return:
         """
 
         self.weight += fodder * self.params[beta]
@@ -66,6 +77,31 @@ class Herbivore:
         """
 
         self.weight -= self.weight*self.params[mu]
+
+    def migrate(self):
+        pass
+
+    def lose_weight_birth(self,w_child):
+        """
+        Calculates the weight the "Mother" loses to birth
+        :param w_child: weight of the child born
+
+        """
+        self.weight -= w_child*self.params[xi]
+
+    def death(self):
+        """
+        calculates if animal dies using fitness omega.
+        :return: returns 1 if the animal dies and 0 if it lives
+        """
+        p = rd.random()
+        if p < self.params[omega]*(1-self.fitness) or self.weight == 0:
+            return True
+        else:
+            return False
+
+
+
 
 
 
