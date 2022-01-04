@@ -16,9 +16,8 @@ class Herbivore:
         phi_weight: 0.1,
         a_half: 40.0,
         w_half = 10.0,
-        beta = 0.5,
-
-
+        beta = 0.9,
+        mu = 0.25
         }
 
     def __init__(self,age, weight, fitness=None):
@@ -44,6 +43,31 @@ class Herbivore:
             q_plus = 1/(1 + m*exp(self.params[phi_age]*(self.age -self.params[a_half])))
             q_minus =  1/(1 + m*exp(self.params[phi_weight]*(self.weight - self.params[w_half])))
             self.fitness = q_plus*q_minus
+
+    def growing_up(self):
+        """
+        Makes the animal one year older
+        """
+        self.age += 1
+
+    def feeding(self, fodder):
+        """
+        Calculates the gain of weigth by an animal eating
+        :param fodder: food accsessable to the animal
+        :return:
+        """
+
+        self.weight += fodder * self.params[beta]
+
+    def lose_weigt(self):
+        """
+        Calulates the loss of weight of an animal
+        :return:
+        """
+
+        self.weight -= self.weight*self.params[mu]
+
+
 
 
 
