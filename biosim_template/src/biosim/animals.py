@@ -55,8 +55,8 @@ class Herbivore:
         if self.weight <= 0:
             self.fitness = 0
         else:
-            q_plus = 1/(1 + m.exp(self.params['phi_age']*(self.age -self.params['a_half'])))
-            q_minus =  1/(1 + m.exp(self.params['phi_weight']*(self.weight - self.params['w_half'])))
+            q_plus = 1/(1 + m.exp(self.params['phi_age']*(self.age - self.params['a_half'])))
+            q_minus = 1/(1 + m.exp(self.params['phi_weight']*(self.weight - self.params['w_half'])))
             self.fitness = q_plus*q_minus
 
 
@@ -89,10 +89,6 @@ class Herbivore:
         pass
 
 
-
-
-
-
     def death(self):
         """
         calculates if animal dies using fitness omega.
@@ -121,9 +117,9 @@ class Herbivore:
         """
         w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
         if self.lose_weigt_birth(w_child) <= self.weight:
-            if rd.random() < min([1, self.params[gamma] * self.params[phi] *(N - 1)]):
+            if rd.random() < min([1, self.params['gamma'] * self.params['phi'] *(N - 1)]):
                 self.weight -= self.lose_weight_birth(w_child)
-                return True
+                return Herbivore(1,w_child)
             else:
                 return False
         else:

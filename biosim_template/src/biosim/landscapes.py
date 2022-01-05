@@ -1,5 +1,5 @@
 import numpy as np
-from .animals import Herbivore
+from animals import Herbivore
 
 
 
@@ -8,6 +8,7 @@ class LowLand:
     def __init__(self):
         self.fodder = 0
         self.population = []
+        self.population_sum = None
 
 
     def add_population(self,population=None):
@@ -21,6 +22,8 @@ class LowLand:
             if animal['species'] == 'Herbivore':
                 self.population.append(Herbivore(animal[age],animal[weight]))
 
+    def sum_of_herbivores(self):
+        self.population_sum = len(self.population)
 
     def calculate_fitness_in_cell(self):
         """
@@ -58,7 +61,8 @@ class LowLand:
                     animal.weight_gained_from_eating(available_fodder)
                     available_fodder = 0
 
-    def procreation(self):
+
+    def procreation_in_cell(self):
         """
         Animals can mate if there are at least two animals of the same species in a cell.
         Gender plays no role in mating.Each animal can give birth to at most one off- spring per year.
@@ -66,8 +70,14 @@ class LowLand:
         If the mother would lose more than her own weight,
         then no baby is born and the weight of the mother remains unchanged.
         """
-
-
+        new_borns = []
+        N = self.population_sum
+        for animal in self.population:
+            new_born = animal.birth(N)
+            if new_born is not False:
+                new_borns.append(new_born)
+            N -= 1
+        self.population += new_borns #adds the newborns to the population at the end
 
 
 
@@ -76,7 +86,7 @@ class LowLand:
         pass
 
 
-    def aging(self):
+    def aging_in_cell(self):
         """
         At birth, each animal has age a = 0 .
         Age increases by one year for each year that passes
@@ -84,7 +94,8 @@ class LowLand:
         for animal in self.population:
             animal.grow_one_year()
 
-    def weight_lost_population(self):
+
+    def weight_lost_in_cell(self):
         """
         Every year, the weight of the animal decreases.
         """
@@ -92,7 +103,7 @@ class LowLand:
             animal.lose_weight()
 
 
-    def death_in_population(self):
+    def death_in_cell(self):
         """
         Animals die when its weight is w = 0 or
         by probability
@@ -102,8 +113,11 @@ class LowLand:
                 self.population.pop(animal)
 
 
-class Water(self):
-    self.fodder = 0
+
+class Water:
+    def __init__(self):
+        self._fodder = 0
+
 
 
 
