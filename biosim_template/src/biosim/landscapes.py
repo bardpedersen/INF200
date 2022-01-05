@@ -1,36 +1,60 @@
 import numpy as np
+from .animals import Herbivore
 
 
 class LowLand:
     def __init__(self):
+        self.fodder = 0
+        self.population = []
+
+
+    def add_population(self,population):
         """
-        Creates the list of all animals.
+        adds a population to the lanscape location, and turns it in to an animal object
+        :param population: the population to add to the map
+        :return:
         """
-        self.animals_in_cell = {'Herbivore': []}
+
+        for animal in population:
+            if animal['species'] == 'Herbivore':
+                self.population.append(Herbivore(animal[age],animal[weight]))
+
+
+    def calculate_fitness_in_cell(self):
+        """
+        uses the calculate fitness function from animals
+        to calculate the fitness of each animal in cell
+        :return:
+        """
+
+        for animal in self.population:
+            animal.calulate_fitness()
+
 
     def feeding(self):
         """
         Animals residing in a cell eat in descend- ing order of fitness.
         Each animal tries every year to eat an amount F of fodder,
         but how much feed the animal obtain depends on fodder available in the cell
+        this function also sets the fooder for
 
         Here:
         F = 10
         f_max = 800
         """
-        self.animals_in_cell.sort(reversed=True, key='fitness')
-        all_herbivore = np.array(self.animals_in_cell)
-        available_fodder = 800
-        appetite = 10
-        for herbivore in all_herbivore:
-            if available_fodder == 0:
-                break
-            elif available_fodder >= appetite:
-                # herbivore.eat(appetite)
-                available_fodder = available_fodder - appetite
-            elif 0 < available_fodder < appetite:
-                # herbivore.eat(available_fodder)
-                available_fodder = 0
+
+        if animal.type()== Herbivore:
+            self.population.sort(key=lambda animal: animal.fitness,reverse=True)
+            appetite = 10
+            for animal in self.population:
+                if available_fodder == 0:
+                    break
+                elif available_fodder >= appetite:
+                    # herbivore.eat(appetite)
+                    available_fodder = available_fodder - appetite
+                elif 0 < available_fodder < appetite:
+                    # herbivore.eat(available_fodder)
+                    available_fodder = 0
 
     def procreation(self):
         """
@@ -51,9 +75,8 @@ class LowLand:
         At birth, each animal has age a = 0 .
         Age increases by one year for each year that passes
         """
-        for animal in self.animals_in_cell:
-            # animal.grow_up()
-            pass
+        for animal in self.population:
+            animal.grow_one_year()
 
     def weight(self):
         """
@@ -76,3 +99,7 @@ class LowLand:
             if animal.death:
                 # self.animals_in_cell.remove(animal)
                 pass
+
+
+
+
