@@ -10,6 +10,8 @@ Class describing hebrivores
 
 :param 
 """
+
+
 class Herbivore:
     """
     class containing animals of species herbivores
@@ -29,7 +31,7 @@ class Herbivore:
         'zeta': 3.5,
         'xi': 1.2,
         'omega': 0.4,
-        'F':10
+        'F': 10
         }
 
     def __init__(self,age, weight, fitness=None):
@@ -52,23 +54,23 @@ class Herbivore:
         if self.weight <= 0:
             self.fitness = 0
         else:
-            q_plus = 1/(1 + m.exp(self.params[phi_age]*(self.age -self.params[a_half])))
-            q_minus =  1/(1 + m.exp(self.params[phi_weight]*(self.weight - self.params[w_half])))
+            q_plus = 1/(1 + m.exp(self.params['phi_age']*(self.age -self.params['a_half'])))
+            q_minus =  1/(1 + m.exp(self.params['phi_weight']*(self.weight - self.params['w_half'])))
             self.fitness = q_plus*q_minus
 
-    def growing_up(self):
+    def grow_one_year(self):
         """
         Makes the animal a year older
         """
         self.age += 1
 
-    def feeding(self, fodder):
+    def weight_gained_from_eating(self, fodder):
         """
         Calculates the gain of weigth by an animal eating
         :param fodder: food accsessable to the animal
         """
 
-        self.weight += fodder * self.params[beta]
+        self.weight += fodder * self.params['beta']
 
     def lose_weigt(self):
         """
@@ -76,7 +78,7 @@ class Herbivore:
         :return:
         """
 
-        self.weight -= self.weight*self.params[mu]
+        self.weight -= self.weight*self.params['mu']
 
     def migrate(self):
         pass
@@ -87,7 +89,7 @@ class Herbivore:
         :param w_child: weight of the child born
 
         """
-        self.weight -= w_child*self.params[xi]
+        self.weight -= w_child*self.params['xi']
 
     def death(self):
         """
@@ -95,7 +97,7 @@ class Herbivore:
         :return: returns 1 if the animal dies and 0 if it lives
         """
         p = rd.random()
-        if p < self.params[omega]*(1-self.fitness) or self.weight == 0:
+        if p < self.params['omega']*(1-self.fitness) or self.weight == 0:
             return True
         else:
             return False
