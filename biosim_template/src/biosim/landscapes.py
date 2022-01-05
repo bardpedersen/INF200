@@ -1,5 +1,5 @@
 import numpy as np
-from animals import Herbivore
+from biosim.animals import Herbivore
 
 
 
@@ -7,7 +7,7 @@ from animals import Herbivore
 class LowLand:
     def __init__(self):
         self.fodder = 0
-        self.population = []
+        self.population_herb = []
         self.population_sum = None
 
 
@@ -20,10 +20,10 @@ class LowLand:
 
         for animal in population:
             if animal['species'] == 'Herbivore':
-                self.population.append(Herbivore(animal[age],animal[weight]))
+                self.population_herb.append(Herbivore(animal['age'], animal['weight']))
 
     def sum_of_herbivores(self):
-        self.population_sum = len(self.population)
+        self.population_sum = len(self.population_herb)
 
     def calculate_fitness_in_cell(self):
         """
@@ -32,10 +32,11 @@ class LowLand:
         :return:
         """
 
-        for animal in self.population:
+        for animal in self.population_herb:
             animal.calulate_fitness()
 
-
+    def add_fooder(self):
+        self.fodder = 800
     def feeding(self):
         """
         Animals residing in a cell eat in descend- ing order of fitness.
@@ -47,19 +48,17 @@ class LowLand:
         F = 10
         f_max = 800
         """
-
-        if type(animal) == 'biosim.animals.Herbivore':
-            self.population.sort(key=lambda animal: animal.fitness,reverse=True)
+        for animal in self.population_herb:
+            self.population_herb.sort(key=lambda animal: animal.fitness, reverse=True)
             appetite = 10
-            for animal in self.population:
-                if available_fodder == 0:
-                    break
-                elif available_fodder >= appetite:
-                    animal.weight_gained_from_eating(available_fodder)
-                    available_fodder = available_fodder - appetite
-                elif 0 < available_fodder < appetite:
-                    animal.weight_gained_from_eating(available_fodder)
-                    available_fodder = 0
+            if available_fodder == 0:
+                break
+            elif available_fodder >= appetite:
+                animal.weight_gained_from_eating(available_fodder)
+                available_fodder = available_fodder - appetite
+            elif 0 < available_fodder < appetite:
+                animal.weight_gained_from_eating(available_fodder)
+                available_fodder = 0
 
 
     def procreation_in_cell(self):
@@ -72,12 +71,12 @@ class LowLand:
         """
         new_borns = []
         N = self.population_sum
-        for animal in self.population:
+        for animal in self.population_herb:
             new_born = animal.birth(N)
             if new_born is not False:
                 new_borns.append(new_born)
             N -= 1
-        self.population += new_borns #adds the newborns to the population at the end
+        self.population_herb += new_borns #adds the newborns to the population at the end
 
 
 
@@ -91,7 +90,7 @@ class LowLand:
         At birth, each animal has age a = 0 .
         Age increases by one year for each year that passes
         """
-        for animal in self.population:
+        for animal in self.population_herb:
             animal.grow_one_year()
 
 
@@ -99,7 +98,7 @@ class LowLand:
         """
         Every year, the weight of the animal decreases.
         """
-        for animal in self.population:
+        for animal in self.population_herb:
             animal.lose_weight()
 
 
@@ -108,9 +107,9 @@ class LowLand:
         Animals die when its weight is w = 0 or
         by probability
         """
-        for animal in self.population:
+        for animal in self.population_herb:
             if animal.death():
-                self.population.pop(animal)
+                self.population_herb.pop(animal)
 
 
 

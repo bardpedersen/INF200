@@ -1,4 +1,3 @@
-
 """
 Animals class for biosim
 """
@@ -98,7 +97,9 @@ class Herbivore:
         if self.weight == 0:
             return True
         else:
-            return p < self.params['omega']*(1-self.fitness)
+            prob_death = self.params['omega'] * (1 - self.fitness)
+            if  p < prob_death:
+                return True
 
 
     def lose_weight_birth(self, w_child):
