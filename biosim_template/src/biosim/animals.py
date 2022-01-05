@@ -58,11 +58,13 @@ class Herbivore:
             q_minus =  1/(1 + m.exp(self.params['phi_weight']*(self.weight - self.params['w_half'])))
             self.fitness = q_plus*q_minus
 
+
     def grow_one_year(self):
         """
         Makes the animal a year older
         """
         self.age += 1
+
 
     def weight_gained_from_eating(self, fodder):
         """
@@ -72,6 +74,7 @@ class Herbivore:
 
         self.weight += fodder * self.params['beta']
 
+
     def lose_weigt(self):
         """
         Calulates the loss of weight of an animal
@@ -80,8 +83,10 @@ class Herbivore:
 
         self.weight -= self.weight*self.params['mu']
 
+
     def migrate(self):
         pass
+
 
     def lose_weight_birth(self,w_child):
         """
@@ -91,16 +96,18 @@ class Herbivore:
         """
         self.weight -= w_child*self.params['xi']
 
+
     def death(self):
         """
         calculates if animal dies using fitness omega.
         :return: returns 1 if the animal dies and 0 if it lives
         """
         p = rd.random()
-        if p < self.params['omega']*(1-self.fitness) or self.weight == 0:
+        if self.weight == 0:
             return True
         else:
-            return False
+            return p < self.params['omega']*(1-self.fitness)
+
 
 
 
