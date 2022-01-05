@@ -2,6 +2,8 @@ import numpy as np
 from .animals import Herbivore
 
 
+
+
 class LowLand:
     def __init__(self):
         self.fodder = 0
@@ -64,11 +66,15 @@ class LowLand:
         If the mother would lose more than her own weight,
         then no baby is born and the weight of the mother remains unchanged.
         """
-        pass
+
+
+
+
 
     def migration(self):
         """No migration on one cell island"""
         pass
+
 
     def aging(self):
         """
@@ -95,8 +101,9 @@ class LowLand:
             if animal.death():
                 self.population.pop(animal)
 
-    class Water(self):
-        self.fodder = 0
+
+class Water(self):
+    self.fodder = 0
 
 
 
