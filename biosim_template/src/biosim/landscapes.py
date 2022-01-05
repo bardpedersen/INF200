@@ -8,7 +8,7 @@ class LowLand:
         self.population = []
 
 
-    def add_population(self,population):
+    def add_population(self,population=None):
         """
         adds a population to the lanscape location, and turns it in to an animal object
         :param population: the population to add to the map
@@ -43,14 +43,14 @@ class LowLand:
         f_max = 800
         """
 
-        if animal.type()== Herbivore:
+        if type(animal) == 'biosim.animals.Herbivore':
             self.population.sort(key=lambda animal: animal.fitness,reverse=True)
             appetite = 10
             for animal in self.population:
                 if available_fodder == 0:
                     break
                 elif available_fodder >= appetite:
-                    animal.weight_gained_from_eating()
+                    animal.weight_gained_from_eating(available_fodder)
                     available_fodder = available_fodder - appetite
                 elif 0 < available_fodder < appetite:
                     animal.weight_gained_from_eating(available_fodder)
@@ -78,27 +78,25 @@ class LowLand:
         for animal in self.population:
             animal.grow_one_year()
 
-    def weight(self):
+    def weight_lost_population(self):
         """
         Every year, the weight of the animal decreases.
-        When an animal eats an amount of fodder, its weight increases.
         """
-        for animal in self.animals_in_cell:
-            # animal.lose_weight
-            pass
+        for animal in self.population:
+            animal.lose_weight()
 
-        for animal in self.animals_in_cell:
-            # animal.gain_weight
-            pass
 
-    def death(self):
+    def death_in_population(self):
         """
         Animals die when its weight is w = 0 or
         by probability
         """
         for animal in self.population:
-            if animal.death()
+            if animal.death():
                 self.population.pop(animal)
+
+    class Water(self):
+        self.fodder = 0
 
 
 
