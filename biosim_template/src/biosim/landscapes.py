@@ -33,10 +33,11 @@ class LowLand:
         """
 
         for animal in self.population_herb:
-            animal.calulate_fitness()
+            animal.calculate_fitness()
 
     def add_fooder(self):
         self.fodder = 800
+
     def feeding(self):
         """
         Animals residing in a cell eat in descend- ing order of fitness.
@@ -48,17 +49,18 @@ class LowLand:
         F = 10
         f_max = 800
         """
+        
         for animal in self.population_herb:
             self.population_herb.sort(key=lambda animal: animal.fitness, reverse=True)
             appetite = 10
-            if available_fodder == 0:
+            if self.fodder == 0:
                 break
-            elif available_fodder >= appetite:
-                animal.weight_gained_from_eating(available_fodder)
-                available_fodder = available_fodder - appetite
-            elif 0 < available_fodder < appetite:
-                animal.weight_gained_from_eating(available_fodder)
-                available_fodder = 0
+            elif self.fodder >= appetite:
+                animal.weight_gained_from_eating(appetite)
+                self.fodder = self.fodder - appetite
+            elif 0 < self.fodder < appetite:
+                animal.weight_gained_from_eating(self.fodder)
+                self.fodder = 0
 
 
     def procreation_in_cell(self):
