@@ -50,10 +50,10 @@ class LowLand:
                 if available_fodder == 0:
                     break
                 elif available_fodder >= appetite:
-                    # herbivore.eat(appetite)
+                    animal.weight_gained_from_eating()
                     available_fodder = available_fodder - appetite
                 elif 0 < available_fodder < appetite:
-                    # herbivore.eat(available_fodder)
+                    animal.weight_gained_from_eating(available_fodder)
                     available_fodder = 0
 
     def procreation(self):
@@ -93,12 +93,13 @@ class LowLand:
 
     def death(self):
         """
-        Animals die when its weight is w = 0
+        Animals die when its weight is w = 0 or
+        by probability
         """
-        for animal in self.animals_in_cell:
-            if animal.death:
-                # self.animals_in_cell.remove(animal)
-                pass
+        for animal in self.population:
+            if animal.death()
+                self.population.pop(animal)
+
 
 
 
