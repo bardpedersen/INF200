@@ -5,6 +5,7 @@ Animals class for biosim
 
 import random as rd
 import math as m
+rd.seed(12345)
 """
 Class describing hebrivores
 
@@ -75,7 +76,7 @@ class Herbivore:
         self.weight += fodder * self.params['beta']
 
 
-    def lose_weigt(self):
+    def lose_weight(self):
         """
         Calulates the loss of weight of an animal
         :return:
@@ -114,13 +115,19 @@ class Herbivore:
 
 
     def birth(self,N):
+        """
+        calculates the probabillity for
+        :param N: is the number of animals in the cell
+        """
         w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
-            if self.lose_weigt_birth(w_child) <= self.weight:
-                if rd.random() < min([1, self.params[gamma] * self.params[phi] *(N - 1)]):
-                    self.weight -= self.lose_weight_birth(w_child)
-                    return True
+        if self.lose_weigt_birth(w_child) <= self.weight:
+            if rd.random() < min([1, self.params[gamma] * self.params[phi] *(N - 1)]):
+                self.weight -= self.lose_weight_birth(w_child)
+                return True
             else:
                 return False
+        else:
+            return False
 
 
 
