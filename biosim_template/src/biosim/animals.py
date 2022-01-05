@@ -88,13 +88,8 @@ class Herbivore:
         pass
 
 
-    def lose_weight_birth(self,w_child):
-        """
-        Calculates the weight the "Mother" loses to birth
-        :param w_child: weight of the child born
 
-        """
-        self.weight -= w_child*self.params['xi']
+
 
 
     def death(self):
@@ -109,6 +104,23 @@ class Herbivore:
             return p < self.params['omega']*(1-self.fitness)
 
 
+    def lose_weight_birth(self, w_child):
+        """
+        Calculates the weight the "Mother" loses to birth
+        :param w_child: weight of the child born
+
+        """
+        return w_child * self.params['xi']
+
+
+    def birth(self,N):
+        w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
+            if self.lose_weigt_birth(w_child) <= self.weight:
+                if rd.random() < min([1, self.params[gamma] * self.params[phi] *(N - 1)]):
+                    self.weight -= self.lose_weight_birth(w_child)
+                    return True
+            else:
+                return False
 
 
 
