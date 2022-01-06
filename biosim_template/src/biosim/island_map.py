@@ -5,8 +5,8 @@ Migration
 location
 """
 import numpy as np
-from .landscapes import LowLand, Water
-from .animals import Herbivore
+from biosim.landscapes import LowLand, Water
+from biosim.animals import Herbivore
 
 class Map:
     def __init__(self, island_map):
