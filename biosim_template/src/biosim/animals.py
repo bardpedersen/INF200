@@ -4,7 +4,7 @@ Animals class for biosim
 
 import random as rd
 import math as m
-rd.seed(12345)
+
 """
 Class describing hebrivores
 
@@ -17,6 +17,7 @@ class Herbivore:
     class containing animals of species herbivores
     the params dictionary contains all the "static" parameters of the species
     """
+    seed = 12345
     params = {
         'w_birth': 8.0,
         'sigma_birth': 1.5,
@@ -70,6 +71,9 @@ class Herbivore:
                     cls.params[parameter] = params[parameter]
             else:
                 raise KeyError(f'{parameter} is not a accepted parameter')
+
+    def set_seed(cls,seed):
+        cls.seed = seed
 
 
 
