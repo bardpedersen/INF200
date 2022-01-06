@@ -7,9 +7,11 @@ Template for BioSim class.
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
 
 from biosim.animals import Herbivore
-from biosim.landscapes import LowLand,Water
+from biosim.landscapes import LowLand, Water
 from biosim.island_map import Map
 
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class BioSim:
@@ -57,11 +59,12 @@ class BioSim:
         self.ini_pop = ini_pop
         self.seed = seed
         self.vis_years = vis_years
-        self._animal_species = {'Herbivore':Herbivore,}
-        self._landscape_types_changeable = {'L':LowLand}
-        self.year = 0
-        self.final_year = None
-
+        self._animal_species = {'Herbivore': Herbivore}
+        self._landscape_types_changeable = {'L': LowLand}
+        self._year = 0
+        self._final_year = None
+        self.x_list = []
+        self.y_list = []
 
     def set_animal_parameters(self, species, params):
         """
@@ -76,10 +79,6 @@ class BioSim:
             animal.set_params(params)
         else:
             raise TypeError(f'cannot assign parameters to {species} ')
-
-
-
-
 
     def set_landscape_parameters(self, landscape, params):
         """
@@ -100,25 +99,66 @@ class BioSim:
         :param num_years: number of years to simulate
         """
 
+        self.map.creating_map()
+        self.add_population(self.ini_pop)
+        _final_year = self._year + num_years
+
+        while self._year < num_years:
+            self.map.island_feeding()
+            self.map.island_procreation()
+            self.map.island_migration()
+            self.map.island_aging()
+            self.map.island_weight_loss()
+            self.map.island_death()
+            self.update_graph_x()
+            self.update_graph_y()
+            self._year += 1
+
+        self.make_graph()
+
     def add_population(self, population):
         """
         Add a population to the island
 
         :param population: List of dictionaries specifying population
         """
+        self.map.island_add_population(population)
 
     @property
     def year(self):
         """Last year simulated."""
+        return self._year
 
     @property
     def num_animals(self):
-        """Total number of animals on island."""
+        """
+        Total number of animals on island.
+        """
+        animals = 0
+        for lanscape in self.map.map:
+            animals += self.map.map[lanscape].cell_sum_of_herbivores()
+        return animals
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
         pass
+
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
         pass
+
+    def update_graph_x(self):
+        self.x_list.append(self._year)
+        return self.x_list
+
+    def update_graph_y(self):
+        self.y_list.append(self.num_animals)
+        return self.y_list
+
+    def make_graph(self):
+        plt.plot(np.array(self.update_graph_x()), np.array(self.update_graph_y()))
+        plt.xlabel('Years')
+        plt.ylabel('Animals')
+        plt.title('Herbivores in single cell')
+        plt.show()

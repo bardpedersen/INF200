@@ -2,30 +2,26 @@ import numpy as np
 from biosim.animals import Herbivore
 
 
-
-
 class LowLand:
     params = {
         'f_max': 800
     }
+
     def __init__(self):
         self.fodder = 0
         self.population_herb = []
         self.population_sum = None
         self.livable = True
 
-
     def __repr__(self):
         return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum}'
 
-
-    def cell_set_params(cls,params):
+    def cell_set_params(cls, params):
         for parameter in params:
             if parameter in cls.params:
                 cls[parameter] = params[parameter]
 
-
-    def cell_add_population(self,population=None):
+    def cell_add_population(self, population=None):
         """
         adds a population to the landscape location, and turns it in to an animal object
         :param population: the population to add to the map
@@ -77,7 +73,6 @@ class LowLand:
                 animal.weight_gained_from_eating(self.fodder)
                 self.fodder = 0
 
-
     def cell_procreation(self):
         """
         Animals can mate if there are at least two animals of the same species in a cell.
@@ -94,14 +89,11 @@ class LowLand:
             if new_born is not None:
                 new_borns.append(new_born)
             N -= 1
-        self.population_herb += new_borns #adds the newborns to the population at the end
-
-
+        self.population_herb += new_borns  # adds the newborns to the population at the end
 
     def cell_migration(self):
         """No migration on one cell island"""
         pass
-
 
     def cell_aging(self):
         """
@@ -111,14 +103,12 @@ class LowLand:
         for animal in self.population_herb:
             animal.grow_one_year()
 
-
     def cell_weight_lost(self):
         """
         Every year, the weight of the animal decreases.
         """
         for animal in self.population_herb:
             animal.lose_weight()
-
 
     def cell_death(self):
         """
@@ -131,11 +121,8 @@ class LowLand:
             if animal.death():
                 index_death = self.population_herb.index(animal)
                 kill_list.append(index_death)
-        for i in sorted(kill_list,reverse=True):
+        for i in sorted(kill_list, reverse=True):
             del self.population_herb[i]
-
-
-
 
 
 class Water:
@@ -146,8 +133,6 @@ class Water:
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
 
-
-
-
-
-
+    def cell_sum_of_herbivores(self):
+        self.population_sum = 0
+        return self.population_sum
