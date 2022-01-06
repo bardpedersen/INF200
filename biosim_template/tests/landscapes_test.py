@@ -40,7 +40,6 @@ def test_remove_population():
     dead_pop = [{'species': 'Herbivore', 'age': 5, 'weight': 0} for _ in range(10)]
     low.cell_add_population(dead_pop)
     dead_nr_animals = low.cell_sum_of_herbivores()
-    low.cell_calculate_fitness()
     low.cell_death()
     end_nr_animals = low.cell_sum_of_herbivores()
 
