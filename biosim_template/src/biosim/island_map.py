@@ -7,32 +7,29 @@ location
 import numpy as np
 from biosim.landscapes import LowLand, Water
 from biosim.animals import Herbivore
+import textwrap
 
 class Map:
     def __init__(self, island_map):
-        self._map = island_map  #Information we get from mono_ho
-        self._landcape = {'W': Water,
-                          'L': LowLand}
+        self.island_map = island_map  #Information we get from mono_ho
+        self._landcape = {'W': Water(),'L': LowLand()}
+        self.map = None
 
-        self.cells = self.creating_island #Individual cells that make up the map.
-
-    def creating_island(self):
+    def creating_map(self):
         """
-        first str to matirx
+        makes string to dictionary with loc as key and landscape cell as value
         """
-        map_str_clean = self._map.replace(' ', '')  #Removes empty lines
-        matrix_map = np.array([[j for j in i] for i in map_str_clean.splitlines()]) #Splits the str to array/matrix
-        """
-        Turn each symbols to right landscape
-        """
-        cells_with_land = np.empty(matrix_map.shape, dtype=object)
-        for i, k in enumerate(matrix_map):
-            for j, _letter in enumerate(k): #i and j is the cordinates, letter is the landscape of the cordinates
-                cells_with_land[(i, j)] = self._landcape[_letter]
-
-        return cells_with_land
+        self.map = {}
+        matrix_map = list(map(list,self.island_map.splitlines()))
+        for i in range(len(matrix_map)):
+            for j in range(len(matrix_map[0])):
+                self.map[(i+1),(j+1)] = self._landcape[matrix_map[i][j]]
 
 
-    def migration(self):
-        """No migration on one cell island"""
-        pass
+    def add_population(self,ini_herb):
+        """
+        adds population to the map
+
+        :param: ini_herb: is a dictionary containing both locatin and list of animals
+        """
+
