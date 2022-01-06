@@ -5,16 +5,27 @@ from biosim.animals import Herbivore
 
 
 class LowLand:
+    params = {
+        'f_max': 800
+    }
     def __init__(self):
         self.fodder = 0
         self.population_herb = []
         self.population_sum = None
+        self.livable = True
+
 
     def __repr__(self):
         return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum}'
 
 
-    def add_population(self,population=None):
+    def cell_set_params(cls,params):
+        for parameter in params:
+            if parameter in cls.params:
+                cls[parameter] = params[parameter]
+
+
+    def cell_add_population(self,population=None):
         """
         adds a population to the landscape location, and turns it in to an animal object
         :param population: the population to add to the map
@@ -25,11 +36,11 @@ class LowLand:
             if animal['species'] == 'Herbivore':
                 self.population_herb.append(Herbivore(animal['age'], animal['weight']))
 
-    def sum_of_herbivores(self):
+    def cell_sum_of_herbivores(self):
         self.population_sum = len(self.population_herb)
         return self.population_sum
 
-    def calculate_fitness_in_cell(self):
+    def cell_calculate_fitness(self):
         """
         uses the calculate fitness function from animals
         to calculate the fitness of each animal in cell
@@ -39,10 +50,10 @@ class LowLand:
         for animal in self.population_herb:
             animal.calculate_fitness()
 
-    def add_fooder(self):
+    def cell_add_fodder(self):
         self.fodder = 800
 
-    def feeding(self):
+    def cell_feeding(self):
         """
         Animals residing in a cell eat in descend- ing order of fitness.
         Each animal tries every year to eat an amount F of fodder,
@@ -53,10 +64,9 @@ class LowLand:
         F = 10
         f_max = 800
         """
-
+        self.cell_calculate_fitness()
         for animal in self.population_herb:
-            animal.calculate_fitness()
-            self.population_herb.sort(key=lambda animal: animal.fitness, reverse=True)
+            self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
             appetite = 10
             if self.fodder == 0:
                 break
@@ -68,7 +78,7 @@ class LowLand:
                 self.fodder = 0
 
 
-    def procreation_in_cell(self):
+    def cell_procreation(self):
         """
         Animals can mate if there are at least two animals of the same species in a cell.
         Gender plays no role in mating.Each animal can give birth to at most one off- spring per year.
@@ -88,12 +98,12 @@ class LowLand:
 
 
 
-    def migration(self):
+    def cell_migration(self):
         """No migration on one cell island"""
         pass
 
 
-    def aging_in_cell(self):
+    def cell_aging(self):
         """
         At birth, each animal has age a = 0 .
         Age increases by one year for each year that passes
@@ -102,7 +112,7 @@ class LowLand:
             animal.grow_one_year()
 
 
-    def weight_lost_in_cell(self):
+    def cell_weight_lost(self):
         """
         Every year, the weight of the animal decreases.
         """
@@ -110,7 +120,7 @@ class LowLand:
             animal.lose_weight()
 
 
-    def death_in_cell(self):
+    def cell_death(self):
         """
         Animals die when its weight is w = 0 or
         by probability
@@ -129,7 +139,8 @@ class LowLand:
 
 class Water:
     def __init__(self):
-        self._fodder = 0
+        self._fodder = None
+        self.livable = False
 
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
