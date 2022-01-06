@@ -25,10 +25,10 @@ class Map:
         """
         Turn each symbols to right landscape
         """
-        cells_with_land = np.empty(self.matrix_map.shape, dtype=object)
+        cells_with_land = np.empty(matrix_map.shape, dtype=object)
         for i, k in enumerate(matrix_map):
             for j, _letter in enumerate(k): #i and j is the cordinates, letter is the landscape of the cordinates
-                cells_with_land[i][j] = self._landcape[_letter]
+                cells_with_land[(i, j)] = self._landcape[_letter]
 
         return cells_with_land
 
@@ -36,5 +36,3 @@ class Map:
     def migration(self):
         """No migration on one cell island"""
         pass
-
-
