@@ -36,6 +36,8 @@ class Herbivore:
 
     def __init__(self,age, weight):
         """
+        initiates instance of animal
+
         :param age: the age of the animal
         :param weight: the weight of the animal
         """
@@ -49,6 +51,29 @@ class Herbivore:
 
     def __repr__(self):
         return f'Herbivore(age:{self.age}, Weight:{self.weight})'
+
+    def set_params(cls,params):
+        """
+        takes an dictionatry of parameters and replaces default params
+
+        :param: params: a dictionary with parameter values
+        """
+        for parameter in params:
+            if parameter in cls.params:
+                if parameter < 0:
+                    raise ValueError(f'{parameter} has to be positive, cant be {params[parameter]}')
+                if parameter  == 'eta' and params[parameter] > 1:
+                    raise ValueError(f'eta has to be smaller than 1 cant be {params[parameter]}')
+                if parameter == 'DeltaPhiMax' and params[parameter] == 0:
+                    raise ValueError(f'DeltaPhiMax must be nonzero positive, cannot be {params[parameter]}')
+                else:
+                    cls.params[parameter] = params[parameter]
+            else:
+                raise KeyError(f'{parameter} is not a accepted parameter')
+
+
+
+
 
     #@classmethod?
     def calculate_fitness(self):
