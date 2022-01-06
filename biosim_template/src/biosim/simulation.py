@@ -54,7 +54,14 @@ class BioSim:
 
         self._islandmap = island_map
         self.map = Map(island_map)
-        self.ini_pop =
+        self.ini_pop = ini_pop
+        self.seed = seed
+        self.vis_years = vis_years
+        self._animal_species = {'Herbivore':Herbivore,}
+        self._landscape_types_changeable = {'L':LowLand}
+        self.year = 0
+        self.final_year = None
+
 
     def set_animal_parameters(self, species, params):
         """
@@ -63,7 +70,15 @@ class BioSim:
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
         """
-        species
+        if species in self._animal_species:
+            species_class = self._animal_species[species]
+            animal = species_class()
+            animal.set_params(params)
+        else:
+            raise TypeError(f'cannot assign parameters to {species} ')
+
+
+
 
 
     def set_landscape_parameters(self, landscape, params):
@@ -73,6 +88,10 @@ class BioSim:
         :param landscape: String, code letter for landscape
         :param params: Dict with valid parameter specification for landscape
         """
+        if landscape in self._landscape_types_changeable:
+            landscape_class = self._animal_species[landscape]
+            land_type = landscape_class()
+            landscape_class.cell_set_params()
 
     def simulate(self, num_years):
         """
