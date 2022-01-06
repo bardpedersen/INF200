@@ -10,6 +10,8 @@ class LowLand:
         self.population_herb = []
         self.population_sum = None
 
+    def __repr__(self):
+        return f'Lowland,Food:{self.fooder},Total animals:{self.population_sum}'
 
 
     def add_population(self,population=None):
@@ -128,6 +130,9 @@ class LowLand:
 class Water:
     def __init__(self):
         self._fodder = 0
+
+    def __repr__(self):
+        return f'Water,Food:{self.fooder},Uninhabitable'
 
 
 
