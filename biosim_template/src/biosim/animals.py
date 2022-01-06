@@ -34,16 +34,18 @@ class Herbivore:
         'F': 10
         }
 
-    def __init__(self,age, weight, fitness=None):
+    def __init__(self,age, weight):
         """
         :param age: the age of the animal
         :param weight: the weight of the animal
-        :param fitness: the fitness of the animal
         """
-
+        if age < 0:
+            raise ValueError('Age has to be a positive integr')
         self.age = age
+        if weight < 0:
+            raise ValueError('Weight has to be positive interg or zero')
         self.weight = weight
-        self.fitness = fitness
+        self.fitness = None
 
     def __repr__(self):
         return f'Herbivore(age:{self.age}, Weight:{self.weight})'
@@ -85,6 +87,8 @@ class Herbivore:
         """
 
         self.weight -= self.weight*self.params['mu']
+        if self.weight < 0:
+            self.weight = 0
 
 
     def migrate(self):
@@ -97,21 +101,13 @@ class Herbivore:
         :return: returns 1 if the animal dies and 0 if it lives
         """
         p = rd.random()
-        if self.weight == 0:
+        prob_death = self.params['omega'] * (1 - self.fitness)
+        if self.weight == 0 or p < prob_death:
             return True
         else:
-            prob_death = self.params['omega'] * (1 - self.fitness)
-            if  p < prob_death:
-                return True
+            return False
 
 
-    def lose_weight_birth(self, w_child):
-        """
-        Calculates the weight the "Mother" loses to birth
-        :param w_child: weight of the child born
-
-        """
-        return w_child * self.params['xi']
 
 
     def birth(self,N):
@@ -119,15 +115,22 @@ class Herbivore:
         calculates the probabillity for
         :param N: is the number of animals in the cell
         """
+
         w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
-        if self.lose_weigt_birth(w_child) <= self.weight:
-            if rd.random() < min([1, self.params['gamma'] * self.params['phi'] *(N - 1)]):
-                self.weight -= self.lose_weight_birth(w_child)
-                return Herbivore(1,w_child)
-            else:
-                return False
+        lost_weight = w_child*self.params['xi']
+        zero_conditon = self.params['xi']*(self.params['w_birth']+self.params['sigma_birth'])
+        if lost_weight > self.weight and self.weight < zero_conditon:
+            return None
+        elif self.weight < lost_weight:
+            return None
         else:
-            return False
+            p = rd.random()
+            p_birth = min(1,self.params['gamma']*self.fitness*(N-1))
+            if p <p_birth:
+                self.weight -= lost_weight
+                return Herbivore(0,w_child)
+
+
 
 
 
