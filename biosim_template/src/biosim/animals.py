@@ -45,6 +45,9 @@ class Herbivore:
         self.weight = weight
         self.fitness = fitness
 
+    def __repr__(self):
+        return f'Herbivore(age:{self.age}, Weight:{self.weight})'
+
     #@classmethod?
     def calculate_fitness(self):
         """
