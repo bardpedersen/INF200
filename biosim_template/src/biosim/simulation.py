@@ -6,6 +6,12 @@ Template for BioSim class.
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
 
+from biosim.animals import Herbivore
+from biosim.landscapes import LowLand,Water
+from biosim.island_map import Map
+
+
+
 class BioSim:
     def __init__(self, island_map, ini_pop, seed,
                  vis_years=1, ymax_animals=None, cmax_animals=None, hist_specs=None,
@@ -46,6 +52,10 @@ class BioSim:
         img_dir and img_base must either be both None or both strings.
         """
 
+        self._islandmap = island_map
+        self.map = Map(island_map)
+        self.ini_pop =
+
     def set_animal_parameters(self, species, params):
         """
         Set parameters for animal species.
@@ -53,6 +63,8 @@ class BioSim:
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
         """
+        species
+
 
     def set_landscape_parameters(self, landscape, params):
         """
@@ -87,6 +99,7 @@ class BioSim:
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
-
+        pass
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
+        pass

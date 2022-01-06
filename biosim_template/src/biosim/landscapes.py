@@ -11,7 +11,7 @@ class LowLand:
         self.population_sum = None
 
     def __repr__(self):
-        return f'Lowland,Food:{self.fooder},Total animals:{self.population_sum}'
+        return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum}'
 
 
     def add_population(self,population=None):
@@ -132,7 +132,7 @@ class Water:
         self._fodder = 0
 
     def __repr__(self):
-        return f'Water,Food:{self.fooder},Uninhabitable'
+        return f'Water,Food:{self._fodder},Uninhabitable'
 
 
 
