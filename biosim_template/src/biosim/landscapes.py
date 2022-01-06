@@ -11,9 +11,10 @@ class LowLand:
         self.population_sum = None
 
 
+
     def add_population(self,population=None):
         """
-        adds a population to the lanscape location, and turns it in to an animal object
+        adds a population to the landscape location, and turns it in to an animal object
         :param population: the population to add to the map
         :return:
         """
@@ -24,6 +25,7 @@ class LowLand:
 
     def sum_of_herbivores(self):
         self.population_sum = len(self.population_herb)
+        return self.population_sum
 
     def calculate_fitness_in_cell(self):
         """
@@ -49,8 +51,9 @@ class LowLand:
         F = 10
         f_max = 800
         """
-        
+
         for animal in self.population_herb:
+            animal.calculate_fitness()
             self.population_herb.sort(key=lambda animal: animal.fitness, reverse=True)
             appetite = 10
             if self.fodder == 0:
@@ -74,6 +77,7 @@ class LowLand:
         new_borns = []
         N = self.population_sum
         for animal in self.population_herb:
+            animal.calculate_fitness()
             new_born = animal.birth(N)
             if new_born is not False:
                 new_borns.append(new_born)
@@ -109,9 +113,15 @@ class LowLand:
         Animals die when its weight is w = 0 or
         by probability
         """
+        kill_list = []
         for animal in self.population_herb:
             if animal.death():
-                self.population_herb.pop(animal)
+                index_death = self.population_herb.index(animal)
+                kill_list.append(index_death)
+        for i in sorted(kill_list,reverse=True):
+            del self.population_herb[i]
+
+
 
 
 
