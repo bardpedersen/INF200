@@ -91,7 +91,7 @@ class LowLand:
         for animal in self.population_herb:
             animal.calculate_fitness()
             new_born = animal.birth(N)
-            if new_born is not False:
+            if new_born is not None:
                 new_borns.append(new_born)
             N -= 1
         self.population_herb += new_borns #adds the newborns to the population at the end
@@ -125,6 +125,7 @@ class LowLand:
         Animals die when its weight is w = 0 or
         by probability
         """
+        self.cell_calculate_fitness()
         kill_list = []
         for animal in self.population_herb:
             if animal.death():
