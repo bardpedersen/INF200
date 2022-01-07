@@ -2,7 +2,7 @@ from biosim import island_map
 from biosim import landscapes
 islandmap = """\
     WWW
-    WWL
+    WLW
     WWW"""
 
 map = island_map.Map(islandmap)
