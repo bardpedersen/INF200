@@ -16,7 +16,7 @@ class Map:
         :param: island_map: a multiline string representing the map
         """
         self.string_map = island_map  #Information we get from mono_ho
-        self._landcape = {'W': Water(),'L': Lowland()}
+        self._landcape = {'W': Water(), 'L': Lowland(), 'H': Highland(), 'D': Dessert()}
         self.map = None
 
     @staticmethod
