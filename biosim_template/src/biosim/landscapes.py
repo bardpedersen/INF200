@@ -55,7 +55,7 @@ class OneGrid:
             animal.calculate_fitness()
 
     def cell_add_fodder(self):
-        self.fodder = 800
+        self.fodder = self._fodder
 
     def cell_feeding_herbivore(self):
         """
@@ -165,7 +165,7 @@ class Highland(OneGrid):
 class Dessert(OneGrid):
     def __init__(self):
         super().__init__()
-        self._fodder = None
+        self._fodder = 0
 
     def __repr__(self):
         return f'Dessert,Food:{self._fodder},Total animals:{self.population_sum}'
@@ -174,8 +174,14 @@ class Dessert(OneGrid):
 class Water(OneGrid):
     def __init__(self):
         super().__init__()
-        self._fodder = None
+        self._fodder = 0
         self.livable = False
 
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
+
+    def cell_add_population(self, population=None):
+        pass
+
+    def cell_add_fodder(self):
+        pass
