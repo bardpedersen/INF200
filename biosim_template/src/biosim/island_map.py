@@ -5,7 +5,7 @@ Migration
 location
 """
 import numpy as np
-from biosim.landscapes import LowLand, Water
+from biosim.landscapes import Lowland, Water, Highland, Dessert
 import textwrap
 
 class Map:
@@ -16,7 +16,7 @@ class Map:
         :param: island_map: a multiline string representing the map
         """
         self.string_map = island_map  #Information we get from mono_ho
-        self._landcape = {'W': Water(),'L': LowLand()}
+        self._landcape = {'W': Water(),'L': Lowland()}
         self.map = None
 
     @staticmethod
@@ -75,7 +75,8 @@ class Map:
             if self.map[key].livable != False:
 
                 self.map[key].cell_add_fodder()
-                self.map[key].cell_feeding()
+                self.map[key].cell_feeding_herbivore()
+                self.map[key].cell_feeding_carnivore()
 
 
     def island_procreation(self):

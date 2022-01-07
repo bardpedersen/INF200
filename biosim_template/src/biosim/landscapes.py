@@ -1,11 +1,13 @@
 from biosim.animals import Herbivore,Carnivore
 import random as rd
 
-class LowLand:
+
+class OneGrid:
     seed = 12345
     params = {
-        'f_max': 800
-    }
+        'f_max_Lowland': 800,
+        'f_max_Highland': 300
+        }
 
     def __init__(self):
         self.fodder = 0
@@ -33,8 +35,7 @@ class LowLand:
             if animal['species'] == 'Herbivore':
                 self.population_herb.append(Herbivore(animal['age'], animal['weight']))
             elif animal['species'] == 'Carnivore':
-                self.population_carn.append(Carnivore(animal['age'],animal['weight']))
-
+                self.population_carn.append(Carnivore(animal['age'], animal['weight']))
 
     def cell_sum_of_herbivores(self):
         self.population_sum = len(self.population_herb)
@@ -47,7 +48,10 @@ class LowLand:
         :return:
         """
 
-        for animal in self.population_herb,self.population_carn:
+        for animal in self.population_herb:
+            animal.calculate_fitness()
+
+        for animal in self.population_carn:
             animal.calculate_fitness()
 
     def cell_add_fodder(self):
@@ -59,24 +63,19 @@ class LowLand:
         Each animal tries every year to eat an amount F of fodder,
         but how much feed the animal obtain depends on fodder available in the cell
         this function also sets the fooder for
-
-        Here:
-        F = 10
-        f_max = 800
         """
+
         self.cell_calculate_fitness()
-        for animal in self.population_herb:
-            self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
-            appetite = 10
+        self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
+        for herbivore in self.population_herb:
             if self.fodder == 0:
                 break
-            elif self.fodder >= appetite:
-                animal.weight_gained_from_eating(appetite)
-                self.fodder = self.fodder - appetite
-            elif 0 < self.fodder < appetite:
-                animal.weight_gained_from_eating(self.fodder)
+            elif self.fodder >= herbivore.params['F']:
+                herbivore.weight_gained_from_eating(herbivore.params['F'])
+                self.fodder = self.fodder - herbivore.params['F']
+            elif 0 < self.fodder < herbivore.params['F']:
+                herbivore.weight_gained_from_eating(self.fodder)
                 self.fodder = 0
-
 
     def cell_feeding_carnivore(self):
         pass
@@ -87,22 +86,11 @@ class LowLand:
         rd.shuffle(self.population_carn)
         for predator in self.population_carn:
             amount_eaten = 0
-            if amount_eaten = predator.params['F']:
+            if amount_eaten == predator.params['F']:
                 for prey in self.population_herb:
                     prob = predator.carnivore_kill_prob(prey)
                     if rd.random() < prob:
                         predator.carnivore_weight_gained_eating(prey)
-
-
-
-
-
-
-
-
-
-
-
 
     def cell_procreation(self):
         """
@@ -156,13 +144,38 @@ class LowLand:
             del self.population_herb[i]
 
 
-
-class Water:
+class Lowland(OneGrid):
     def __init__(self):
+        super().__init__()
+        self._fodder = 800
+
+    def __repr__(self):
+        return f'Lowland,Food:{self._fodder},Total animals:{self.population_sum}'
+
+
+class Highland(OneGrid):
+    def __init__(self):
+        super().__init__()
+        self._fodder = 300
+
+    def __repr__(self):
+        return f'Highland,Food:{self._fodder},Total animals:{self.population_sum}'
+
+
+class Dessert(OneGrid):
+    def __init__(self):
+        super().__init__()
+        self._fodder = None
+
+    def __repr__(self):
+        return f'Dessert,Food:{self._fodder},Total animals:{self.population_sum}'
+
+
+class Water(OneGrid):
+    def __init__(self):
+        super().__init__()
         self._fodder = None
         self.livable = False
 
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
-
-

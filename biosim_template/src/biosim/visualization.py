@@ -1,5 +1,5 @@
 from biosim.animals import Herbivore, Carnivore
-from biosim.landscapes import LowLand, Water
+from biosim.landscapes import Lowland, Water
 from biosim.island_map import Map
 
 import numpy as np
@@ -19,12 +19,11 @@ class WindowPlot:
         self.years = []
         self.island_map = island_map
 
-    def update_years(self, year):
+    def update_year(self, year):
         self.years.append(year)
 
-    def update_animals(self, num_animals_herb, num_animals_car):
+    def update_animals(self, num_animals_herb):
         self.nr_herb.append(num_animals_herb)
-        self.nr_car.append(num_animals_car)
 
     def update_animals_age(self):
         self.age_car.append()

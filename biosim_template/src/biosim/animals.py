@@ -148,8 +148,8 @@ class Herbivore(Animal):
         'F': 10
         }
 
-    def __init__(self,age,weigth):
-        super().__init__(age,weigth)
+    def __init__(self, age, weight):
+        super().__init__(age, weight)
 
 
     def __repr__(self):
@@ -157,7 +157,7 @@ class Herbivore(Animal):
 
     def weight_gained_from_eating(self, fodder):
         """
-        Calculates the gain of weigth by an animal eating
+        Calculates the gain of weight by an animal eating
         :param fodder: food accsessable to the animal
         """
 

@@ -7,7 +7,7 @@ Template for BioSim class.
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
 
 from biosim.animals import Herbivore
-from biosim.landscapes import LowLand, Water
+from biosim.landscapes import Lowland, Water, Highland, Dessert
 from biosim.island_map import Map
 from biosim.visualization import WindowPlot
 
@@ -61,7 +61,7 @@ class BioSim:
         self.seed = seed
         self.vis_years = vis_years
         self._animal_species = {'Herbivore': Herbivore}
-        self._landscape_types_changeable = {'L': LowLand}
+        self._landscape_types_changeable = {'L': Lowland}
         self._year = 0
         self._final_year = None
         self.visualiz = WindowPlot(island_map)
@@ -110,8 +110,8 @@ class BioSim:
             self.map.island_aging()
             self.map.island_weight_loss()
             self.map.island_death()
-            self.visualiz.update_graph_x(self.year)
-            self.visualiz.update_graph_y(self.num_animals)
+            self.visualiz.update_year(self.year)
+            self.visualiz.update_animals(self.num_animals_per_species)
             self._year += 1
 
         self.visualiz.one_graph()
@@ -136,13 +136,17 @@ class BioSim:
         """
         animals = 0
         for lanscape in self.map.map:
-            animals += self.map.map[lanscape].cell_sum_of_herbivores()
+            animals += (self.map.map[lanscape].cell_sum_of_herbivores() +
+                        self.map.map[lanscape].cell_sum_of_carnivores())
         return animals
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
-        pass
+        animals = 0
+        for lanscape in self.map.map:
+            animals += self.map.map[lanscape].cell_sum_of_herbivores()
+        return animals
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
