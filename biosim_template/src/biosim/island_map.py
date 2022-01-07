@@ -20,19 +20,28 @@ class Map:
         self.map = None
 
     @staticmethod
-    def validate_map(map):
+    def validate_map(string_map):
         """
-        takes a map on nested_list format and checks if it is valid
+        Checks if the borders of the map is water and all lines have the same lenght
 
-        :param: map: a map in nested list format
+        :param: string_map: a map in string format
         """
-        pass
+
+        for line in string_map.splitlines():
+            assert len(string_map.splitlines()[0]) == len(line),'Map input not valid'
+            assert line[0] == 'W','Map input not valid'
+            assert line[len(line)-1] == 'W','Map input not valid'
+            for ch in string_map.splitlines()[0]:
+                assert ch == 'W','Map input not valid'
+            for ch in string_map.splitlines()[len(string_map.splitlines())-1]:
+                assert ch == 'W','Map input not valid'
 
 
     def creating_map(self):
         """
         makes string to dictionary with loc as key and landscape cell as value
         """
+        self.validate_map(self.string_map)
 
         self.map = {}
         x = 1
@@ -111,11 +120,11 @@ class Map:
 
 
 
-        pass
+
 if __name__=='__main__':
     geogr = """\
                WWW
-               WLW
+               WLWW
                WWW"""
     geogr = textwrap.dedent(geogr)
 
