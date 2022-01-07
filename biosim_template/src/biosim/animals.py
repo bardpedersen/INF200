@@ -10,31 +10,8 @@ Class describing hebrivores
 
 :param 
 """
-
-
-class Herbivore:
-    """
-    class containing animals of species herbivores
-    the params dictionary contains all the "static" parameters of the species
-    """
+class Animal:
     seed = 12345
-    params = {
-        'w_birth': 8.0,
-        'sigma_birth': 1.5,
-        'beta': 0.9,
-        'eta': 0.05,
-        'a_half': 40.0,
-        'phi_age': 0.6,
-        'w_half': 10.0,
-        'phi_weight': 0.1,
-        'mu': 0.25,
-        'gamma': 0.2,
-        'zeta': 3.5,
-        'xi': 1.2,
-        'omega': 0.4,
-        'F': 10
-        }
-
     def __init__(self,age, weight):
         """
         initiates instance of animal
@@ -49,6 +26,7 @@ class Herbivore:
             raise ValueError('Weight has to be positive interg or zero')
         self.weight = weight
         self.fitness = None
+        self.has_migrated = False
 
     def __repr__(self):
         return f'Herbivore(age:{self.age}, Weight:{self.weight})'
@@ -76,10 +54,6 @@ class Herbivore:
         cls.seed = seed
 
 
-
-
-
-    #@classmethod?
     def calculate_fitness(self):
         """
         Calculates the fitness of the animal by using the fitness formula given in the task
@@ -92,7 +66,6 @@ class Herbivore:
             q_minus = 1/(1 + m.exp(self.params['phi_weight']*(self.weight - self.params['w_half'])))
             self.fitness = q_plus*q_minus
 
-
     def grow_one_year(self):
         """
         Makes the animal a year older
@@ -100,13 +73,7 @@ class Herbivore:
         self.age += 1
 
 
-    def weight_gained_from_eating(self, fodder):
-        """
-        Calculates the gain of weigth by an animal eating
-        :param fodder: food accsessable to the animal
-        """
 
-        self.weight += fodder * self.params['beta']
 
 
     def lose_weight(self):
@@ -136,9 +103,6 @@ class Herbivore:
         else:
             return False
 
-
-
-
     def birth(self,N):
         """
         calculates the probabillity for
@@ -161,7 +125,83 @@ class Herbivore:
 
 
 
+class Herbivore(Animal):
+    """
+    class containing animals of species herbivores
+    the params dictionary contains all the "static" parameters of the species
+    """
 
+    params = {
+        'w_birth': 8.0,
+        'sigma_birth': 1.5,
+        'beta': 0.9,
+        'eta': 0.05,
+        'a_half': 40.0,
+        'phi_age': 0.6,
+        'w_half': 10.0,
+        'phi_weight': 0.1,
+        'mu': 0.25,
+        'gamma': 0.2,
+        'zeta': 3.5,
+        'xi': 1.2,
+        'omega': 0.4,
+        'F': 10
+        }
+
+    def __init__(self,age,weigth):
+        super().__init__(age,weigth)
+
+
+    def __repr__(self):
+        return f'Herbivore, (age:{self.age}, Weight:{self.weight})'
+
+    def weight_gained_from_eating(self, fodder):
+        """
+        Calculates the gain of weigth by an animal eating
+        :param fodder: food accsessable to the animal
+        """
+
+        self.weight += fodder * self.params['beta']
+
+
+class Carnivore(Animal):
+    params = {
+        'w_birth': 6.0,
+        'sigma_birth': 1.0,
+        'beta': 0.75,
+        'eta': 0.125,
+        'a_half': 40.0,
+        'phi_age': 0.3,
+        'w_half': 4.0,
+        'phi_weight': 0.4,
+        'mu': 0.4,
+        'gamma': 0.8,
+        'zeta': 3.5,
+        'xi': 1.1,
+        'omega': 0.8,
+        'F': 50,
+        'DeltaPhiMax':10
+    }
+    def __init__(self,age,weight):
+        super().__init__(age, weight)
+
+    def __repr__(self):
+        return f'Carnivore, (age:{self.age}, Weight:{self.weight})'
+
+    def carnivore_kill_prob(self,prey):
+        """
+        Calulates the probabillity if carnivore kills herbivore
+
+        """
+        difference_fitness = self.fitness - prey.fitness
+        if self.fitness < prey.fitness:
+            prob = 0
+        elif 0 < difference_fitness and difference_fitness < self.params['DeltaPhiMax']:
+            prob = difference_fitness/self.params['DeltaPhiMax']
+        else:
+            prob = 1
+
+        return prob
 
 
 
