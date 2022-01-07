@@ -6,7 +6,7 @@ Template for BioSim class.
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
 
-from biosim.animals import Herbivore
+from biosim.animals import Herbivore,Carnivore
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 from biosim.island_map import Map
 from biosim.visualization import WindowPlot
@@ -115,6 +115,8 @@ class BioSim:
             self._year += 1
 
         self.visualiz.one_graph()
+
+
 
     def add_population(self, population):
         """
