@@ -95,7 +95,7 @@ class Animal:
         p = rd.random()
         prob_death = self.params['omega'] * (1 - self.fitness)
         if self.weight == 0 or p < prob_death:
-            self.is_dead == True
+            self.is_dead = True
 
 
     def birth(self,N):
@@ -188,6 +188,7 @@ class Carnivore(Animal):
         Calulates the probabillity if carnivore kills herbivore
 
         """
+
         difference_fitness = self.fitness - prey.fitness
         if self.fitness < prey.fitness:
             prob = 0

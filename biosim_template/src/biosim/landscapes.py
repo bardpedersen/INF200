@@ -4,10 +4,6 @@ import random as rd
 
 class OneGrid:
     seed = 12345
-    params = {
-        'f_max_Lowland': 800,
-        'f_max_Highland': 300
-        }
 
     def __init__(self):
         self.fodder = 0
@@ -37,6 +33,7 @@ class OneGrid:
             elif animal['species'] == 'Carnivore':
                 self.population_carn.append(Carnivore(animal['age'], animal['weight']))
 
+
     def cell_sum_of_herbivores(self):
         self.population_sum = len(self.population_herb)
         return self.population_sum
@@ -63,6 +60,10 @@ class OneGrid:
         Each animal tries every year to eat an amount F of fodder,
         but how much feed the animal obtain depends on fodder available in the cell
         this function also sets the fooder for
+
+        Here:
+        F = 10
+        f_max = 800
         """
 
         self.cell_calculate_fitness()
@@ -76,6 +77,7 @@ class OneGrid:
             elif 0 < self.fodder < herbivore.params['F']:
                 herbivore.weight_gained_from_eating(self.fodder)
                 self.fodder = 0
+
 
     def cell_feeding_carnivore(self):
         pass
@@ -91,6 +93,8 @@ class OneGrid:
                     prob = predator.carnivore_kill_prob(prey)
                     if rd.random() < prob:
                         predator.carnivore_weight_gained_eating(prey)
+                self.population_herb = [herb for herb in self.population_herb if herb.is_dead == False]
+        #noe som er feil her fikser i morgen (7.01.2021)
 
     def cell_procreation(self):
         """
@@ -129,22 +133,27 @@ class OneGrid:
         for animal in self.population_herb:
             animal.lose_weight()
 
+
     def cell_death(self):
         """
-        Animals die when its weight is w = 0 or
-        by probability
+        This func kills and removes both carnivores and herbivores in each cell
         """
         self.cell_calculate_fitness()
-        kill_list = []
-        for animal in self.population_herb:
-            if animal.death():
-                index_death = self.population_herb.index(animal)
-                kill_list.append(index_death)
-        for i in sorted(kill_list, reverse=True):
-            del self.population_herb[i]
+        for herb in self.population_herb:
+            herb.death()
+        for carn in self.population_carn:
+            carn.death()
+
+        self.population_herb = [herb for herb in self.population_herb if herb.is_dead == False]
+        self.population_carn = [carn for carn in self.population_carn if carn.is_dead == False]
+
+
 
 
 class Lowland(OneGrid):
+    params = {
+        'f_max_Lowland': 800
+    }
     def __init__(self):
         super().__init__()
         self._fodder = 800
@@ -154,6 +163,9 @@ class Lowland(OneGrid):
 
 
 class Highland(OneGrid):
+    params = {
+        'f_max_Lowland': 800
+    }
     def __init__(self):
         super().__init__()
         self._fodder = 300
@@ -180,8 +192,6 @@ class Water(OneGrid):
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
 
-    def cell_add_population(self, population=None):
-        pass
 
     def cell_add_fodder(self):
         pass
