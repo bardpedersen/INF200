@@ -9,6 +9,7 @@ Template for BioSim class.
 from biosim.animals import Herbivore
 from biosim.landscapes import LowLand, Water
 from biosim.island_map import Map
+from biosim.visualization import WindowPlot
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -63,8 +64,7 @@ class BioSim:
         self._landscape_types_changeable = {'L': LowLand}
         self._year = 0
         self._final_year = None
-        self.x_list = []
-        self.y_list = []
+        self.visualiz = WindowPlot(island_map)
 
     def set_animal_parameters(self, species, params):
         """
@@ -110,11 +110,11 @@ class BioSim:
             self.map.island_aging()
             self.map.island_weight_loss()
             self.map.island_death()
-            self.update_graph_x()
-            self.update_graph_y()
+            self.visualiz.update_graph_x(self.year)
+            self.visualiz.update_graph_y(self.num_animals)
             self._year += 1
 
-        self.make_graph()
+        self.visualiz.one_graph()
 
     def add_population(self, population):
         """
@@ -147,18 +147,3 @@ class BioSim:
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
         pass
-
-    def update_graph_x(self):
-        self.x_list.append(self._year)
-        return self.x_list
-
-    def update_graph_y(self):
-        self.y_list.append(self.num_animals)
-        return self.y_list
-
-    def make_graph(self):
-        plt.plot(np.array(self.update_graph_x()), np.array(self.update_graph_y()))
-        plt.xlabel('Years')
-        plt.ylabel('Animals')
-        plt.title('Herbivores in single cell')
-        plt.show()
