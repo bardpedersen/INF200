@@ -203,7 +203,14 @@ class Carnivore(Animal):
 
         return prob
 
+    def carnivore_weight_gained_eating(self,prey):
+        """
+        calulates carnivores weigt gain from eating
 
+
+        """
+
+        self.weight += self.params['beta']*prey.weight
 
 
 

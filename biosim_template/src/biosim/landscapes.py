@@ -1,8 +1,8 @@
-import numpy as np
-from biosim.animals import Herbivore
-
+from biosim.animals import Herbivore,Carnivore
+import random as rd
 
 class LowLand:
+    seed = 12345
     params = {
         'f_max': 800
     }
@@ -10,6 +10,7 @@ class LowLand:
     def __init__(self):
         self.fodder = 0
         self.population_herb = []
+        self.population_carn = []
         self.population_sum = None
         self.livable = True
 
@@ -31,6 +32,9 @@ class LowLand:
         for animal in population:
             if animal['species'] == 'Herbivore':
                 self.population_herb.append(Herbivore(animal['age'], animal['weight']))
+            elif animal['species'] == 'Carnivore':
+                self.population_carn.append(Carnivore(animal['age'],animal['weight']))
+
 
     def cell_sum_of_herbivores(self):
         self.population_sum = len(self.population_herb)
@@ -43,13 +47,13 @@ class LowLand:
         :return:
         """
 
-        for animal in self.population_herb:
+        for animal in self.population_herb,self.population_carn:
             animal.calculate_fitness()
 
     def cell_add_fodder(self):
         self.fodder = 800
 
-    def cell_feeding(self):
+    def cell_feeding_herbivore(self):
         """
         Animals residing in a cell eat in descend- ing order of fitness.
         Each animal tries every year to eat an amount F of fodder,
@@ -72,6 +76,33 @@ class LowLand:
             elif 0 < self.fodder < appetite:
                 animal.weight_gained_from_eating(self.fodder)
                 self.fodder = 0
+
+
+    def cell_feeding_carnivore(self):
+        pass
+        self.cell_calculate_fitness()
+        self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
+
+        self.cell_calculate_fitness()
+        rd.shuffle(self.population_carn)
+        for predator in self.population_carn:
+            amount_eaten = 0
+            if amount_eaten = predator.params['F']:
+                for prey in self.population_herb:
+                    prob = predator.carnivore_kill_prob(prey)
+                    if rd.random() < prob:
+                        predator.carnivore_weight_gained_eating(prey)
+
+
+
+
+
+
+
+
+
+
+
 
     def cell_procreation(self):
         """
@@ -125,6 +156,7 @@ class LowLand:
             del self.population_herb[i]
 
 
+
 class Water:
     def __init__(self):
         self._fodder = None
@@ -133,6 +165,4 @@ class Water:
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
 
-    def cell_sum_of_herbivores(self):
-        self.population_sum = 0
-        return self.population_sum
+
