@@ -27,9 +27,8 @@ class Animal:
         self.weight = weight
         self.fitness = None
         self.has_migrated = False
+        self.is_dead = False
 
-    def __repr__(self):
-        return f'Herbivore(age:{self.age}, Weight:{self.weight})'
 
     def set_params(cls,params):
         """
@@ -49,6 +48,7 @@ class Animal:
                     cls.params[parameter] = params[parameter]
             else:
                 raise KeyError(f'{parameter} is not a accepted parameter')
+
 
     def set_seed(cls,seed):
         cls.seed = seed
@@ -71,10 +71,6 @@ class Animal:
         Makes the animal a year older
         """
         self.age += 1
-
-
-
-
 
     def lose_weight(self):
         """
@@ -99,9 +95,8 @@ class Animal:
         p = rd.random()
         prob_death = self.params['omega'] * (1 - self.fitness)
         if self.weight == 0 or p < prob_death:
-            return True
-        else:
-            return False
+            self.is_dead == True
+
 
     def birth(self,N):
         """
