@@ -64,7 +64,7 @@ class Map:
         for d in ini_herb:
             self.map[d['loc']].cell_add_population(d['pop'])
 
-        self.map[d['loc']].cell_sum_of_herbivores()
+        self.map[d['loc']].cell_sum_of_animals()
 
     def island_feeding(self):
         """
@@ -73,10 +73,12 @@ class Map:
 
         for key in self.map:
             if self.map[key].livable != False:
-
-                self.map[key].cell_add_fodder()
-                self.map[key].cell_feeding_herbivore()
-                self.map[key].cell_feeding_carnivore()
+                self.map[key].cell_sum_of_animals()
+                if self.map[key].population_sum_herb != None:
+                    self.map[key].cell_add_fodder()
+                    self.map[key].cell_feeding_herbivore()
+                if self.map[key].population_sum_carn != None:
+                    self.map[key].cell_feeding_carnivore()
 
 
     def island_procreation(self):
@@ -87,7 +89,7 @@ class Map:
         for key in self.map:
             if self.map[key].livable != False:
                 self.map[key].cell_procreation()
-                self.map[key].cell_sum_of_herbivores()
+                self.map[key].cell_sum_of_animals()
 
 
 
@@ -114,7 +116,8 @@ class Map:
         for key in self.map:
             if self.map[key].livable != False:
                 self.map[key].cell_death()
-                self.map[key].cell_sum_of_herbivores()
+                self.map[key].cell_sum_of_animals()
+
 
 
 
@@ -133,12 +136,12 @@ if __name__=='__main__':
                   'pop': [{'species': 'Herbivore',
                            'age': 5,
                            'weight': 20}
-                          for _ in range(50)]}]
+                          for _ in range(20)]}]
     ini_carns = [{'loc': (2, 2),
                   'pop': [{'species': 'Carnivore',
                            'age': 5,
                            'weight': 20}
-                          for _ in range(20)]}]
+                          for _ in range(5)]}]
     island = Map(geogr)
     island.creating_map()
     island.island_add_population(ini_herbs)

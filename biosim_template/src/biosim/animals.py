@@ -12,6 +12,7 @@ Class describing hebrivores
 """
 class Animal:
     seed = 12345
+    rd.seed(seed)
     def __init__(self,age, weight):
         """
         initiates instance of animal
@@ -98,7 +99,7 @@ class Animal:
             self.is_dead = True
 
 
-    def birth(self,N):
+    def birth(self,N,species='herb'):
         """
         calculates the probabillity for
         :param N: is the number of animals in the cell
@@ -116,7 +117,10 @@ class Animal:
             p_birth = min(1,self.params['gamma']*self.fitness*(N-1))
             if p <p_birth:
                 self.weight -= lost_weight
-                return Herbivore(0,w_child)
+                if species == 'herb':
+                    return Herbivore(0,w_child)
+                elif species == 'carn':
+                    return Carnivore(0,w_child)
 
 
 
@@ -199,14 +203,14 @@ class Carnivore(Animal):
 
         return prob
 
-    def carnivore_weight_gained_eating(self,prey):
+    def carnivore_weight_gained_eating(self,fodder):
         """
         calulates carnivores weigt gain from eating
 
 
         """
 
-        self.weight += self.params['beta']*prey.weight
+        self.weight += self.params['beta']*fodder
 
 
 
