@@ -129,10 +129,9 @@ class Map:
         """
         calculates the total of each species in the island
         """
-        if self.island_total_herbivores == None:
-            self.island_total_herbivores = 0
-        if self.island_total_carnivores == None:
-            self.island_total_carnivores = 0
+
+        self.island_total_herbivores = 0
+        self.island_total_carnivores = 0
 
         for key in self.map_dict:
             if self.map_dict[key].livable == True:
@@ -146,6 +145,7 @@ class Map:
         """
         calculates the total number of animals in each cell
         """
+
         self.island_total_animals = self.island_total_carnivores + self.island_total_herbivores
 
 

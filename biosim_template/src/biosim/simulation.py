@@ -139,10 +139,10 @@ class BioSim:
         Number of animals per species in island, as dictionary.
         """
 
-        self.map.map_dict.island_total_herbivores_and_carnivores()
+        self.map.island_total_herbivores_and_carnivores()
 
 
-        return self.map.map_dict.island_total_herbivores,self.map.map_dict.island_total_carnivores
+        return self.map.island_total_herbivores,self.map.island_total_carnivores
 
     @property
     def num_animals(self):
@@ -150,9 +150,9 @@ class BioSim:
         Total number of animals on island.
         """
         animals = 0
-        self.map.map_dict.island_total_sum_of_animals()
+        self.map.island_total_sum_of_animals()
 
-        return self.map.map_dict.island_total_sum_of_animals
+        return self.map.island_total_sum_of_animals
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
