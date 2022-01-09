@@ -64,7 +64,7 @@ class Animal:
             self.fitness = 0
         else:
             q_plus = 1/(1 + m.exp(self.params['phi_age']*(self.age - self.params['a_half'])))
-            q_minus = 1/(1 + m.exp(self.params['phi_weight']*(self.weight - self.params['w_half'])))
+            q_minus = 1/(1 + m.exp(-self.params['phi_weight']*(self.weight - self.params['w_half'])))
             self.fitness = q_plus*q_minus
 
     def grow_one_year(self):
@@ -118,7 +118,7 @@ class Animal:
             if p <p_birth:
                 self.weight -= lost_weight
                 if species == 'herb':
-                    return Herbivore(0,w_child)
+                    return Herbivore(0,abs(w_child))
                 elif species == 'carn':
                     return Carnivore(0,w_child)
 
@@ -179,7 +179,7 @@ class Carnivore(Animal):
         'xi': 1.1,
         'omega': 0.8,
         'F': 50,
-        'DeltaPhiMax':15
+        'DeltaPhiMax':10
     }
     def __init__(self,age,weight):
         super().__init__(age, weight)
