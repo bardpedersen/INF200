@@ -60,8 +60,8 @@ class BioSim:
         self.ini_pop = ini_pop
         self.seed = seed
         self.vis_years = vis_years
-        self._animal_species = {'Herbivore': Herbivore}
-        self._landscape_types_changeable = {'L': Lowland}
+        self._animal_species = {'Herbivore': Herbivore,'Carnivore':Carnivore}
+        self._landscape_types_changeable = {'L': Lowland,'H':Highland}
         self._year = 0
         self._final_year = None
         self.visualiz = WindowPlot(island_map)
@@ -131,24 +131,28 @@ class BioSim:
         """Last year simulated."""
         return self._year
 
+
+
+    @property
+    def num_animals_per_species(self):
+        """
+        Number of animals per species in island, as dictionary.
+        """
+
+        self.map.map_dict.island_total_herbivores_and_carnivores()
+
+
+        return self.map.map_dict.island_total_herbivores,self.map.map_dict.island_total_carnivores
+
     @property
     def num_animals(self):
         """
         Total number of animals on island.
         """
         animals = 0
-        for lanscape in self.map.map:
-            animals += (self.map.map[lanscape].cell_sum_of_herbivores() +
-                        self.map.map[lanscape].cell_sum_of_carnivores())
-        return animals
+        self.map.map_dict.island_total_sum_of_animals()
 
-    @property
-    def num_animals_per_species(self):
-        """Number of animals per species in island, as dictionary."""
-        animals = 0
-        for lanscape in self.map.map:
-            animals += self.map.map[lanscape].cell_sum_of_herbivores()
-        return animals
+        return self.map.map_dict.island_total_sum_of_animals
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
