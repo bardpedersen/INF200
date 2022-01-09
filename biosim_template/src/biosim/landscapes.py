@@ -112,7 +112,7 @@ class OneGrid:
                         prey.is_dead = True
                         predator.carnivore_weight_gained_eating(fodder)
                         break
-                    predator.calculate.fitness()
+                    predator.calculate_fitness()
             population_herb = [herb for herb in self.population_herb if herb.is_dead == False]
             self.population_herb = population_herb
 
