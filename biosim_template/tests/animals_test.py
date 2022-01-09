@@ -34,7 +34,7 @@ class TestAnimals:
         'xi': 1.1,
         'omega': 0.8,
         'F': 50,
-        'DeltaPhiMax': 15
+        'DeltaPhiMax': 10
     }
 
     @pytest.fixture(autouse=True)
@@ -85,6 +85,19 @@ class TestAnimals:
             self.carn.lose_weight()
             assert self.herb.weight == weight_herb
             assert self.carn.weight == weight_carn
+
+    def test_calculate_fitness(self):
+        """
+        tests the fitness calculation in the function
+        """
+
+        self.carn.weight = 0
+        self.carn.calculate_fitness()
+        assert self.carn.fitness == 0
+
+        self.herb.calculate_fitness()
+        assert self.herb.fitness == pytest.approx(0.4999999996)
+
 
 
 
