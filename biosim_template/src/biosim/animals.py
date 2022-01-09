@@ -152,7 +152,7 @@ class Herbivore(Animal):
 
 
     def __repr__(self):
-        return f'Herbivore, (age:{self.age}, Weight:{self.weight})'
+        return f'Herbivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead})'
 
     def weight_gained_from_eating(self, fodder):
         """
@@ -179,13 +179,13 @@ class Carnivore(Animal):
         'xi': 1.1,
         'omega': 0.8,
         'F': 50,
-        'DeltaPhiMax':10
+        'DeltaPhiMax':15
     }
     def __init__(self,age,weight):
         super().__init__(age, weight)
 
     def __repr__(self):
-        return f'Carnivore, (age:{self.age}, Weight:{self.weight})'
+        return f'Carnivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead})'
 
     def carnivore_kill_prob(self,prey):
         """
