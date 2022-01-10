@@ -73,6 +73,14 @@ class Animal:
         """
         self.age += 1
 
+    def weight_gained_from_eating(self, fodder):
+        """
+        Calculates the gain of weight by an animal eating
+        :param fodder: food accsessable to the animal
+        """
+
+        self.weight += fodder * self.params['beta']
+
     def lose_weight(self):
         """
         Calulates the loss of weight of an animal
@@ -154,13 +162,6 @@ class Herbivore(Animal):
     def __repr__(self):
         return f'Herbivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead})'
 
-    def weight_gained_from_eating(self, fodder):
-        """
-        Calculates the gain of weight by an animal eating
-        :param fodder: food accsessable to the animal
-        """
-
-        self.weight += fodder * self.params['beta']
 
 
 class Carnivore(Animal):
@@ -202,15 +203,6 @@ class Carnivore(Animal):
             prob = 1
 
         return prob
-
-    def carnivore_weight_gained_eating(self,fodder):
-        """
-        calulates carnivores weigt gain from eating
-
-
-        """
-
-        self.weight += self.params['beta']*fodder
 
 
 

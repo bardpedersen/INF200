@@ -101,16 +101,16 @@ class OneGrid:
                     fodder = prey.weight
                     if amount_eaten + fodder < appetite:
                         prey.is_dead = True
-                        predator.carnivore_weight_gained_eating(fodder)
+                        predator.weight_gained_from_eating(fodder)
                         amount_eaten += fodder
                     elif amount_eaten + fodder > appetite:
                         prey.is_dead = True
                         fodder = appetite - amount_eaten
-                        predator.carnivore_weight_gained_eating(fodder)
+                        predator.weight_gained_from_eating(fodder)
                         break
                     elif amount_eaten + fodder == appetite:
                         prey.is_dead = True
-                        predator.carnivore_weight_gained_eating(fodder)
+                        predator.weight_gained_from_eating(fodder)
                         break
                     predator.calculate_fitness()
             population_herb = [herb for herb in self.population_herb if herb.is_dead == False]
