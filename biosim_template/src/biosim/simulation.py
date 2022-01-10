@@ -111,6 +111,7 @@ class BioSim:
             self.map.island_weight_loss()
             self.map.island_death()
             self.visualiz.update_year(self.year)
+            self.visualiz.herb_map(self.map.map_dict)
             self.visualiz.update_animals(self.num_animals_per_species)
             self._year += 1
 
