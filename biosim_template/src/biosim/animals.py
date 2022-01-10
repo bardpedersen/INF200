@@ -109,24 +109,30 @@ class Animal:
 
     def birth(self,N,species='herb'):
         """
-        calculates the probabillity for
-        :param N: is the number of animals in the cell
+        calculates the probabillity for birth of animals and returns a animal
+
+
+        :param: N: is the number of animals in the cell
+        :param: species: selects what kind of animal to return, default is Herbivore
         """
+
 
         w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
         lost_weight = w_child*self.params['xi']
-        zero_conditon = self.params['xi']*(self.params['w_birth']+self.params['sigma_birth'])
-        if lost_weight > self.weight and self.weight < zero_conditon:
+        zero_conditon = self.params['zeta']*(self.params['w_birth']+self.params['sigma_birth'])
+        if self.weight < lost_weight:
+            return None
+        elif self.weight < zero_conditon:
             return None
         elif self.weight < lost_weight:
             return None
         else:
             p = rd.random()
             p_birth = min(1,self.params['gamma']*self.fitness*(N-1))
-            if p <p_birth:
+            if p < p_birth:
                 self.weight -= lost_weight
                 if species == 'herb':
-                    return Herbivore(0,abs(w_child))
+                    return Herbivore(0,w_child)
                 elif species == 'carn':
                     return Carnivore(0,w_child)
 
