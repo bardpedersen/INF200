@@ -1,6 +1,7 @@
 from biosim import animals
 import pytest
 
+
 class TestAnimals:
     params_herb = {
         'w_birth': 8.0,
@@ -41,14 +42,14 @@ class TestAnimals:
     def create_herbivore(self):
         self.age_h = 5
         self.weight_h = 10
-        self.herb = animals.Herbivore(self.age_h,self.weight_h)
+        self.herb = animals.Herbivore(self.age_h, self.weight_h)
 
     @pytest.fixture(autouse=True)
     def create_carnivore(self):
         self.age_c = 5
         self.weight_c = 20
-        self.carn = animals.Carnivore(self.age_c,self.weight_c)
-
+        self.carn = animals.Carnivore(self.age_c, self.weight_c)
+        yield
 
     def test_grow_one_year_test(self):
         """
@@ -62,18 +63,19 @@ class TestAnimals:
             self.herb.grow_one_year()
             self.carn.grow_one_year()
             assert self.herb.age == age_herb + 1
-            assert self.carn.age == age_carn+ 1
+            assert self.carn.age == age_carn + 1
             age_carn += 1
             age_herb += 1
 
-
-    def test_weight_gained_from_eating_herbivore(self):
+    def test_weight_gained_from_eating(self):
 
         for i in range(10):
-            weight_real = self.herb.weight + self.params_herb['beta']*i
+            weight_herb = self.herb.weight + self.params_herb['beta']*i
+            weight_carn = self.carn.weight + self.params_carn['beta']*i
             self.herb.weight_gained_from_eating(i)
-            assert self.herb.weight == weight_real
-
+            self.carn.weight_gained_from_eating(i)
+            assert self.herb.weight == weight_herb
+            assert self.carn.weight == weight_carn
 
     def test_lost_weight(self):
         weight_herb = self.herb.weight
@@ -98,6 +100,84 @@ class TestAnimals:
         self.herb.calculate_fitness()
         assert self.herb.fitness == pytest.approx(0.4999999996)
 
+    def test_birth_prob(self, mocker):
+        """
+        tests birth probabillty and birth weight
+        """
+        w_child = 8
+        mocker.patch('random.random', return_value=0.78)  # set slightly lower than prob carn birth so birth happens
+        mocker.patch('random.gauss', return_value=8)
+
+        self.carn.calculate_fitness()
+
+        self.herb.weight = 9.5  # smaller
+        self.herb.calculate_fitness()
+        new_born_herb = self.herb.birth(100)  # large N value to show that probabillity is zero
+        assert new_born_herb == None
+
+        self.herb.weight = 33
+        self.herb.calculate_fitness()
+        new_born_herb = self.herb.birth(100)  # large N value to show that probabillity is zero
+        assert new_born_herb == None
+
+
+        self.carn.weight = 25# just bigger than one of the zero conditions for birth
+        self.carn.calculate_fitness()
+
+        new_born_carn = self.carn.birth(2)
+
+        assert new_born_carn.weight == w_child
+        assert new_born_carn.age == 0
+
+    def test_death(self, mocker):
+        """
+        tests the death function so it works with
+        """
+        self.herb.calculate_fitness()
+        mocker.patch('random.random', return_value=0.21)  # death prob = 20%
+        self.herb.death()
+        assert self.herb.is_dead == False
+
+        mocker.patch('random.random', return_value=0.19)
+        self.herb.death()
+        assert self.herb.is_dead == True
+        self.herb.is_dead == False
+
+        self.herb.weight = 0
+        self.herb.death()
+        assert self.herb.is_dead == True
+
+        self.carn.weight = 8  # makes death prob = 13.4%
+        mocker.patch('random.random', return_value=0.14)
+        self.carn.calculate_fitness()
+        self.carn.death()
+        assert self.carn.is_dead == False
+
+        mocker.patch('random.random', return_value=0.12)
+        self.carn.death()
+        assert self.carn.is_dead == True
+        self.carn.is_dead = False
+
+        self.carn.weight = 0
+        self.carn.death()
+        assert self.carn.is_dead == True
+
+
+    def test_carnivore_kill_prob(self):
+        """
+        tests the calculation of kill probabillity for predator
+        """
+
+        self.carn.fitness = 0.40
+        self.herb.calculate_fitness()
+        assert self.carn.carnivore_kill_prob(self.herb) == 0
+
+
+        prob = (0.55- self.herb.fitness)/self.params_carn['DeltaPhiMax']
+        self.carn.fitness = 0.55
+        self.carn.carnivore_kill_prob(self.herb)
+
+        assert self.carn.carnivore_kill_prob(self.herb) == pytest.approx(prob)
 
 
 
