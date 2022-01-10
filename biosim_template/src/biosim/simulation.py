@@ -9,7 +9,7 @@ Template for BioSim class.
 from biosim.animals import Herbivore,Carnivore
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 from biosim.island_map import Map
-from biosim.visualization import WindowPlot
+from biosim.visualization import Visualization
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -64,7 +64,7 @@ class BioSim:
         self._landscape_types_changeable = {'L': Lowland,'H':Highland}
         self._year = 0
         self._final_year = None
-        self.visualiz = WindowPlot(island_map)
+        self.visual = Visualization()
 
     def set_animal_parameters(self, species, params):
         """
@@ -103,6 +103,7 @@ class BioSim:
         self.add_population(self.ini_pop)
         _final_year = self._year + num_years
 
+
         while self._year < num_years:
             self.map.island_feeding()
             self.map.island_procreation()
@@ -110,12 +111,16 @@ class BioSim:
             self.map.island_aging()
             self.map.island_weight_loss()
             self.map.island_death()
-            self.visualiz.update_year(self.year)
-            self.visualiz.herb_map(self.map.map_dict)
-            self.visualiz.update_animals(self.num_animals_per_species)
+            self.map.island_total_herbivores_and_carnivores()
+            self.visual.update_year(self._year)
+            self.visual.update_animals(self.map)
             self._year += 1
 
-        self.visualiz.one_graph()
+
+        self.visual.color_map(self.map)
+        self.visual.herb_map(self.map)
+        self.visual.carn_map(self.map)
+        self.visual.one_graph()
 
 
 

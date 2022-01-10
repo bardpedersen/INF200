@@ -119,7 +119,7 @@ class Animal:
 
         w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
         lost_weight = w_child*self.params['xi']
-        zero_conditon = self.params['zeta']*(self.params['w_birth']+self.params['sigma_birth'])
+        zero_conditon = self.params['xi']*(self.params['w_birth']+self.params['sigma_birth'])
         if self.weight < lost_weight:
             return None
         elif self.weight < zero_conditon:
