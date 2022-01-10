@@ -4,7 +4,7 @@ import random as rd
 
 class OneGrid:
     seed = 12345
-    rd.seed(12345)
+    rd.seed(seed)
 
     def __init__(self):
         self.fodder = 0
