@@ -1,195 +1,219 @@
-from biosim.landscapes import OneGrid, Water, Lowland, Highland, Dessert
+from biosim import landscapes
 from biosim import animals
 import pytest
 
-w_birth = 8.0
-sigma_birth = 1.5
-beta = 0.9
-eta = 0.05
-a_half = 40.0
-phi_age = 0.6
-w_half = 10.0
-phi_weight = 0.1
-mu = 0.25
-gamma = 0.2
-zeta = 3.5
-xi = 1.2
-omega = 0.4
-F = 10
 
-low = Lowland()
-high = Highland()
-des = Dessert()
-water = Water()
+class TestLandscapes:
+    params_herb = {
+        'w_birth': 8.0,
+        'sigma_birth': 1.5,
+        'beta': 0.9,
+        'eta': 0.05,
+        'a_half': 40.0,
+        'phi_age': 0.6,
+        'w_half': 10.0,
+        'phi_weight': 0.1,
+        'mu': 0.25,
+        'gamma': 0.2,
+        'zeta': 3.5,
+        'xi': 1.2,
+        'omega': 0.4,
+        'F': 10
+    }
 
-def reset_varibels():
-    start_nr_animals = None
-    end_nr_animals = None
-    fodder_before = None
-    fodder_after = None
-    weight_before = None
-    weight_after = None
-    fodder_grows = None
+    params_carn = {
+        'w_birth': 6.0,
+        'sigma_birth': 1.0,
+        'beta': 0.75,
+        'eta': 0.125,
+        'a_half': 40.0,
+        'phi_age': 0.3,
+        'w_half': 4.0,
+        'phi_weight': 0.4,
+        'mu': 0.4,
+        'gamma': 0.8,
+        'zeta': 3.5,
+        'xi': 1.1,
+        'omega': 0.8,
+        'F': 50,
+        'DeltaPhiMax': 10
+    }
 
-"""Testing in Lowland"""
-def test_add_population():
-    """
-    Test that adding animals works.
-    """
-    pop = [{'species': 'Herbivore', 'age': 5, 'weight': 20} for _ in range(100)]
-    start_nr_animals = low.cell_sum_of_herbivores()
-    low.cell_add_population(pop)
-    end_nr_animals = low.cell_sum_of_herbivores()
+    @pytest.fixture(autouse=True)
+    def create_landtype(self):
+        self.lowland = landscapes.Lowland()
+        self.highland = landscapes.Highland()
+        self.dessert = landscapes.Dessert()
+        self.water = landscapes.Water()
 
-    assert start_nr_animals == 0
-    assert end_nr_animals == 100
+    @pytest.fixture(autouse=True)
+    def animals(self):
+        self.nr_animals = 20
+        self.herb_list = [{'species': 'Herbivore', 'age': 5, 'weight': 20} for _ in range(self.nr_animals)]
+        self.carn_list = [{'species': 'Carnivore', 'age': 5, 'weight': 20} for _ in range(self.nr_animals)]
 
-def test_remove_population():
-    """
-    Test that removing/dead animals work
-    """
-    start_nr_animals = low.cell_sum_of_herbivores()
-    dead_pop = [{'species': 'Herbivore', 'age': 5, 'weight': 0} for _ in range(10)]
-    low.cell_add_population(dead_pop)
-    dead_nr_animals = low.cell_sum_of_herbivores()
-    low.cell_death()
-    end_nr_animals = low.cell_sum_of_herbivores()
+    def test_add_population_lowland(self):
+        """
+        Test that adding animals works.
+        """
 
-    assert start_nr_animals == 100
-    assert dead_nr_animals == 110
-    assert end_nr_animals < 100
+        self.lowland.cell_sum_of_animals()
+        lowland_start_population_herb = self.lowland.population_sum_herb
+        lowland_start_population_carn = self.lowland.population_sum_carn
+        self.lowland.cell_add_population(self.herb_list)
+        self.lowland.cell_add_population(self.carn_list)
+        self.lowland.cell_sum_of_animals()
+        lowland_end_population_herb = self.lowland.population_sum_herb
+        lowland_end_population_carn = self.lowland.population_sum_carn
 
+        assert lowland_start_population_herb == 0
+        assert lowland_start_population_carn == 0
+        assert lowland_end_population_herb == self.nr_animals
+        assert lowland_end_population_carn == self.nr_animals
 
-def test_feeding():
-    """
-    Testing that growing food as well ass feeding works
-    """
-    low.cell_add_fodder()
-    fodder_before = low.fodder
-    weight_list_before = []
-    for animal in low.population_herb:
-        weight_list_before.append(animal.weight)
-    weight_before = sum(weight_list_before)/len(weight_list_before)
+    def test_add_population_highland(self):
 
-    low.cell_feeding_herbivore()
-    fodder_after = low.fodder
-    weight_list_after = []
-    for animal in low.population_herb:
-        weight_list_after.append(animal.weight)
-    weight_after = sum(weight_list_after)/len(weight_list_after)
+        self.highland.cell_sum_of_animals()
+        highland_start_population_herb = self.highland.population_sum_herb
+        highland_start_population_carn = self.highland.population_sum_carn
+        self.highland.cell_add_population(self.herb_list)
+        self.highland.cell_add_population(self.carn_list)
+        self.highland.cell_sum_of_animals()
+        highland_end_population_herb = self.highland.population_sum_herb
+        highland_end_population_carn = self.highland.population_sum_carn
 
-    low.cell_add_fodder()
-    fodder_grows = low.fodder
-    nr_animals = low.cell_sum_of_herbivores()
-    assert fodder_before == 800
-    assert fodder_after == 800 - (nr_animals * 10)
-    assert weight_before == 20
-    assert weight_after == weight_before + beta * 10
-    assert fodder_grows == 800
+        assert highland_start_population_herb == 0
+        assert highland_start_population_carn == 0
+        assert highland_end_population_herb == self.nr_animals
+        assert highland_end_population_carn == self.nr_animals
 
-def procreation():
-    pass
+    def test_add_population_dessert(self):
 
-def test_Highland():
-    reset_varibels()
+        self.dessert.cell_sum_of_animals()
+        dessert_start_population_herb = self.dessert.population_sum_herb
+        dessert_start_population_carn = self.dessert.population_sum_carn
+        self.dessert.cell_add_population(self.herb_list)
+        self.dessert.cell_add_population(self.carn_list)
+        self.dessert.cell_sum_of_animals()
+        dessert_end_population_herb = self.dessert.population_sum_herb
+        dessert_end_population_carn = self.dessert.population_sum_carn
 
-    pop = [{'species': 'Herbivore', 'age': 5, 'weight': 20} for _ in range(15)]
-    start_nr_animals = high.cell_sum_of_herbivores()
-    high.cell_add_population(pop)
-    end_nr_animals = high.cell_sum_of_herbivores()
+        assert dessert_start_population_herb == 0
+        assert dessert_start_population_carn == 0
+        assert dessert_end_population_herb == self.nr_animals
+        assert dessert_end_population_carn == self.nr_animals
 
-    high.cell_add_fodder()
-    fodder_before = high.fodder
-    weight_list_before = []
-    for animal in high.population_herb:
-        weight_list_before.append(animal.weight)
-    weight_before = sum(weight_list_before)/len(weight_list_before)
+    def test_add_population_water(self):
 
-    high.cell_feeding_herbivore()
-    fodder_after = high.fodder
-    weight_list_after = []
-    for animal in high.population_herb:
-        weight_list_after.append(animal.weight)
-    weight_after = sum(weight_list_after)/len(weight_list_after)
+        self.water.cell_sum_of_animals()
+        water_start_population_herb = self.water.population_sum_herb
+        water_start_population_carn = self.water.population_sum_carn
+        self.water.cell_add_population(self.herb_list)
+        self.water.cell_add_population(self.carn_list)
+        self.water.cell_sum_of_animals()
+        water_end_population_herb = self.water.population_sum_herb
+        water_end_population_carn = self.water.population_sum_carn
 
-    high.cell_add_fodder()
-    fodder_grows = high.fodder
-    nr_animals = high.cell_sum_of_herbivores()
-    assert start_nr_animals == 0
-    assert end_nr_animals == 15
-    assert fodder_before == 300
-    assert fodder_after == 300 - (nr_animals * 10)
-    assert weight_before == 20
-    assert weight_after == weight_before + beta * 10
-    assert fodder_grows == 300
+        assert water_start_population_herb == 0
+        assert water_start_population_carn == 0
+        assert water_end_population_herb == 0
+        assert water_end_population_carn == 0
 
-def test_Dessert():
-    reset_varibels()
+    def test_feeding_herb_lowland(self):
+        self.lowland.cell_add_population(self.herb_list)
+        self.lowland.cell_sum_of_animals()
+        self.nr_animals = self.lowland.population_sum_herb
 
-    pop = [{'species': 'Herbivore', 'age': 5, 'weight': 20} for _ in range(15)]
-    start_nr_animals = des.cell_sum_of_herbivores()
-    des.cell_add_population(pop)
-    end_nr_animals = des.cell_sum_of_herbivores()
+        lowland_fodder_before = self.lowland.fodder
+        self.lowland.cell_add_fodder()
+        lowland_fodder_before_eating = self.lowland.fodder
+        self.lowland.cell_feeding_herbivore()
+        lowland_fodder_after = self.lowland.fodder
+        self.lowland.cell_add_fodder()
+        lowland_fodder_regrows = self.lowland.fodder
 
-    des.cell_add_fodder()
-    fodder_before = des.fodder
-    weight_list_before = []
-    for animal in des.population_herb:
-        weight_list_before.append(animal.weight)
-    weight_before = sum(weight_list_before) / len(weight_list_before)
+        assert lowland_fodder_before == 0
+        assert lowland_fodder_before_eating == self.lowland.params['f_max']
+        assert lowland_fodder_after == self.lowland.params['f_max'] - (self.nr_animals * 10)
+        assert lowland_fodder_regrows == self.lowland.params['f_max']
 
-    des.cell_feeding_herbivore()
-    fodder_after = des.fodder
-    weight_list_after = []
-    for animal in des.population_herb:
-        weight_list_after.append(animal.weight)
-    weight_after = sum(weight_list_after) / len(weight_list_after)
+    def test_feeding_herb_highland(self):
+        self.highland.cell_add_population(self.herb_list)
+        self.highland.cell_sum_of_animals()
+        self.nr_animals = self.highland.population_sum_herb
 
-    des.cell_add_fodder()
-    fodder_grows = des.fodder
-    nr_animals = des.cell_sum_of_herbivores()
-    assert start_nr_animals == 0
-    assert end_nr_animals == 15
-    assert fodder_before == 0
-    assert fodder_after == 0
-    assert weight_before == 20
-    assert weight_after == 20
-    assert fodder_grows == 0
+        highland_fodder_before = self.highland.fodder
+        self.highland.cell_add_fodder()
+        highland_fodder_before_eating = self.highland.fodder
+        self.highland.cell_feeding_herbivore()
+        highland_fodder_after = self.highland.fodder
+        self.highland.cell_add_fodder()
+        highland_fodder_regrows = self.highland.fodder
 
-def test_Water():
-    reset_varibels()
+        assert highland_fodder_before == 0
+        assert highland_fodder_before_eating == self.highland.params['f_max']
+        assert highland_fodder_after == self.highland.params['f_max'] - (self.nr_animals * 10)
+        assert highland_fodder_regrows == self.highland.params['f_max']
 
-    pop = [{'species': 'Herbivore', 'age': 5, 'weight': 20} for _ in range(15)]
-    start_nr_animals = water.cell_sum_of_herbivores()
-    water.cell_add_population(pop)
-    end_nr_animals = water.cell_sum_of_herbivores()
+    def test_feeding_herb_dessert(self):
+        self.dessert.cell_add_population(self.herb_list)
+        self.dessert.cell_sum_of_animals()
+        self.nr_animals = self.dessert.population_sum_herb
 
-    water.cell_add_fodder()
-    fodder_before = water.fodder
-    weight_list_before = []
-    if len(weight_list_before) != 0:
-        for animal in water.population_herb:
-            weight_list_before.append(animal.weight)
-        weight_before = sum(weight_list_before) / len(weight_list_before)
-    else:
-        weight_before = 0
+        dessert_fodder_before = self.dessert.fodder
+        self.dessert.cell_add_fodder()
+        dessert_fodder_before_eating = self.dessert.fodder
+        self.dessert.cell_feeding_herbivore()
+        dessert_fodder_after = self.dessert.fodder
+        self.dessert.cell_add_fodder()
+        dessert_fodder_regrows = self.dessert.fodder
 
-    water.cell_feeding_herbivore()
-    fodder_after = water.fodder
-    weight_list_after = []
-    if len(weight_list_before) != 0:
-        for animal in water.population_herb:
-            weight_list_after.append(animal.weight)
-        weight_after = sum(weight_list_after) / len(weight_list_after)
-    weight_after = 0
+        assert dessert_fodder_before == 0
+        assert dessert_fodder_before_eating == self.dessert.params['f_max']
+        assert dessert_fodder_after == self.dessert.params['f_max']
+        assert dessert_fodder_regrows == self.dessert.params['f_max']
 
-    water.cell_add_fodder()
-    fodder_grows = water.fodder
-    nr_animals = water.cell_sum_of_herbivores()
-    assert start_nr_animals == 0
-    assert end_nr_animals == 0
-    assert fodder_before == 0
-    assert fodder_after == 0
-    assert weight_before == 0
-    assert weight_after == 0
-    assert fodder_grows == 0
+    def test_remove_population(self):  # Only lowland at the moment
+        self.nr_animals = 100
+        self.lowland.cell_add_population([{'species': 'Herbivore', 'age': 5, 'weight': 0}
+                                          for _ in range(self.nr_animals)])
+        self.lowland.cell_add_population([{'species': 'Carnivore', 'age': 5, 'weight': 0}
+                                          for _ in range(self.nr_animals)])
+        self.lowland.cell_sum_of_animals()
+        lowland_start_population_herb = self.lowland.population_sum_herb
+        lowland_start_population_carn = self.lowland.population_sum_carn
+
+        self.lowland.cell_death()
+        self.lowland.cell_sum_of_animals()
+
+        lowland_end_population_herb = self.lowland.population_sum_herb
+        lowland_end_population_carn = self.lowland.population_sum_carn
+
+        assert lowland_start_population_herb == self.nr_animals
+        assert lowland_start_population_carn == self.nr_animals
+        assert lowland_end_population_herb < self.nr_animals
+        assert lowland_end_population_carn < self.nr_animals
+
+    def test_procreation(self):
+        self.nr_animals = 20
+        self.lowland.cell_add_population([{'species': 'Herbivore', 'age': 5, 'weight': 26}
+                                          for _ in range(self.nr_animals)])
+        self.lowland.cell_add_population([{'species': 'Carnivore', 'age': 5, 'weight': 26}
+                                          for _ in range(self.nr_animals)])
+        self.lowland.cell_sum_of_animals()
+        lowland_start_population_herb = self.lowland.population_sum_herb
+        lowland_start_population_carn = self.lowland.population_sum_carn
+
+        self.lowland.cell_procreation()
+        self.lowland.cell_sum_of_animals()
+
+        lowland_end_population_herb = self.lowland.population_sum_herb
+        lowland_end_population_carn = self.lowland.population_sum_carn
+
+        assert lowland_start_population_herb == self.nr_animals
+        assert lowland_start_population_carn == self.nr_animals
+        assert lowland_end_population_herb == self.nr_animals  #No one is born
+        assert lowland_end_population_carn == self.nr_animals  #is 1 of duplicating
+
+    def test_migration(self):
+        pass

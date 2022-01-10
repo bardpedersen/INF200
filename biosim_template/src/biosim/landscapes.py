@@ -8,13 +8,11 @@ class OneGrid:
 
     def __init__(self):
         self.fodder = 0
+        self.livable = True
         self.population_herb = []
         self.population_carn = []
         self.population_sum_herb = None
         self.population_sum_carn = None
-
-
-
 
     def cell_set_params(cls, params):
         for parameter in params:
@@ -27,18 +25,19 @@ class OneGrid:
         :param population: the population to add to the map
         :return:
         """
+        if not self.livable:
+            pass
 
-        for animal in population:
-            if animal['species'] == 'Herbivore':
-                self.population_herb.append(Herbivore(animal['age'], animal['weight']))
-            elif animal['species'] == 'Carnivore':
-                self.population_carn.append(Carnivore(animal['age'], animal['weight']))
-
+        else:
+            for animal in population:
+                if animal['species'] == 'Herbivore':
+                    self.population_herb.append(Herbivore(animal['age'], animal['weight']))
+                elif animal['species'] == 'Carnivore':
+                    self.population_carn.append(Carnivore(animal['age'], animal['weight']))
 
     def cell_sum_of_animals(self):
         self.population_sum_herb = len(self.population_herb)
         self.population_sum_carn = len(self.population_carn)
-
 
     def cell_calculate_fitness(self):
         """
@@ -80,7 +79,6 @@ class OneGrid:
                 herbivore.weight_gained_from_eating(self.fodder)
                 self.fodder = 0
 
-
     def cell_feeding_carnivore(self):
         """
         implements feeding of carniores for the cell
@@ -113,10 +111,8 @@ class OneGrid:
                         predator.weight_gained_from_eating(fodder)
                         break
                     predator.calculate_fitness()
-            population_herb = [herb for herb in self.population_herb if herb.is_dead == False]
+            population_herb = [herb for herb in self.population_herb if not herb.is_dead]
             self.population_herb = population_herb
-
-
 
     def cell_procreation(self):
         """
@@ -141,7 +137,7 @@ class OneGrid:
         N_C = self.population_sum_carn
         for carn in self.population_carn:
             carn.calculate_fitness()
-            new_born_carn = carn.birth(N_C,species='carn')
+            new_born_carn = carn.birth(N_C, species='carn')
             if new_born_carn is not None:
                 new_born_carns.append(new_born_carn)
             N_C -= 1
@@ -166,7 +162,6 @@ class OneGrid:
         for animal in self.population_herb:
             animal.lose_weight()
 
-
     def cell_death(self):
         """
         This func kills and removes both carnivores and herbivores in each cell
@@ -177,29 +172,43 @@ class OneGrid:
         for carn in self.population_carn:
             carn.death()
 
-        population_herb = [herb for herb in self.population_herb if herb.is_dead == False]
+        population_herb = [herb for herb in self.population_herb if not herb.is_dead]
         self.population_herb = population_herb
-        population_carn = [carn for carn in self.population_carn if carn.is_dead == False]
+        population_carn = [carn for carn in self.population_carn if not carn.is_dead]
         self.population_carn = population_carn
-
 
 
 class Lowland(OneGrid):
     params = {
         'f_max': 800
     }
+
     def __init__(self):
         super().__init__()
         self._fodder = 800
         self.livable = True
 
     def __repr__(self):
-        return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum_carn+ self.population_sum_herb}'
+        return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
 
 
 class Highland(OneGrid):
     params = {
         'f_max': 300
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.fodder = 0
+        self.livable = True
+
+    def __repr__(self):
+        return f'Highland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
+
+
+class Dessert(OneGrid):
+    params = {
+        'f_max': 0
     }
     def __init__(self):
         super().__init__()
@@ -207,20 +216,13 @@ class Highland(OneGrid):
         self.livable = True
 
     def __repr__(self):
-        return f'Highland,Food:{self.fodder},Total animals:{self.population_sum_carn+ self.population_sum_herb}'
-
-
-class Dessert(OneGrid):
-    def __init__(self):
-        super().__init__()
-        self.fodder = 0
-        self.livable = True
-
-    def __repr__(self):
-        return f'Dessert,Food:{self.fodder},Total animals:{self.population_sum_herb +self.population_sum_carn}'
+        return f'Dessert,Food:{self.fodder},Total animals:{self.population_sum_herb + self.population_sum_carn}'
 
 
 class Water(OneGrid):
+    params = {
+        'f_max': 0
+    }
     def __init__(self):
         super().__init__()
         self._fodder = 0
@@ -228,7 +230,6 @@ class Water(OneGrid):
 
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
-
 
     def cell_add_fodder(self):
         pass
