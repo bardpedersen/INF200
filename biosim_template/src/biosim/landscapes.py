@@ -4,7 +4,7 @@ import random as rd
 
 class OneGrid:
     seed = 12345
-    rd.seed(12345)
+    rd.seed(seed)
 
     def __init__(self):
         self.fodder = 0
@@ -12,9 +12,6 @@ class OneGrid:
         self.population_carn = []
         self.population_sum_herb = None
         self.population_sum_carn = None
-
-
-
 
     def cell_set_params(cls, params):
         for parameter in params:
