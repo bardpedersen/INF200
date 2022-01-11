@@ -7,6 +7,8 @@ location
 import numpy as np
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 import textwrap
+import random
+
 
 class Map:
     def __init__(self, island_map):
@@ -103,9 +105,49 @@ class Map:
             if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_aging()
 
-
     def island_migration(self):
-        pass
+        for loc in self.map_dict:
+            self.map_dict[loc].cell_migration()
+            print(self.map_dict[loc])
+            for animal in self.map_dict[loc].are_migrating:
+                rand = random.random()
+                if rand <= 0.25:
+                    self.migration_move_right(loc, animal)
+                elif 0.25 < rand <= 0.5:
+                    self.migration_move_left(loc, animal)
+                elif 0.5 < rand <= 0.75:
+                    self.migration_move_up(loc, animal)
+                else:
+                    self.migration_move_down(loc, animal)
+            self.map_dict[loc].are_migrating = []
+
+    def migration_move_right(self, loc, animal):
+        new_loc = (loc[0], loc[1] + 1)
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_herb.append(animal)
+        else:
+            self.map_dict[loc].population_herb.append(animal)
+
+    def migration_move_left(self, loc, animal):
+        new_loc = (loc[0], loc[1] - 1)
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_herb.append(animal)
+        else:
+            self.map_dict[loc].population_herb.append(animal)
+
+    def migration_move_up(self, loc, animal):
+        new_loc = (loc[0]-1, loc[1])
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_herb.append(animal)
+        else:
+            self.map_dict[loc].population_herb.append(animal)
+
+    def migration_move_down(self, loc, animal):
+        new_loc = (loc[0]+1, loc[1])
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_herb.append(animal)
+        else:
+            self.map_dict[loc].population_herb.append(animal)
 
 
     def island_weight_loss(self):
@@ -139,8 +181,6 @@ class Map:
                 self.island_total_herbivores += self.map_dict[key].population_sum_herb
                 self.island_total_carnivores += self.map_dict[key].population_sum_carn
 
-
-
     def island_total_sum_of_animals(self):
         """
         calculates the total number of animals in each cell
@@ -160,7 +200,7 @@ class Map:
 
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     geogr = """\
                WWW
                WLW
@@ -198,4 +238,4 @@ if __name__=='__main__':
         island.island_weight_loss()
         island.island_death()
 
-
+    b = island.map_dict

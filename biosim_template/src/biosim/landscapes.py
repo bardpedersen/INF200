@@ -11,12 +11,12 @@ class OneGrid:
         self.population_carn = []
         self.population_sum_herb = None
         self.population_sum_carn = None
+        self.are_migrating = []
 
     def cell_set_params(cls, params):
         for parameter in params:
             if parameter in cls.params:
                 cls[parameter] = params[parameter]
-
 
     def cell_add_population(self, population=None):
         """
@@ -145,7 +145,19 @@ class OneGrid:
 
     def cell_migration(self):
         """No migration on one cell island"""
-        pass
+        self.are_migrating = []
+        for animal in self.population_herb:
+            print(animal,'animal')
+            self.cell_calculate_fitness()
+            move_prob = animal.params['mu'] * animal.fitness
+            random = rd.random()
+            if random < move_prob:
+                print('waw')
+                self.are_migrating.append(animal)
+
+        _temporary_list = []
+        _temporary_list = self.population_herb
+        self.population_herb = [animal for animal in _temporary_list if animal not in self.are_migrating]
 
     def cell_aging(self):
         """
@@ -153,6 +165,9 @@ class OneGrid:
         Age increases by one year for each year that passes
         """
         for animal in self.population_herb:
+            animal.grow_one_year()
+
+        for animal in self.population_carn:
             animal.grow_one_year()
 
     def cell_weight_lost(self):
@@ -190,7 +205,7 @@ class Lowland(OneGrid):
     def __init__(self):
         super().__init__()
         self.fodder = 0
-        self._livable = True
+        self.livable = True
 
     def __repr__(self):
         return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
@@ -204,7 +219,7 @@ class Highland(OneGrid):
     def __init__(self):
         super().__init__()
         self.fodder = 0
-        self._livable = True
+        self.livable = True
 
     def __repr__(self):
         return f'Highland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
@@ -216,8 +231,8 @@ class Dessert(OneGrid):
     }
     def __init__(self):
         super().__init__()
-        self._fodder = 0
-        self._livable = True
+        self.fodder = 0
+        self.livable = True
 
     def __repr__(self):
         return f'Dessert,Food:{self.fodder},Total animals:{self.population_sum_herb + self.population_sum_carn}'
@@ -229,11 +244,35 @@ class Water(OneGrid):
     }
     def __init__(self):
         super().__init__()
-        self._fodder = 0
-        self._livable = False
+        self.fodder = 0
+        self.livable = False
 
     def __repr__(self):
-        return f'Water,Food:{self._fodder},Uninhabitable'
+        return f'Water,Food:{self.fodder},Uninhabitable'
 
     def cell_add_fodder(self):
         pass
+
+
+if __name__ == '__main__':
+
+    low = Lowland()
+
+    herb = [{'species': 'Carnivore', 'age': 5, 'weight': 26}
+                                          for _ in range(10)]
+    carn = [{'species': 'Herbivore', 'age': 5, 'weight': 26}
+                                 for _ in range(10)]
+    low.cell_add_population(herb)
+    low.cell_add_population(carn)
+    low.cell_sum_of_animals()
+    a = low.population_herb
+    b = low.population_carn
+
+    low.cell_procreation()
+    low.cell_sum_of_animals()
+    c = low.population_herb
+    d = repr(low.population_carn[2])
+    e = d.split(',')[2][7:13]
+    low.cell_aging()
+    j = repr(low.population_carn[2])
+    m = d.split(',')[1][6:7]
