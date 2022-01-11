@@ -84,13 +84,8 @@ class Visualization:
 
         """
 
-        fig = plt.figure(figsize=(10,10))
-
-
-
         plt.title('Herbivores and carnivores on the island')
-        plt.plot(self.years,self.herb_list)
-        plt.plot(self.years, self.carn_list)
+        plt.plot(self.years,self.herb_list,self.years, self.carn_list)
         plt.xlabel('years')
         plt.ylabel('Num of Animals')
         plt.show()

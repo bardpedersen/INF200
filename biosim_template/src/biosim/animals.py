@@ -6,14 +6,14 @@ import random as rd
 import math as m
 
 """
-Class describing hebrivores
+Class describing Animals 
 
 :param 
 """
+
+
 class Animal:
-    seed = 12345
-    rd.seed(seed)
-    def __init__(self,age, weight):
+    def __init__(self, age, weight):
         """
         initiates instance of animal
 
@@ -30,8 +30,7 @@ class Animal:
         self.has_migrated = False
         self.is_dead = False
 
-
-    def set_params(cls,params):
+    def set_params(cls, params):
         """
         takes an dictionatry of parameters and replaces default params
 
@@ -41,7 +40,7 @@ class Animal:
             if parameter in cls.params:
                 if parameter < 0:
                     raise ValueError(f'{parameter} has to be positive, cant be {params[parameter]}')
-                if parameter  == 'eta' and params[parameter] > 1:
+                if parameter == 'eta' and params[parameter] > 1:
                     raise ValueError(f'eta has to be smaller than 1 cant be {params[parameter]}')
                 if parameter == 'DeltaPhiMax' and params[parameter] == 0:
                     raise ValueError(f'DeltaPhiMax must be nonzero positive, cannot be {params[parameter]}')
@@ -49,11 +48,6 @@ class Animal:
                     cls.params[parameter] = params[parameter]
             else:
                 raise KeyError(f'{parameter} is not a accepted parameter')
-
-
-    def set_seed(cls,seed):
-        cls.seed = seed
-
 
     def calculate_fitness(self):
         """
@@ -87,7 +81,7 @@ class Animal:
         :return:
         """
 
-        self.weight -= self.weight*self.params['mu']
+        self.weight -= self.weight*self.params['eta']
         if self.weight < 0:
             self.weight = 0
 
@@ -102,6 +96,7 @@ class Animal:
         :return: returns 1 if the animal dies and 0 if it lives
         """
         p = rd.random()
+        self.calculate_fitness()
         prob_death = self.params['omega'] * (1 - self.fitness)
         if self.weight == 0 or p < prob_death:
             self.is_dead = True
@@ -119,12 +114,12 @@ class Animal:
 
         w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
         lost_weight = w_child*self.params['xi']
-        zero_conditon = self.params['xi']*(self.params['w_birth']+self.params['sigma_birth'])
+        zero_conditon = self.params['zeta']*(self.params['w_birth']+self.params['sigma_birth'])
         if self.weight < lost_weight:
             return None
-        elif self.weight < zero_conditon:
+        elif w_child <= 0:
             return None
-        elif self.weight < lost_weight:
+        elif self.weight < zero_conditon:
             return None
         else:
             p = rd.random()
@@ -186,7 +181,7 @@ class Carnivore(Animal):
         'xi': 1.1,
         'omega': 0.8,
         'F': 50,
-        'DeltaPhiMax':10
+        'DeltaPhiMax':15
     }
     def __init__(self,age,weight):
         super().__init__(age, weight)
@@ -203,7 +198,7 @@ class Carnivore(Animal):
         difference_fitness = self.fitness - prey.fitness
         if self.fitness < prey.fitness:
             prob = 0
-        elif 0 < difference_fitness and difference_fitness < self.params['DeltaPhiMax']:
+        elif 0 < difference_fitness < self.params['DeltaPhiMax']:
             prob = difference_fitness/self.params['DeltaPhiMax']
         else:
             prob = 1
@@ -211,5 +206,7 @@ class Carnivore(Animal):
         return prob
 
 
-
+if __name__ == '__main__':
+    for _ in range(100):
+        print(rd.random())
 

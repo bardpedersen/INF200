@@ -1,10 +1,8 @@
-from biosim.animals import Herbivore,Carnivore
+from biosim.animals import Herbivore, Carnivore
 import random as rd
 
 
 class OneGrid:
-    seed = 12345
-    rd.seed(seed)
 
     def __init__(self):
         self.fodder = 0
@@ -18,6 +16,7 @@ class OneGrid:
         for parameter in params:
             if parameter in cls.params:
                 cls[parameter] = params[parameter]
+
 
     def cell_add_population(self, population=None):
         """
@@ -70,6 +69,7 @@ class OneGrid:
         self.cell_calculate_fitness()
         self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
         for herbivore in self.population_herb:
+
             if self.fodder == 0:
                 break
             elif self.fodder >= herbivore.params['F']:
@@ -111,7 +111,7 @@ class OneGrid:
                         predator.weight_gained_from_eating(fodder)
                         break
                     predator.calculate_fitness()
-            population_herb = [herb for herb in self.population_herb if not herb.is_dead]
+            population_herb = [herb for herb in self.population_herb if herb.is_dead is False]
             self.population_herb = population_herb
 
     def cell_procreation(self):
@@ -159,22 +159,26 @@ class OneGrid:
         """
         Every year, the weight of the animal decreases.
         """
-        for animal in self.population_herb:
-            animal.lose_weight()
+        if self.population_herb is not None:
+            for herb in self.population_herb:
+                herb.lose_weight()
+        if self.population_carn is not None:
+            for carn in self.population_carn:
+                carn.lose_weight()
 
     def cell_death(self):
         """
         This func kills and removes both carnivores and herbivores in each cell
         """
-        self.cell_calculate_fitness()
+
         for herb in self.population_herb:
             herb.death()
         for carn in self.population_carn:
             carn.death()
 
-        population_herb = [herb for herb in self.population_herb if not herb.is_dead]
+        population_herb = [herb for herb in self.population_herb if herb.is_dead is False]
         self.population_herb = population_herb
-        population_carn = [carn for carn in self.population_carn if not carn.is_dead]
+        population_carn = [carn for carn in self.population_carn if carn.is_dead is False]
         self.population_carn = population_carn
 
 
@@ -185,8 +189,8 @@ class Lowland(OneGrid):
 
     def __init__(self):
         super().__init__()
-        self._fodder = 800
-        self.livable = True
+        self.fodder = 0
+        self._livable = True
 
     def __repr__(self):
         return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
@@ -200,7 +204,7 @@ class Highland(OneGrid):
     def __init__(self):
         super().__init__()
         self.fodder = 0
-        self.livable = True
+        self._livable = True
 
     def __repr__(self):
         return f'Highland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
@@ -212,8 +216,8 @@ class Dessert(OneGrid):
     }
     def __init__(self):
         super().__init__()
-        self.fodder = 0
-        self.livable = True
+        self._fodder = 0
+        self._livable = True
 
     def __repr__(self):
         return f'Dessert,Food:{self.fodder},Total animals:{self.population_sum_herb + self.population_sum_carn}'
@@ -226,7 +230,7 @@ class Water(OneGrid):
     def __init__(self):
         super().__init__()
         self._fodder = 0
-        self.livable = False
+        self._livable = False
 
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'

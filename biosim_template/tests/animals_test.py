@@ -81,8 +81,8 @@ class TestAnimals:
         weight_herb = self.herb.weight
         weight_carn = self.carn.weight
         for i in range(10):
-            weight_herb = weight_herb - self.params_herb['mu']*weight_herb
-            weight_carn = weight_carn - self.params_carn['mu']*weight_carn
+            weight_herb = weight_herb - self.params_herb['eta']*weight_herb
+            weight_carn = weight_carn - self.params_carn['eta']*weight_carn
             self.herb.lose_weight()
             self.carn.lose_weight()
             assert self.herb.weight == weight_herb
@@ -120,6 +120,11 @@ class TestAnimals:
         new_born_herb = self.herb.birth(100)  # large N value to show that probabillity is zero
         assert new_born_herb == None
 
+        self.herb.weight = 34
+        self.herb.calculate_fitness()
+        new_born_herb = self.herb.birth(100)
+        assert new_born_herb.age == 0
+        assert new_born_herb.weight == 8
 
         self.carn.weight = 25# just bigger than one of the zero conditions for birth
         self.carn.calculate_fitness()
@@ -128,6 +133,7 @@ class TestAnimals:
 
         assert new_born_carn.weight == w_child
         assert new_born_carn.age == 0
+
 
     def test_death(self, mocker):
         """

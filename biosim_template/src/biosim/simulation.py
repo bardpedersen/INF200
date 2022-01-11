@@ -11,9 +11,10 @@ from biosim.landscapes import Lowland, Water, Highland, Dessert
 from biosim.island_map import Map
 from biosim.visualization import Visualization
 
+
 import matplotlib.pyplot as plt
 import numpy as np
-
+import random as rd
 
 class BioSim:
     def __init__(self, island_map, ini_pop, seed,
@@ -54,17 +55,23 @@ class BioSim:
 
         img_dir and img_base must either be both None or both strings.
         """
-
+        rd.seed(seed)
         self._islandmap = island_map
         self.map = Map(island_map)
         self.ini_pop = ini_pop
-        self.seed = seed
         self.vis_years = vis_years
         self._animal_species = {'Herbivore': Herbivore,'Carnivore':Carnivore}
         self._landscape_types_changeable = {'L': Lowland,'H':Highland}
         self._year = 0
         self._final_year = None
         self.visual = Visualization()
+        self.img_years = img_years
+
+
+
+
+
+
 
     def set_animal_parameters(self, species, params):
         """
@@ -101,7 +108,7 @@ class BioSim:
 
         self.map.creating_map()
         self.add_population(self.ini_pop)
-        _final_year = self._year + num_years
+        _final_year = self._year + self.img_years
 
 
         while self._year < num_years:
@@ -117,9 +124,9 @@ class BioSim:
             self._year += 1
 
 
-        self.visual.color_map(self.map)
-        self.visual.herb_map(self.map)
-        self.visual.carn_map(self.map)
+        #self.visual.color_map(self.map)
+        #self.visual.herb_map(self.map)
+        #self.visual.carn_map(self.map)
         self.visual.one_graph()
 
 

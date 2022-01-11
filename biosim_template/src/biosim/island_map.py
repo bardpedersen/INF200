@@ -73,12 +73,12 @@ class Map:
         """
 
         for key in self.map_dict:
-            if self.map_dict[key].livable != False:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_sum_of_animals()
-                if self.map_dict[key].population_sum_herb != None:
+                if self.map_dict[key].population_sum_herb is not None:
                     self.map_dict[key].cell_add_fodder()
                     self.map_dict[key].cell_feeding_herbivore()
-                if self.map_dict[key].population_sum_carn != None:
+                if self.map_dict[key].population_sum_carn is not None:
                     self.map_dict[key].cell_feeding_carnivore()
 
 
@@ -88,7 +88,7 @@ class Map:
         """
 
         for key in self.map_dict:
-            if self.map_dict[key].livable != False:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_procreation()
                 self.map_dict[key].cell_sum_of_animals()
 
@@ -100,7 +100,7 @@ class Map:
         """
 
         for key in self.map_dict:
-            if self.map_dict[key].livable != False:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_aging()
 
 
@@ -113,7 +113,7 @@ class Map:
         calculates the weight loss for each cell in simulation
         """
         for key in self.map_dict:
-            if self.map_dict[key].livable != False:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_weight_lost()
 
     def island_death(self):
@@ -121,7 +121,7 @@ class Map:
         kills (by probability see animals.py) and removes the dead animal in each cells
         """
         for key in self.map_dict:
-            if self.map_dict[key].livable != False:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_death()
                 self.map_dict[key].cell_sum_of_animals()
 
@@ -134,7 +134,7 @@ class Map:
         self.island_total_carnivores = 0
 
         for key in self.map_dict:
-            if self.map_dict[key].livable == True:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_sum_of_animals()
                 self.island_total_herbivores += self.map_dict[key].population_sum_herb
                 self.island_total_carnivores += self.map_dict[key].population_sum_carn
@@ -180,12 +180,22 @@ if __name__=='__main__':
     island = Map(geogr)
     island.creating_map()
     island.island_add_population(ini_herbs)
+
+    for i in range(50):
+
+
+        island.island_feeding()
+        island.island_procreation()
+        island.island_aging()
+        island.island_weight_loss()
+        island.island_death()
+
     island.island_add_population(ini_carns)
-    island.island_feeding()
-    island.island_procreation()
-    island.island_weight_loss()
-    island.island_death()
+    for i in range(50):
+        island.island_feeding()
+        island.island_procreation()
+        island.island_aging()
+        island.island_weight_loss()
+        island.island_death()
 
-
-    b = island.map_dict
 
