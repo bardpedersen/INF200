@@ -124,6 +124,8 @@ class TestLandscapes:
         self.lowland.cell_sum_of_animals()
         self.nr_animals = self.lowland.population_sum_herb
 
+        lowland_start_weight_herb = self.lowland.population_herb[4].weight
+
         lowland_fodder_before = self.lowland.fodder
         self.lowland.cell_add_fodder()
         lowland_fodder_before_eating = self.lowland.fodder
@@ -132,10 +134,14 @@ class TestLandscapes:
         self.lowland.cell_add_fodder()
         lowland_fodder_regrows = self.lowland.fodder
 
+        lowland_end_weight_herb = self.lowland.population_herb[4].weight
+
         assert lowland_fodder_before == 0
         assert lowland_fodder_before_eating == self.lowland.params['f_max']
         assert lowland_fodder_after == self.lowland.params['f_max'] - (self.nr_animals * 10)
         assert lowland_fodder_regrows == self.lowland.params['f_max']
+        assert lowland_start_weight_herb == 20
+        assert lowland_end_weight_herb == 29
 
     def test_feeding_herb_highland(self):
         self.highland.cell_add_population(self.herb_list)
@@ -173,7 +179,7 @@ class TestLandscapes:
         assert dessert_fodder_after == self.dessert.params['f_max']
         assert dessert_fodder_regrows == self.dessert.params['f_max']
 
-    def test_remove_population(self):  # Only lowland at the moment
+    def test_death(self):  # Only lowland at the moment
         self.nr_animals = 100
         self.lowland.cell_add_population([{'species': 'Herbivore', 'age': 5, 'weight': 0}
                                           for _ in range(self.nr_animals)])
@@ -212,8 +218,63 @@ class TestLandscapes:
 
         assert lowland_start_population_herb == self.nr_animals
         assert lowland_start_population_carn == self.nr_animals
-        assert lowland_end_population_herb == self.nr_animals  #No one is born
-        assert lowland_end_population_carn == self.nr_animals  #is 1 of duplicating
+        assert lowland_end_population_herb == self.nr_animals  # No one is born
+        assert lowland_end_population_carn > self.nr_animals  # is 1 of duplicating
+
+    def test_aging(self):
+        self.lowland.cell_add_population(self.herb_list)
+        self.lowland.cell_add_population(self.carn_list)
+        self.lowland.cell_sum_of_animals()
+
+        lowland_start_age_herb = self.lowland.population_herb[4].age
+        lowland_start_age_carn = self.lowland.population_carn[4].age
+
+        self.lowland.cell_aging()
+        self.lowland.cell_aging()
+
+        lowland_end_age_herb = self.lowland.population_herb[4].age
+        lowland_end_age_carn = self.lowland.population_carn[4].age
+
+        assert lowland_start_age_herb == 5
+        assert lowland_start_age_carn == 5
+        assert lowland_end_age_herb == 7
+        assert lowland_end_age_carn == 7
+
+    def test_feeding_procreation(self):
+        self.lowland.cell_add_population(self.herb_list)
+        self.lowland.cell_add_population(self.carn_list)
+        self.lowland.cell_sum_of_animals()
+
+        lowland_start_herbivores = self.lowland.population_sum_herb
+        lowland_start_weight_carn = self.lowland.population_carn[4].weight
+
+        self.lowland.cell_feeding_carnivore()
+        self.lowland.cell_sum_of_animals()
+
+        lowland_end_herbivores = self.lowland.population_sum_herb
+        lowland_end_weight_carn = self.lowland.population_carn[4].weight
+
+        assert lowland_start_herbivores == self.nr_animals
+        assert lowland_end_herbivores < self.nr_animals
+        assert lowland_start_weight_carn == 20
+        assert lowland_end_weight_carn > 20
+
+    def test_feed_with_fitness_order(self):
+        self.lowland.cell_add_population(self.herb_list)
+        self.lowland.cell_add_population(self.carn_list)
+        self.lowland.cell_sum_of_animals()
+
+        self.lowland.cell_calculate_fitness()
+
+        lowland_start_fitness_herb = self.lowland.population_herb[4].fitness
+
+
+        self.lowland.population_herb.sort(key=lambda x: x.fitness, reverse=True)
+        self.lowland.population_carn.sort(key=lambda x: x.fitness, reverse=True)
+
+        self.lowland.population_herb
+        self.lowland.population_carn
+        pass
 
     def test_migration(self):
         pass
