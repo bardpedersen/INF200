@@ -181,7 +181,7 @@ class Carnivore(Animal):
         'xi': 1.1,
         'omega': 0.8,
         'F': 50,
-        'DeltaPhiMax':15
+        'DeltaPhiMax':10
     }
     def __init__(self,age,weight):
         super().__init__(age, weight)

@@ -4,9 +4,9 @@ import random as rd
 
 class OneGrid:
 
-    def __init__(self):
+    def __init__(self,cord):
         self.fodder = 0
-        self.livable = True
+        self.cord = cord
         self.population_herb = []
         self.population_carn = []
         self.population_sum_herb = None
@@ -24,7 +24,7 @@ class OneGrid:
         :param population: the population to add to the map
         :return:
         """
-        if not self.livable:
+        if not self._livable:
             pass
 
         else:
@@ -187,8 +187,8 @@ class Lowland(OneGrid):
         'f_max': 800
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self,cord):
+        super().__init__(cord)
         self.fodder = 0
         self._livable = True
 
@@ -201,12 +201,12 @@ class Highland(OneGrid):
         'f_max': 300
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self,cord):
+        super().__init__(cord)
         self.fodder = 0
         self._livable = True
 
-    def __repr__(self):
+    def __repr__(self,cord):
         return f'Highland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
 
 
@@ -214,8 +214,8 @@ class Dessert(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self):
-        super().__init__()
+    def __init__(self,cord):
+        super().__init__(cord)
         self._fodder = 0
         self._livable = True
 
@@ -227,13 +227,12 @@ class Water(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self):
-        super().__init__()
+    def __init__(self,cord):
+        super().__init__(cord)
         self._fodder = 0
         self._livable = False
 
     def __repr__(self):
         return f'Water,Food:{self._fodder},Uninhabitable'
 
-    def cell_add_fodder(self):
-        pass
+
