@@ -12,7 +12,6 @@ class OneGrid:
         self.population_carn = []
         self.population_sum_herb = None
         self.population_sum_carn = None
-        self.are_migrating = []
 
     def cell_set_params(cls, params):
         for parameter in params:
@@ -147,23 +146,17 @@ class OneGrid:
     def cell_migration(self):
         """No migration on one cell island"""
         self.are_migrating = []
-        for animal in self.population_herb:
-            self.cell_calculate_fitness()
-            move_prob = animal.params['mu'] * animal.fitness
-            random = rd.random()
-            if random < move_prob:
-                self.are_migrating.append(animal)
+        for herb in self.population_herb:
+            herb.migrate()
 
-        for animal in self.population_carn:
-            self.cell_calculate_fitness()
-            move_prob = animal.params['mu'] * animal.fitness
-            random = rd.random()
-            if random < move_prob:
-                self.are_migrating.append(animal)
+        for carn in self.population_carn:
+            carn.migrate()
 
-        population_herb = [herb for herb in self.population_herb if herb not in self.are_migrating]
+    def cell_migration_remove(self):
+        population_herb = [herb for herb in self.population_herb if herb.has_migrated is False]
         self.population_herb = population_herb
-        population_carn = [carn for carn in self.population_carn if carn not in self.are_migrating]
+
+        population_carn = [carn for carn in self.population_carn if carn.has_migrated is False]
         self.population_carn = population_carn
 
 

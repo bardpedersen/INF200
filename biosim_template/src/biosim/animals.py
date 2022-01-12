@@ -86,10 +86,6 @@ class Animal:
             self.weight = 0
 
 
-    def migrate(self):
-        pass
-
-
     def death(self):
         """
         calculates if animal dies using fitness omega.
@@ -100,6 +96,17 @@ class Animal:
         prob_death = self.params['omega'] * (1 - self.fitness)
         if self.weight == 0 or p < prob_death:
             self.is_dead = True
+
+    def migrate(self):
+        if self.has_migrated:
+            self.has_migrated = False
+
+        else:
+            self.calculate_fitness()
+            move_prob = self.params['mu'] * self.fitness
+            p = rd.random()
+            if p < move_prob:
+                self.has_migrated = True
 
 
     def birth(self,N,species='herb'):
@@ -161,7 +168,8 @@ class Herbivore(Animal):
 
 
     def __repr__(self):
-        return f'Herbivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead})'
+        return f'Herbivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead}, ' \
+               f'Has_migrated: {self.has_migrated})'
 
 
 
@@ -187,7 +195,8 @@ class Carnivore(Animal):
         super().__init__(age, weight)
 
     def __repr__(self):
-        return f'Carnivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead})'
+        return f'Carnivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead}, ' \
+               f'Has_migrated: {self.has_migrated})'
 
     def carnivore_kill_prob(self,prey):
         """

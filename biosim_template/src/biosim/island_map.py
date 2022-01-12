@@ -105,79 +105,102 @@ class Map:
             if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_aging()
 
-    def island_migration_list(self):
+    def island_migration_statement(self):
         for loc in self.map_dict:
             self.map_dict[loc].cell_migration()
 
     def island_migration(self):
-        self.island_migration_list()
-        for loc in self.map_dict:
-            for animal in self.map_dict[loc].are_migrating:
-                rand = random.random()
-                if rand <= 0.25:
-                    self.migration_move_right(loc, animal)
-                elif 0.25 < rand <= 0.5:
-                    self.migration_move_left(loc, animal)
-                elif 0.5 < rand <= 0.75:
-                    self.migration_move_up(loc, animal)
-                else:
-                    self.migration_move_down(loc, animal)
-            self.map_dict[loc].are_migrating = []
+        self.island_migration_statement()
+        for loc in self.map_dict.keys():
+            self.island_migration_carn(loc)
+            self.island_migration_herb(loc)
+            self.map_dict[loc].cell_migration_remove()
 
         for loc in self.map_dict:
             self.map_dict[loc].cell_sum_of_animals()
 
-    def migration_move_right(self, loc, animal):
+
+    def island_migration_herb(self, loc):
+        for animal in self.map_dict[loc].population_herb:
+            if animal.has_migrated:
+                rand = random.random()
+                if rand <= 0.25:
+                    self.migration_move_right_herb(loc, animal)
+                elif 0.25 < rand <= 0.5:
+                    self.migration_move_left_herb(loc, animal)
+                elif 0.5 < rand <= 0.75:
+                    self.migration_move_up_herb(loc, animal)
+                else:
+                    self.migration_move_down_herb(loc, animal)
+
+    def island_migration_carn(self, loc):
+        for animal in self.map_dict[loc].population_carn:
+            if animal.has_migrated:
+                rand = random.random()
+                if rand <= 0.25:
+                    self.migration_move_right_carn(loc, animal)
+                elif 0.25 < rand <= 0.5:
+                    self.migration_move_left_carn(loc, animal)
+                elif 0.5 < rand <= 0.75:
+                    self.migration_move_up_carn(loc, animal)
+                else:
+                    self.migration_move_down_carn(loc, animal)
+
+    def migration_move_right_herb(self, loc, animal):
         new_loc = (loc[0], loc[1] + 1)
         if self.map_dict[new_loc].livable:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[new_loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[new_loc].population_carn.append(animal)
+            self.map_dict[new_loc].population_herb.append(animal)
         else:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[loc].population_carn.append(animal)
+            animal.has_migrated = False
 
-    def migration_move_left(self, loc, animal):
+    def migration_move_left_herb(self, loc, animal):
         new_loc = (loc[0], loc[1] - 1)
         if self.map_dict[new_loc].livable:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[new_loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[new_loc].population_carn.append(animal)
+            self.map_dict[new_loc].population_herb.append(animal)
         else:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[loc].population_carn.append(animal)
+            animal.has_migrated = False
 
-    def migration_move_up(self, loc, animal):
+    def migration_move_up_herb(self, loc, animal):
         new_loc = (loc[0]-1, loc[1])
         if self.map_dict[new_loc].livable:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[new_loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[new_loc].population_carn.append(animal)
+            self.map_dict[new_loc].population_herb.append(animal)
         else:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[loc].population_carn.append(animal)
+            animal.has_migrated = False
 
-    def migration_move_down(self, loc, animal):
+    def migration_move_down_herb(self, loc, animal):
         new_loc = (loc[0]+1, loc[1])
         if self.map_dict[new_loc].livable:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[new_loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[new_loc].population_carn.append(animal)
+            self.map_dict[new_loc].population_herb.append(animal)
         else:
-            if type(animal).__name__ == 'Herbivore':
-                self.map_dict[loc].population_herb.append(animal)
-            elif type(animal).__name__ == 'Carnivore':
-                self.map_dict[loc].population_carn.append(animal)
+            animal.has_migrated = False
+
+    def migration_move_right_carn(self, loc, animal):
+        new_loc = (loc[0], loc[1] + 1)
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_carn.append(animal)
+        else:
+            animal.has_migrated = False
+
+    def migration_move_left_carn(self, loc, animal):
+        new_loc = (loc[0], loc[1] - 1)
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_carn.append(animal)
+        else:
+            animal.has_migrated = False
+
+    def migration_move_up_carn(self, loc, animal):
+        new_loc = (loc[0]-1, loc[1])
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_carn.append(animal)
+        else:
+            animal.has_migrated = False
+
+    def migration_move_down_carn(self, loc, animal):
+        new_loc = (loc[0]+1, loc[1])
+        if self.map_dict[new_loc].livable:
+            self.map_dict[new_loc].population_carn.append(animal)
+        else:
+            animal.has_migrated = False
 
 
     def island_weight_loss(self):
