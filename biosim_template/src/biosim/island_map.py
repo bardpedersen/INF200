@@ -51,9 +51,9 @@ class Map:
         for line in self.string_map.splitlines():
             y = 1
             for ch in line:
-                cord = (x, y)
+                cord = (x,y)
                 landcape = {'W': Water(cord), 'L': Lowland(cord), 'H': Highland(cord), 'D': Dessert(cord)}
-                self.map_dict[(x, y)] = landcape[ch]
+                self.map_dict[cord] = landcape[ch]
                 y+=1
             x+=1
 
@@ -61,13 +61,13 @@ class Map:
         """
         adds population to the map
 
-        :param: ini_herb: is a dictionary containing both location and list of animals
+        :param: ini_herb: is a dictionary containing both locatin and list of animals
         """
 
         for d in ini_herb:
             self.map_dict[d['loc']].cell_add_population(d['pop'])
 
-        #self.map_dict[d['loc']].cell_sum_of_animals()
+        self.map_dict[d['loc']].cell_sum_of_animals()
 
     def island_feeding(self):
         """
@@ -75,7 +75,8 @@ class Map:
         """
 
         for key in self.map_dict:
-            if self.map_dict[key]._livable is True:
+            if self.map_dict[key].livable is True:
+                self.map_dict[key].cell_sum_of_animals()
                 if self.map_dict[key].population_sum_herb is not None:
                     self.map_dict[key].cell_add_fodder()
                     self.map_dict[key].cell_feeding_herbivore()
@@ -89,7 +90,7 @@ class Map:
         """
 
         for key in self.map_dict:
-            if self.map_dict[key]._livable is True:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_procreation()
                 self.map_dict[key].cell_sum_of_animals()
 
@@ -101,7 +102,7 @@ class Map:
         """
 
         for key in self.map_dict:
-            if self.map_dict[key]._livable is True:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_aging()
 
     def island_migration_list(self):
@@ -184,7 +185,7 @@ class Map:
         calculates the weight loss for each cell in simulation
         """
         for key in self.map_dict:
-            if self.map_dict[key]._livable is True:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_weight_lost()
 
     def island_death(self):
@@ -192,7 +193,7 @@ class Map:
         kills (by probability see animals.py) and removes the dead animal in each cells
         """
         for key in self.map_dict:
-            if self.map_dict[key]._livable is True:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_death()
                 self.map_dict[key].cell_sum_of_animals()
 
@@ -205,7 +206,7 @@ class Map:
         self.island_total_carnivores = 0
 
         for key in self.map_dict:
-            if self.map_dict[key]._livable is True:
+            if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_sum_of_animals()
                 self.island_total_herbivores += self.map_dict[key].population_sum_herb
                 self.island_total_carnivores += self.map_dict[key].population_sum_carn
@@ -232,7 +233,6 @@ class Map:
 if __name__ == '__main__':
     geogr = """\
                WWW
-               WLW
                WLW
                WWW"""
     geogr = textwrap.dedent(geogr)
