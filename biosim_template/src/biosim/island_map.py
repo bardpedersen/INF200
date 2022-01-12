@@ -4,7 +4,6 @@ Geogrofi
 Migration
 location
 """
-import numpy as np
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 import textwrap
 import random
@@ -105,10 +104,13 @@ class Map:
             if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_aging()
 
-    def island_migration(self):
+    def island_migration_list(self):
         for loc in self.map_dict:
             self.map_dict[loc].cell_migration()
-            print(self.map_dict[loc])
+
+    def island_migration(self):
+        self.island_migration_list()
+        for loc in self.map_dict:
             for animal in self.map_dict[loc].are_migrating:
                 rand = random.random()
                 if rand <= 0.25:
@@ -121,33 +123,60 @@ class Map:
                     self.migration_move_down(loc, animal)
             self.map_dict[loc].are_migrating = []
 
+        for loc in self.map_dict:
+            self.map_dict[loc].cell_sum_of_animals()
+
     def migration_move_right(self, loc, animal):
         new_loc = (loc[0], loc[1] + 1)
         if self.map_dict[new_loc].livable:
-            self.map_dict[new_loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[new_loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[new_loc].population_carn.append(animal)
         else:
-            self.map_dict[loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[loc].population_carn.append(animal)
 
     def migration_move_left(self, loc, animal):
         new_loc = (loc[0], loc[1] - 1)
         if self.map_dict[new_loc].livable:
-            self.map_dict[new_loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[new_loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[new_loc].population_carn.append(animal)
         else:
-            self.map_dict[loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[loc].population_carn.append(animal)
 
     def migration_move_up(self, loc, animal):
         new_loc = (loc[0]-1, loc[1])
         if self.map_dict[new_loc].livable:
-            self.map_dict[new_loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[new_loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[new_loc].population_carn.append(animal)
         else:
-            self.map_dict[loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[loc].population_carn.append(animal)
 
     def migration_move_down(self, loc, animal):
         new_loc = (loc[0]+1, loc[1])
         if self.map_dict[new_loc].livable:
-            self.map_dict[new_loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[new_loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[new_loc].population_carn.append(animal)
         else:
-            self.map_dict[loc].population_herb.append(animal)
+            if type(animal).__name__ == 'Herbivore':
+                self.map_dict[loc].population_herb.append(animal)
+            elif type(animal).__name__ == 'Carnivore':
+                self.map_dict[loc].population_carn.append(animal)
 
 
     def island_weight_loss(self):

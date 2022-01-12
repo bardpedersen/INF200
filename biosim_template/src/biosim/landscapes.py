@@ -147,17 +147,24 @@ class OneGrid:
         """No migration on one cell island"""
         self.are_migrating = []
         for animal in self.population_herb:
-            print(animal,'animal')
             self.cell_calculate_fitness()
             move_prob = animal.params['mu'] * animal.fitness
             random = rd.random()
             if random < move_prob:
-                print('waw')
                 self.are_migrating.append(animal)
 
-        _temporary_list = []
-        _temporary_list = self.population_herb
-        self.population_herb = [animal for animal in _temporary_list if animal not in self.are_migrating]
+        for animal in self.population_carn:
+            self.cell_calculate_fitness()
+            move_prob = animal.params['mu'] * animal.fitness
+            random = rd.random()
+            if random < move_prob:
+                self.are_migrating.append(animal)
+
+        population_herb = [herb for herb in self.population_herb if herb not in self.are_migrating]
+        self.population_herb = population_herb
+        population_carn = [carn for carn in self.population_carn if carn not in self.are_migrating]
+        self.population_carn = population_carn
+
 
     def cell_aging(self):
         """
