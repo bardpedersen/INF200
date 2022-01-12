@@ -14,7 +14,7 @@ class Map:
         """
         Creates instance of map class
 
-        :param: island_map: a multiline string representing the map
+        :param island_map: a multiline string representing the map
         """
         self.string_map = island_map  #Information we get from mono_ho
         self.map_dict = None
@@ -27,7 +27,7 @@ class Map:
         """
         Checks if the borders of the map is water and all lines have the same lenght
 
-        :param: string_map: a map in string format
+        :param string_map: a map in string format
         """
 
         for line in string_map.splitlines():
@@ -61,7 +61,7 @@ class Map:
         """
         adds population to the map
 
-        :param: ini_herb: is a dictionary containing both locatin and list of animals
+        :param ini_herb: is a dictionary containing both locatin and list of animals
         """
 
         for d in ini_herb:

@@ -107,8 +107,8 @@ class Animal:
         calculates the probabillity for birth of animals and returns a animal
 
 
-        :param: N: is the number of animals in the cell
-        :param: species: selects what kind of animal to return, default is Herbivore
+        :param N: is the number of animals in the cell
+        :param species: selects what kind of animal to return, default is Herbivore
         """
 
 
