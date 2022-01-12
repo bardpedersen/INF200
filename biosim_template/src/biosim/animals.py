@@ -20,10 +20,14 @@ class Animal:
         :param age: the age of the animal
         :param weight: the weight of the animal
         """
-        if age < 0:
+        if age is None:
+            age = 0
+        elif age < 0:
             raise ValueError('Age has to be a positive integr')
         self.age = age
-        if weight < 0:
+        if weight is None:
+            weight = 0
+        elif weight < 0:
             raise ValueError('Weight has to be positive interg or zero')
         self.weight = weight
         self.fitness = None
@@ -38,7 +42,7 @@ class Animal:
         """
         for parameter in params:
             if parameter in cls.params:
-                if parameter < 0:
+                if params[parameter] < 0:
                     raise ValueError(f'{parameter} has to be positive, cant be {params[parameter]}')
                 if parameter == 'eta' and params[parameter] > 1:
                     raise ValueError(f'eta has to be smaller than 1 cant be {params[parameter]}')
@@ -163,7 +167,7 @@ class Herbivore(Animal):
         'F': 10
         }
 
-    def __init__(self, age, weight):
+    def __init__(self, age=None, weight=None):
         super().__init__(age, weight)
 
 
@@ -191,7 +195,7 @@ class Carnivore(Animal):
         'F': 50,
         'DeltaPhiMax':10
     }
-    def __init__(self,age,weight):
+    def __init__(self,age=None,weight=None):
         super().__init__(age, weight)
 
     def __repr__(self):

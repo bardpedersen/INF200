@@ -57,18 +57,23 @@ class BioSim:
         """
         rd.seed(seed)
         self._islandmap = island_map
-        self.map = Map(island_map)
         self.ini_pop = ini_pop
         self.vis_years = vis_years
-        self._animal_species = {'Herbivore': Herbivore,'Carnivore':Carnivore}
-        self._landscape_types_changeable = {'L': Lowland,'H':Highland}
+        self.ymax_animals = ymax_animals
+        self.cmax_animals = cmax_animals
+        self.hist_specs = hist_specs
+        self.img_dir = img_dir
+        self.img_base = img_base
+        self.img_fmt = img_fmt
+        self.img_years = img_years
+        self.log_file = log_file
         self._year = 0
         self._final_year = None
+        self._animal_species = {'Herbivore': Herbivore, 'Carnivore': Carnivore}
+        self._landscape_types_changeable = {'L': Lowland, 'H': Highland}
+        self.map = Map(island_map)
+        self.map.creating_map()
         self.visual = Visualization()
-        self.img_years = img_years
-
-
-
 
 
 
@@ -95,9 +100,9 @@ class BioSim:
         :param params: Dict with valid parameter specification for landscape
         """
         if landscape in self._landscape_types_changeable:
-            landscape_class = self._animal_species[landscape]
+            landscape_class = self._landscape_types_changeable[landscape]
             land_type = landscape_class()
-            landscape_class.cell_set_params()
+            land_type.cell_set_params(params)
 
     def simulate(self, num_years):
         """
@@ -106,9 +111,11 @@ class BioSim:
         :param num_years: number of years to simulate
         """
 
-        self.map.creating_map()
         self.add_population(self.ini_pop)
-        _final_year = self._year + self.img_years
+        if self.img_years is None:
+            self._final_year = self._year + self.vis_years
+        else:
+            self._final_year = self._year + self.img_years
 
 
         while self._year < num_years:

@@ -16,7 +16,7 @@ class OneGrid:
     def cell_set_params(cls, params):
         for parameter in params:
             if parameter in cls.params:
-                cls[parameter] = params[parameter]
+                cls.params[parameter] = params[parameter]
 
     def cell_add_population(self, population=None):
         """
@@ -203,7 +203,7 @@ class Lowland(OneGrid):
         'f_max': 800
     }
 
-    def __init__(self, cord):
+    def __init__(self, cord=None):
         super().__init__(cord)
         self.fodder = 0
         self.livable = True
@@ -217,7 +217,7 @@ class Highland(OneGrid):
         'f_max': 300
     }
 
-    def __init__(self, cord):
+    def __init__(self, cord=None):
         super().__init__(cord)
         self.fodder = 0
         self.livable = True
@@ -230,9 +230,8 @@ class Dessert(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self,cord):
+    def __init__(self,cord=None):
         super().__init__(cord)
-        self.cord = cord
         self.fodder = 0
         self.livable = True
 
@@ -244,7 +243,7 @@ class Water(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self, cord):
+    def __init__(self, cord=None):
         super().__init__(cord)
         self.fodder = 0
         self.livable = False
