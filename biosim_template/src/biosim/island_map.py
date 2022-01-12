@@ -17,7 +17,6 @@ class Map:
         :param: island_map: a multiline string representing the map
         """
         self.string_map = island_map  #Information we get from mono_ho
-        self._landcape = {'W': Water(), 'L': Lowland(), 'H': Highland(), 'D': Dessert()}
         self.map_dict = None
         self.island_total_carnivores = None
         self.island_total_herbivores = None
@@ -52,7 +51,9 @@ class Map:
         for line in self.string_map.splitlines():
             y = 1
             for ch in line:
-                self.map_dict[(x, y)] = self._landcape[ch]
+                cord = (x,y)
+                landcape = {'W': Water(cord), 'L': Lowland(cord), 'H': Highland(cord), 'D': Dessert(cord)}
+                self.map_dict[cord] = landcape[ch]
                 y+=1
             x+=1
 

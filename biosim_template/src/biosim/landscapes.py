@@ -4,8 +4,9 @@ import random as rd
 
 class OneGrid:
 
-    def __init__(self):
+    def __init__(self, cord):
         self.fodder = 0
+        self.cord = cord
         self.livable = True
         self.population_herb = []
         self.population_carn = []
@@ -209,8 +210,8 @@ class Lowland(OneGrid):
         'f_max': 800
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, cord):
+        super().__init__(cord)
         self.fodder = 0
         self.livable = True
 
@@ -223,8 +224,8 @@ class Highland(OneGrid):
         'f_max': 300
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, cord):
+        super().__init__(cord)
         self.fodder = 0
         self.livable = True
 
@@ -236,8 +237,9 @@ class Dessert(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self):
-        super().__init__()
+    def __init__(self,cord):
+        super().__init__(cord)
+        self.cord = cord
         self.fodder = 0
         self.livable = True
 
@@ -249,8 +251,8 @@ class Water(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self):
-        super().__init__()
+    def __init__(self, cord):
+        super().__init__(cord)
         self.fodder = 0
         self.livable = False
 
@@ -263,7 +265,7 @@ class Water(OneGrid):
 
 if __name__ == '__main__':
 
-    low = Lowland()
+    low = Lowland(1,2)
 
     herb = [{'species': 'Carnivore', 'age': 5, 'weight': 26}
                                           for _ in range(10)]
