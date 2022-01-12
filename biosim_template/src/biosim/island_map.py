@@ -94,8 +94,6 @@ class Map:
                 self.map_dict[key].cell_procreation()
                 self.map_dict[key].cell_sum_of_animals()
 
-
-
     def island_aging(self):
         """
         ages all the animals on the island
@@ -118,7 +116,6 @@ class Map:
 
         for loc in self.map_dict:
             self.map_dict[loc].cell_sum_of_animals()
-
 
     def island_migration_herb(self, loc):
         for animal in self.map_dict[loc].population_herb:
@@ -201,7 +198,6 @@ class Map:
             self.map_dict[new_loc].population_carn.append(animal)
         else:
             animal.has_migrated = False
-
 
     def island_weight_loss(self):
         """

@@ -41,10 +41,10 @@ class TestLandscapes:
 
     @pytest.fixture(autouse=True)
     def create_landtype(self):
-        self.lowland = landscapes.Lowland()
-        self.highland = landscapes.Highland()
-        self.dessert = landscapes.Dessert()
-        self.water = landscapes.Water()
+        self.lowland = landscapes.Lowland((1,1))
+        self.highland = landscapes.Highland((1,2))
+        self.dessert = landscapes.Dessert((1,3))
+        self.water = landscapes.Water((1,4))
 
     @pytest.fixture(autouse=True)
     def animals(self):

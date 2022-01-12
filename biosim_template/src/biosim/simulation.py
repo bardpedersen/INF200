@@ -117,7 +117,7 @@ class BioSim:
         else:
             self._final_year = self._year + self.img_years
 
-
+        self.visual.setup(self.map,self._final_year)
         while self._year < num_years:
             self.map.island_feeding()
             self.map.island_procreation()
@@ -126,15 +126,15 @@ class BioSim:
             self.map.island_weight_loss()
             self.map.island_death()
             self.map.island_total_herbivores_and_carnivores()
-            self.visual.update_year(self._year)
-            self.visual.update_animals(self.map)
+            self.visual.update(self._year,self.map)
             self._year += 1
 
 
-        #self.visual.color_map(self.map)
-        #self.visual.herb_map(self.map)
-        #self.visual.carn_map(self.map)
-        self.visual.one_graph()
+        self.visual.show_plot()
+
+
+
+
 
 
 
