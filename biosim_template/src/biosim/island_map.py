@@ -242,7 +242,18 @@ class Map:
         self.island_total_animals = self.island_total_carnivores + self.island_total_herbivores
 
 
-
+    def island_update_one_year(self):
+        """
+        updates the island one year
+        """
+        self.island_feeding()
+        self.island_procreation()
+        self.island_migration()
+        self.island_aging()
+        self.island_weight_loss()
+        self.island_death()
+        self.island_total_herbivores_and_carnivores()
+        self.island_total_sum_of_animals()
 
 
 
@@ -255,16 +266,10 @@ class Map:
 
 if __name__ == '__main__':
     geogr = """\
-               WWWWWWWWWWW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WWWWWWWWWWW"""
+               WWWW
+               WLLW
+               WLLW
+               WWWW"""
     geogr = textwrap.dedent(geogr)
 
     ini_herbs = [{'loc': (5, 5),
@@ -280,7 +285,7 @@ if __name__ == '__main__':
     island = Map(geogr)
     island.creating_map()
     island.island_add_population(ini_herbs)
-    for i in range(4):
+    for i in range(2):
         island.island_migration()
         island.island_aging()
         nested_list = list(map(list, island.string_map.splitlines()))
