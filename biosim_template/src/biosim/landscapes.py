@@ -145,7 +145,7 @@ class OneGrid:
 
     def cell_migration(self):
         """No migration on one cell island"""
-        self.are_migrating = []
+
         for herb in self.population_herb:
             herb.migrate()
 
@@ -167,9 +167,11 @@ class OneGrid:
         """
         for animal in self.population_herb:
             animal.grow_one_year()
+            animal.has_migrated = False
 
         for animal in self.population_carn:
             animal.grow_one_year()
+            animal.has_migrated = False
 
     def cell_weight_lost(self):
         """

@@ -102,16 +102,14 @@ class Animal:
             self.is_dead = True
 
     def migrate(self):
-        if self.has_migrated:
-            self.has_migrated = False
-
-        else:
+        if not self.has_migrated:
             self.calculate_fitness()
             move_prob = self.params['mu'] * self.fitness
             p = rd.random()
             if p < move_prob:
                 self.has_migrated = True
-
+        else:
+            self.has_migrated = False
 
     def birth(self,N,species='herb'):
         """

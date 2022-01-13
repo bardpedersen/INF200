@@ -7,6 +7,10 @@ location
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 import textwrap
 import random
+import matplotlib.pyplot as plt
+import numpy as np
+
+random.seed(101)
 
 
 class Map:
@@ -103,13 +107,12 @@ class Map:
             if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_aging()
 
-    def island_migration_statement(self):
-        for loc in self.map_dict:
-            self.map_dict[loc].cell_migration()
+
+
 
     def island_migration(self):
-        self.island_migration_statement()
         for loc in self.map_dict.keys():
+            self.map_dict[loc].cell_migration()
             self.island_migration_carn(loc)
             self.island_migration_herb(loc)
             self.map_dict[loc].cell_migration_remove()
@@ -251,16 +254,23 @@ class Map:
 
 if __name__ == '__main__':
     geogr = """\
-               WWW
-               WLW
-               WWW"""
+               WWWWWWWWWWW
+               WLLLLLLLLLW
+               WLLLLLLLLLW
+               WLLLLLLLLLW
+               WLLLLLLLLLW
+               WLLLLLLLLLW
+               WLLLLLLLLLW
+               WLLLLLLLLLW
+               WLLLLLLLLLW
+               WWWWWWWWWWW"""
     geogr = textwrap.dedent(geogr)
 
-    ini_herbs = [{'loc': (2, 2),
+    ini_herbs = [{'loc': (5, 5),
                   'pop': [{'species': 'Herbivore',
                            'age': 5,
                            'weight': 20}
-                          for _ in range(50)]}]
+                          for _ in range(1000)]}]
     ini_carns = [{'loc': (2, 2),
                   'pop': [{'species': 'Carnivore',
                            'age': 5,
@@ -269,22 +279,23 @@ if __name__ == '__main__':
     island = Map(geogr)
     island.creating_map()
     island.island_add_population(ini_herbs)
-
-    for i in range(50):
-
-
-        island.island_feeding()
-        island.island_procreation()
+    for i in range(4):
+        island.island_migration()
         island.island_aging()
-        island.island_weight_loss()
-        island.island_death()
-
-    island.island_add_population(ini_carns)
-    for i in range(50):
-        island.island_feeding()
-        island.island_procreation()
-        island.island_aging()
-        island.island_weight_loss()
-        island.island_death()
-
-    b = island.map_dict
+        nested_list = list(map(list, island.string_map.splitlines()))
+        x = 1
+        for j in range(len(nested_list)):
+            y = 1
+            for k in range(len(nested_list[0])):
+                if island.map_dict[(x, y)].population_sum_herb == None:
+                    nested_list[j][k] = 0
+                else:
+                    nested_list[j][k] = island.map_dict[(x, y)].population_sum_herb
+                y += 1
+            x += 1
+        matrix = np.array(nested_list)
+        plt.imshow(matrix)
+        plt.colorbar()
+        plt.pause(1e-6)
+        plt.show()
+    island.island_total_herbivores_and_carnivores()
