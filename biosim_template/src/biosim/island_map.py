@@ -57,6 +57,7 @@ class Map:
             for ch in line:
                 cord = (x,y)
                 landcape = {'W': Water(cord), 'L': Lowland(cord), 'H': Highland(cord), 'D': Dessert(cord)}
+                assert landcape[ch] != KeyError, 'Letter dont match landtype'
                 self.map_dict[cord] = landcape[ch]
                 y+=1
             x+=1
@@ -75,7 +76,7 @@ class Map:
 
     def island_feeding(self):
         """
-        ages all the animals on the island
+        feeds all the animals on the island
         """
 
         for key in self.map_dict:
