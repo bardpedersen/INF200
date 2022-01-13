@@ -104,7 +104,7 @@ class BioSim:
             land_type = landscape_class()
             land_type.cell_set_params(params)
 
-    def simulate(self, num_years):
+    def simulate(self, num_years, vis_steps=1, img_steps=None):
         """
         Run simulation while visualizing the result.
 
@@ -112,25 +112,22 @@ class BioSim:
         """
 
         self.add_population(self.ini_pop)
-        if self.img_years is None:
-            self._final_year = self._year + self.vis_years
-        else:
-            self._final_year = self._year + self.img_years
-
+        if img_steps is None:
+            img_steps = vis_steps
+        if img_steps % vis_steps != 0:
+            raise ValueError('img_steps must be multiple of vis_steps')
+        self._final_year = self._year + num_years
         self.visual.setup(self.map,self._final_year)
-        while self._year < num_years:
-            self.map.island_feeding()
-            self.map.island_procreation()
-            self.map.island_migration()
-            self.map.island_aging()
-            self.map.island_weight_loss()
-            self.map.island_death()
-            self.map.island_total_herbivores_and_carnivores()
-            self.visual.update(self._year,self.map)
+        self.setup_logfile()
+
+        while self._year < self._final_year:
+            self.map.island_update_one_year()
+            if self._year % vis_steps == 0:
+                self.visual.update(self._year,self.map)
+            self.save_to_file()
+
             self._year += 1
 
-
-        self.visual.show_plot()
 
 
 
@@ -173,6 +170,22 @@ class BioSim:
         self.map.island_total_sum_of_animals()
 
         return self.map.island_total_sum_of_animals
+
+    def setup_logfile(self):
+        """
+        Writes the first line to logfile
+        """
+        logfile = open(self.log_file,"w")
+        logfile.write("Year,Total_Herbivores,Total_Carnivores")
+        logfile.close()
+
+    def save_to_file(self):
+        """
+        Writes year, total herbivores and total carnivores to file
+        """
+        logfile = open(self.log_file,"a")
+        logfile.write(f"{self._year},{self.map.island_total_herbivores},{self.map.island_total_carnivores}")
+
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""

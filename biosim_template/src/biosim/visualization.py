@@ -26,6 +26,7 @@ class Visualization:
         self._herb_ax = None
         self._carn_ax = None
         self._pop_ax = None
+        self._pop_plot = None
         self._pop_line = None
 
     def _color_map(self, island_map):
@@ -69,16 +70,22 @@ class Visualization:
 
         if self._pop_ax is None:
             self._pop_ax = self._fig.add_subplot(2,2,2)
-
+            self._pop_ax.set_ylim(0,30000)
+        self._pop_ax.set_xlim(0,final_year+1)
         if self._pop_line is None:
-            pop_plot = self._pop_ax.plot(np.arange(0,final_year), np.full(final_year,np.nan))
+            pop_plot = self._pop_ax.plot(np.arange(0,final_year+1),
+                                           np.full(final_year+1,np.nan))
             self._pop_line = pop_plot[0]
         else:
             x_data, y_data = self._pop_line.get_data()
-            x_new = np.arange(x_data[0], final_year+1)
+            x_new = np.arange(x_data[-1]+1,final_year+1)
             if len(x_new) > 0:
-                y_new = np.full(x_new.shape, np.nan)
-                self._pop_line.set_data(np.hstack((x_data,x_new)),np.hstack((y_data,y_new)))
+                y_new = np.full(x_new.shape,np.nan)
+                self._pop_line.set_data(np.hstack((x_data,x_new)),
+                                        np.hstack((y_data,y_new)))
+
+
+
 
     def update(self, year, island_map):
         """
@@ -87,11 +94,13 @@ class Visualization:
         :param year: is the year the simulation currently is in
         :param island_map: is the island map object to be plotted
         """
+        plt.ion()
         self._update_herb_map(island_map)
         self._update_carn_map(island_map)
         self._update_pop_graph(year, island_map)
         self._fig.canvas.flush_events()
         plt.pause(1e-6)
+        self._fig.show()
 
 
     def _update_herb_map(self,island_map):
@@ -113,9 +122,9 @@ class Visualization:
                 y += 1
             x += 1
 
+
         matrix = np.array(nested_list)
         self._herb_ax.imshow(matrix)
-
 
 
     def _update_carn_map(self, island_map):
@@ -143,13 +152,16 @@ class Visualization:
         """
 
         y_data = self._pop_line.get_ydata()
-        y_data[year] = island_map.island_total_herbivores + island_map.island_total_carnivores
+        y_data[year] = island_map.island_total_animals
         self._pop_line.set_ydata(y_data)
+        plt.pause(1e-6)
 
 
-    def show_plot(self):
 
-        plt.show()
+
+
+
+
 
 
 

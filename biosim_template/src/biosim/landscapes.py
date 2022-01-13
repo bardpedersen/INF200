@@ -79,6 +79,7 @@ class OneGrid:
                 herbivore.weight_gained_from_eating(self.fodder)
                 self.fodder = 0
 
+
     def cell_feeding_carnivore(self):
         """
         implements feeding of carniores for the cell
@@ -86,7 +87,6 @@ class OneGrid:
         self.cell_calculate_fitness()
         self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
 
-        self.cell_calculate_fitness()
 
         rd.shuffle(self.population_carn)
         for predator in self.population_carn:
@@ -198,6 +198,7 @@ class OneGrid:
         self.population_herb = population_herb
         population_carn = [carn for carn in self.population_carn if carn.is_dead is False]
         self.population_carn = population_carn
+
 
 
 class Lowland(OneGrid):
