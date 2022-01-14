@@ -178,14 +178,18 @@ class Visualization:
         """
         herb,carn = island_map.island_age_weight_fitness()
 
-        self._age_ax.hist(herb['age'])
-        self._age_ax.hist(carn['age'])
+        self._age_ax.cla()
+        self._age_ax.hist(herb['age'],histtype='step')
+        self._age_ax.hist(carn['age'],histtype='step')
 
-        self._weight_ax.hist(herb['weight'])
-        self._weight_ax.hist(carn['weight'])
+        self._weight_ax.cla()
+        self._weight_ax.hist(herb['weight'],histtype='step')
+        self._weight_ax.hist(carn['weight'],histtype='step')
 
-        self._fitness_ax.hist(herb['fitness'])
-        self._fitness_ax.hist(carn['fitness'])
+        self._fitness_ax.cla()
+        self._fitness_ax.hist(herb['fitness'],histtype='step')
+        self._fitness_ax.hist(carn['fitness'],histtype='step')
+
 
     def _update_pop_graph(self, year, island_map):
         """
