@@ -115,7 +115,7 @@ class BioSim:
         if img_steps % vis_steps != 0:
             raise ValueError('img_steps must be multiple of vis_steps')
         self._final_year = self._year + num_years
-        self.visual.setup(self.map,self._final_year)
+        self.visual.setup(self.map,self._final_year,self.ymax_animals)
 
         while self._year < self._final_year:
             self.map.island_update_one_year()
