@@ -25,7 +25,7 @@ class OneGrid:
         :return:
         """
         if not self.livable:
-            pass
+            raise TypeError('Cannot add animals to water cell')
 
         else:
             for animal in population:
