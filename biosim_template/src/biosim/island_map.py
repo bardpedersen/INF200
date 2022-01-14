@@ -38,7 +38,9 @@ class Map:
         for line in string_map.splitlines():
             if len(string_map.splitlines()[0]) != len(line):
                 raise ValueError('Map lines must be of equal lenght')
-            if line[0] != 'W' or line[len(line)-1] != 'W':
+            if line[0] != 'W':
+                raise ValueError('Boundary must be Water')
+            if line[len(line)-1] != 'W':
                 raise ValueError('Boundary must be Water')
             for ch in line:
                 if ch not in landscapes:

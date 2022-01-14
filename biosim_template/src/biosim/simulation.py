@@ -57,7 +57,7 @@ class BioSim:
         img_dir and img_base must either be both None or both strings.
         """
         rd.seed(seed)
-        self._islandmap = textwrap.dedent(island_map)
+        self.island_map = textwrap.dedent(island_map)
         self.ini_pop = ini_pop
         self.vis_years = vis_years
         self.ymax_animals = ymax_animals
@@ -72,7 +72,7 @@ class BioSim:
         self._final_year = None
         self._animal_species = {'Herbivore': Herbivore, 'Carnivore': Carnivore}
         self._landscape_types_changeable = {'L': Lowland, 'H': Highland}
-        self.map = Map(island_map)
+        self.map = Map(self.island_map)
         self.map.creating_map()
         self.visual = Visualization()
 
