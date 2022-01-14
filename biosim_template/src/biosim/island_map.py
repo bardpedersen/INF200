@@ -26,6 +26,7 @@ class Map:
         self.island_total_herbivores = None
         self.island_total_animals = None
 
+
     @staticmethod
     def validate_map(string_map):
         """
@@ -262,6 +263,29 @@ class Map:
             pop = None
         self.island_total_animals = pop
 
+    def island_age_weight_fitness(self):
+        """
+        adds the all of the ages weights of the animals into a dict
+        """
+
+        herb_island = {
+            'age':[],
+            'weight':[],
+            'fitness':[]
+        }
+        carn_island = {
+            'age': [],
+            'weight': [],
+            'fitness': []
+        }
+        for cord in self.map_dict.keys():
+            herb, carn = self.map_dict[cord].cell_age_weight_and_fitness()
+            for key in herb:
+                herb_island[key].extend(herb[key])
+            for key in carn:
+                carn_island[key].extend(carn[key])
+        return herb_island, carn_island
+
 
 
     def island_update_one_year(self):
@@ -276,6 +300,7 @@ class Map:
         self.island_death()
         self.island_total_herbivores_and_carnivores()
         self.island_total_sum_of_animals()
+
 
 
 

@@ -199,6 +199,36 @@ class OneGrid:
         population_carn = [carn for carn in self.population_carn if carn.is_dead is False]
         self.population_carn = population_carn
 
+    def cell_age_weight_and_fitness(self):
+        """
+        adds the age weight and fitness for each of the animals into dictionary with list as value
+        """
+        herb_age_weight_fitness = {
+            'age':[],
+            'weight':[],
+            'fitness':[]
+        }
+
+        carn_age_weight_fitness = {
+            'age': [],
+            'weight': [],
+            'fitness': []
+
+        }
+
+
+        for herb in self.population_herb:
+            herb_age_weight_fitness['age'].append(herb.age)
+            herb_age_weight_fitness['weight'].append(herb.weight)
+            herb_age_weight_fitness['fitness'].append(herb.fitness)
+
+        for carn in self.population_carn:
+            carn_age_weight_fitness['age'].append(carn.age)
+            carn_age_weight_fitness['weight'].append(carn.weight)
+            carn_age_weight_fitness['fitness'].append(carn.fitness)
+
+        return herb_age_weight_fitness,carn_age_weight_fitness
+
 
 
 class Lowland(OneGrid):

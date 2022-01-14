@@ -11,6 +11,7 @@ _DEFAULT_DIR = os.path.join(r'C:\Users\pbuka\Code\JanuarBlokk\biosim-a17-peder-b
 _DEFAULT_NAME = 'sim'
 _DEFAULT_FORMAT = 'png'
 
+
 class Visualization:
     """ Visualizes the results from biosim"""
     def __init__(self, img_dir=None, img_name=None, img_fmt=None):
@@ -27,7 +28,12 @@ class Visualization:
         self._carn_ax = None
         self._pop_ax = None
         self._pop_plot = None
-        self._pop_line = None
+        self._herb_line = None
+        self._carn_line = None
+        self._fitness_ax = None
+        self._weight_ax = None
+        self._age_ax = None
+
 
     def _color_map(self, island_map):
         """
@@ -57,33 +63,53 @@ class Visualization:
         if self._fig is None:
             self._fig = plt.figure()
 
-
         if self._map_ax is None:
-            self._map_ax = self._fig.add_subplot(2,2,1)
+            self._map_ax = self._fig.add_subplot(3, 3, 4)
         self._color_map(island_map)
 
         if self._herb_ax is None:
-            self._herb_ax = self._fig.add_subplot(2,2,3)
+            self._herb_ax = self._fig.add_subplot(3, 3, 5)
 
         if self._carn_ax is None:
-            self._carn_ax = self._fig.add_subplot(2,2,4)
+            self._carn_ax = self._fig.add_subplot(3, 3, 6)
+
+        if self._age_ax is None:
+            self._age_ax = self._fig.add_subplot(3, 3, 7)
+
+        if self._weight_ax is None:
+            self._weight_ax = self._fig.add_subplot(3, 3, 8)
+
+        if self._fitness_ax is None:
+            self._fitness_ax = self._fig.add_subplot(3, 3, 9)
 
         if self._pop_ax is None:
-            self._pop_ax = self._fig.add_subplot(2,2,2)
-            self._pop_ax.set_ylim(0,30000)
+            self._pop_ax = self._fig.add_subplot(3, 3, 2)
+            self._pop_ax.set_ylim(0,20000)
         self._pop_ax.set_xlim(0,final_year+1)
-        if self._pop_line is None:
+
+
+        if self._herb_line is None:
             pop_plot = self._pop_ax.plot(np.arange(0,final_year+1),
                                            np.full(final_year+1,np.nan))
-            self._pop_line = pop_plot[0]
+            self._herb_line = pop_plot[0]
         else:
-            x_data, y_data = self._pop_line.get_data()
+            x_data, y_data = self._herb_line.get_data()
             x_new = np.arange(x_data[-1]+1,final_year+1)
             if len(x_new) > 0:
                 y_new = np.full(x_new.shape,np.nan)
-                self._pop_line.set_data(np.hstack((x_data,x_new)),
+                self._herb_line.set_data(np.hstack((x_data,x_new)),
                                         np.hstack((y_data,y_new)))
-
+        if self._carn_line is None:
+            pop_plot = self._pop_ax.plot(np.arange(0, final_year + 1),
+                                         np.full(final_year + 1, np.nan))
+            self._carn_line = pop_plot[0]
+        else:
+            x_data, y_data = self._carn_line.get_data()
+            x_new = np.arange(x_data[-1] + 1, final_year + 1)
+            if len(x_new) > 0:
+                y_new = np.full(x_new.shape, np.nan)
+                self._carn_line.set_data(np.hstack((x_data, x_new)),
+                                        np.hstack((y_data, y_new)))
 
 
 
@@ -98,6 +124,7 @@ class Visualization:
         self._update_herb_map(island_map)
         self._update_carn_map(island_map)
         self._update_pop_graph(year, island_map)
+        self._update_age_weight_fitness(island_map)
         self._fig.canvas.flush_events()
         plt.pause(1e-6)
         self._fig.show()
@@ -143,18 +170,40 @@ class Visualization:
         matrix = np.array(nested_list)
         self._carn_ax.imshow(matrix)
 
+    def _update_age_weight_fitness(self,island_map):
+        """
+        updates the histograms of age weight and fitness,
 
+        :param island_map: island_map object containing all info about island
+        """
+        herb,carn = island_map.island_age_weight_fitness()
 
+        self._age_ax.hist(herb['age'])
+        self._age_ax.hist(carn['age'])
+
+        self._weight_ax.hist(herb['weight'])
+        self._weight_ax.hist(carn['weight'])
+
+        self._fitness_ax.hist(herb['fitness'])
+        self._fitness_ax.hist(carn['fitness'])
 
     def _update_pop_graph(self, year, island_map):
         """
         plotting the animals in the cell by years|
+
+        :param year: what year it is in used for x axis in this case
+        :param island_map: island_map object containing all info about island
         """
 
-        y_data = self._pop_line.get_ydata()
-        y_data[year] = island_map.island_total_animals
-        self._pop_line.set_ydata(y_data)
+        y_data_herb = self._herb_line.get_ydata()
+        y_data_herb[year] = island_map.island_total_herbivores
+        self._herb_line.set_ydata(y_data_herb)
+
+        y_data_carn = self._carn_line.get_ydata()
+        y_data_carn[year] = island_map.island_total_carnivores
+        self._carn_line.set_ydata(y_data_carn)
         plt.pause(1e-6)
+
 
 
 
