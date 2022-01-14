@@ -33,15 +33,24 @@ class Map:
 
         :param string_map: a map in string format
         """
+        landscapes = ['W','L','H','D']
 
         for line in string_map.splitlines():
-            assert len(string_map.splitlines()[0]) == len(line),'Map input not valid'
-            assert line[0] == 'W','Map input not valid'
-            assert line[len(line)-1] == 'W','Map input not valid'
-            for ch in string_map.splitlines()[0]:
-                assert ch == 'W','Map input not valid'
-            for ch in string_map.splitlines()[len(string_map.splitlines())-1]:
-                assert ch == 'W','Map input not valid'
+            if len(string_map.splitlines()[0]) != len(line):
+                raise ValueError('Map lines must be of equal lenght')
+            if line[0] != 'W' or line[len(line)-1] != 'W':
+                raise ValueError('Boundary must be Water')
+            for ch in line:
+                if ch not in landscapes:
+                    raise ValueError('Landscape type not valid')
+        for ch in string_map.splitlines()[0]:
+            if ch != 'W':
+                raise ValueError('Boundary must be water')
+        for ch in string_map.splitlines()[len(string_map.splitlines())-1]:
+            if ch != 'W':
+                raise ValueError('Boundary must be water')
+
+
 
 
     def creating_map(self):
@@ -71,8 +80,7 @@ class Map:
 
         for d in ini_herb:
             self.map_dict[d['loc']].cell_add_population(d['pop'])
-
-        self.map_dict[d['loc']].cell_sum_of_animals()
+            self.map_dict[d['loc']].cell_sum_of_animals()
 
     def island_feeding(self):
         """
@@ -238,8 +246,20 @@ class Map:
         """
         calculates the total number of animals in each cell
         """
+        self.island_total_herbivores_and_carnivores()
 
-        self.island_total_animals = self.island_total_carnivores + self.island_total_herbivores
+        herb = self.island_total_herbivores
+        if herb is None:
+            herb = 0
+        carn = self.island_total_carnivores
+        if carn is None:
+            carn = 0
+
+        pop = carn + herb
+        if pop == 0:
+            pop = None
+        self.island_total_animals = pop
+
 
 
     def island_update_one_year(self):
