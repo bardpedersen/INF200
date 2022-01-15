@@ -7,7 +7,7 @@ import os
 Inspired by Hans Ekkehard Plessers Grapichs ile from randvis prodject
 Link: https://gitlab.com/nmbu.no/emner/inf200/h2021/inf200-course-materials/-/blob/main/january_block/examples/randvis_project/src/randvis/graphics.py
 """
-_DEFAULT_DIR = os.path.join(r'C:\Users\pbuka\Code\JanuarBlokk\biosim-a17-peder-bard\biosim_template','results')
+_DEFAULT_DIR = os.path.join(r'C:\Users\pbuka\Code\JanuarBlokk\biosim-a17-peder-bard\biosim_template', 'results')
 _DEFAULT_NAME = 'sim'
 _DEFAULT_FORMAT = 'png'
 
@@ -21,6 +21,19 @@ class Visualization:
         :param img_fmt: format of image
 
         """
+
+        if img_name is None:
+            img_name = _DEFAULT_NAME
+        if img_dir is not None:
+
+            self._img_base = os.path.join(img_dir,img_name)
+        else:
+            self._img_base = None
+
+        self.img_fmt = img_fmt if img_fmt is not None else _DEFAULT_FORMAT
+
+        self._img_ctr = 0
+        self._img_step = 1
 
         self._fig = None
         self._map_ax = None
@@ -51,7 +64,7 @@ class Visualization:
         self._img_ax = plt.imshow(colour_map)
 
 
-    def setup(self, island_map, final_year,y_max=None,cmax=200):
+    def setup(self, island_map, final_year,y_max=20000,cmax=200):
         """
         prepares for plotting
 
@@ -63,19 +76,19 @@ class Visualization:
 
         # create new plot window
         if self._fig is None:
-            self._fig = plt.figure()
+            self._fig = plt.figure(figsize=(10,8))
 
 
         if self._map_ax is None:
-            self._map_ax = self._fig.add_subplot(3, 3, 4)
+            self._map_ax = self._fig.add_subplot(3, 2, 1)
         self._color_map(island_map)
 
         if self._herb_ax is None:
-            self._herb_ax = self._fig.add_subplot(3, 3, 5)
+            self._herb_ax = self._fig.add_subplot(3, 2, 3)
             self._herb_plot = None
 
         if self._carn_ax is None:
-            self._carn_ax = self._fig.add_subplot(3, 3, 6)
+            self._carn_ax = self._fig.add_subplot(3, 2, 4)
             self._carn_plot = None
 
         if self._age_ax is None:
@@ -88,11 +101,14 @@ class Visualization:
             self._fitness_ax = self._fig.add_subplot(3, 3, 9)
 
         if self._pop_ax is None:
-            self._pop_ax = self._fig.add_subplot(3, 3, 2)
+            self._pop_ax = self._fig.add_subplot(3, 2, 2)
             self._pop_ax.title.set_text('Population of island')
             self._pop_ax.set(xlabel ='Years',ylabel='Num of animals')
-        if y_max is not None:
+        if y_max is None:
+            self._pop_ax.set_ylim(0,20000)
+        else:
             self._pop_ax.set_ylim(0,y_max)
+
         self._pop_ax.set_xlim(0,final_year+1)
 
 
@@ -121,23 +137,28 @@ class Visualization:
                 self._carn_line.set_data(np.hstack((x_data, x_new)),
                                         np.hstack((y_data, y_new)))
 
-        self._fig.subplots_adjust(wspace=0.30,hspace=0.30)
+        self._fig.subplots_adjust(hspace=0.40)
 
 
-    def update(self, year, island_map,cmax=200,hist_specs=None):
+    def update(self, year, island_map,cmax=None,hist_specs=None):
         """
         updates plot with current year
 
         :param year: is the year the simulation currently is in
         :param island_map: is the island map object to be plotted
         """
-        plt.ion()
+        if cmax is None:
+            cmax = {'Herbivore': 200,
+                    'Carnivore': 200}
+
+        self._fig.suptitle(f'Simulation, Year: {year}', fontsize=16)
         self._update_herb_map(island_map,cmax)
         self._update_carn_map(island_map,cmax)
         self._update_pop_graph(year, island_map)
         self._update_age_weight_fitness(island_map,hist_specs=None)
         self._fig.canvas.flush_events()
         plt.pause(1e-6)
+        self._save_plots(year)
         self._fig.show()
 
 
@@ -146,6 +167,7 @@ class Visualization:
         plots the population on the map by color
 
         :param island_map: is the island_map object containg info about the simulation
+        :param cmax: dictionary containing default values for colorbar max
         """
 
         nested_list = list(map(list,island_map.string_map.splitlines()))
@@ -160,18 +182,26 @@ class Visualization:
                 y += 1
             x += 1
 
-
         matrix = np.array(nested_list)
 
         if self._herb_plot is None:
-            self._herb_plot = self._herb_ax.imshow(matrix,interpolation='nearest',vmin=0,vmax=200)
+            self._herb_plot = self._herb_ax.imshow(matrix,interpolation='nearest',vmin=0,vmax=cmax['Herbivore'])
             plt.colorbar(self._herb_plot,ax=self._herb_ax)
+            self._herb_ax.set_title('Herbivore heat map')
         else:
             self._herb_plot.set_data(matrix)
 
 
 
     def _update_carn_map(self, island_map,cmax):
+        """
+        plotting the
+
+        :param island_map: is the island_map object containg info about the simulation
+        :param cmax: dictionary containing default values for colorbar max
+
+        """
+
         nested_list = list(map(list, island_map.string_map.splitlines()))
         x = 1
         for i in range(len(nested_list)):
@@ -186,35 +216,41 @@ class Visualization:
 
         matrix = np.array(nested_list)
         if self._carn_plot is None:
-            self._carn_plot = self._carn_ax.imshow(matrix,interpolation='nearest',vmin=0,vmax=cmax)
+            self._carn_plot = self._carn_ax.imshow(matrix,interpolation='nearest',vmin=0,vmax=cmax['Carnivore'])
             plt.colorbar(self._carn_plot,ax=self._carn_ax)
+            self._carn_ax.set_title('Carnivore Heat map')
         else:
             self._carn_plot.set_data(matrix)
 
 
-    def _update_age_weight_fitness(self,island_map,hist_specs):
-        hist_specs ={
-            'weight':{'max':80,'delta':2},
-            'age':{'max':40,'delta':2},
-            'fitness':{'max':1,'delta':2}
-
-        }
+    def _update_age_weight_fitness(self,island_map,hist_specs=None):
         """
         updates the histograms of age weight and fitness,
 
         :param island_map: island_map object containing all info about island
         """
+        if hist_specs is None:
+            hist_specs = {
+                'weight': {'max': 80, 'delta': 2},
+                'age': {'max': 40, 'delta': 2},
+                'fitness': {'max': 1, 'delta': 2}
+
+            }
+
         herb,carn = island_map.island_age_weight_fitness()
 
         self._age_ax.cla()
+        self._age_ax.set_title('Age')
         self._age_ax.hist(herb['age'],histtype='step',range=(0,hist_specs['age']['max']),rwidth=hist_specs['age']['delta'])
         self._age_ax.hist(carn['age'],histtype='step',range=(0,hist_specs['age']['max']),rwidth=hist_specs['age']['delta'])
 
         self._weight_ax.cla()
+        self._weight_ax.set_title('Weight')
         self._weight_ax.hist(herb['weight'],histtype='step',range=(0,hist_specs['weight']['max']),rwidth=hist_specs['weight']['delta'])
         self._weight_ax.hist(carn['weight'],histtype='step',range=(0,hist_specs['weight']['max']),rwidth=hist_specs['weight']['delta'])
 
         self._fitness_ax.cla()
+        self._fitness_ax.set_title('Fitness')
         self._fitness_ax.hist(herb['fitness'],histtype='step',range=(0,hist_specs['fitness']['max']),rwidth=hist_specs['fitness']['delta'])
         self._fitness_ax.hist(carn['fitness'],histtype='step',range=(0,hist_specs['fitness']['max']),rwidth=hist_specs['fitness']['delta'])
 
@@ -236,6 +272,18 @@ class Visualization:
         self._carn_line.set_ydata(y_data_carn)
         plt.pause(1e-6)
 
+    def _save_plots(self,year):
+        """
+        saves plot to file if filename given
+        """
+        if self._img_base is None:
+            return
+        elif year % self._img_step != 0:
+            return
+
+        self._fig.savefig(f'{self._img_base}_{self._img_ctr}.{self._img_fmt}')
+
+        self._img_ctr += 1
 
 
 

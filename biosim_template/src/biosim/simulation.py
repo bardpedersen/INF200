@@ -74,7 +74,7 @@ class BioSim:
         self._landscape_types_changeable = {'L': Lowland, 'H': Highland}
         self.map = Map(self.island_map)
         self.map.creating_map()
-        self.visual = Visualization()
+        self.visual = Visualization(self.img_dir,self.img_base,self.img_fmt)
 
     def set_animal_parameters(self, species, params):
         """
