@@ -30,7 +30,7 @@ class Visualization:
         else:
             self._img_base = None
 
-        self.img_fmt = img_fmt if img_fmt is not None else _DEFAULT_FORMAT
+        self._img_fmt = img_fmt if img_fmt is not None else _DEFAULT_FORMAT
 
         self._img_ctr = 0
         self._img_step = 1
@@ -72,7 +72,6 @@ class Visualization:
 
         """
 
-        self._img_step = None
 
         # create new plot window
         if self._fig is None:
@@ -281,7 +280,11 @@ class Visualization:
         elif year % self._img_step != 0:
             return
 
-        self._fig.savefig(f'{self._img_base}_{self._img_ctr}.{self._img_fmt}')
+        self._fig.savefig('{base}_{num:05d}.{type}'.format(base=self._img_base,
+                                                     num=self._img_ctr,
+                                                     type=self._img_fmt))
+
+
 
         self._img_ctr += 1
 
