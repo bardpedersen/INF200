@@ -4,6 +4,9 @@ import pytest
 
 @pytest.mark.parametrize('class_with_animals', [Lowland, Highland, Dessert])
 class TestAnimalLandscapes:
+    """
+    This class test all land types witch support animals and have the same behavior
+    """
     params_herb = {
         'w_birth': 8.0,
         'sigma_birth': 1.5,
@@ -46,11 +49,10 @@ class TestAnimalLandscapes:
         :param class_with_animals: classes that are livable
         :param animals_nr_herb: the start number of herbivore
         :param animals_weight_herb: the start weight of herbivore
-        :param animals_age_herb: the age weight of herbivore
+        :param animals_age_herb: the start age of herbivore
         :param animals_nr_carn: the start number for carnivore
         :param animals_weight_carn:the start weight of carnivore
-        :param animals_age_carn:the age weight of carnivore
-
+        :param animals_age_carn:the start age of carnivore
         :return:
         """
         self.animals_nr_herb = animals_nr_herb
@@ -72,6 +74,7 @@ class TestAnimalLandscapes:
     def test_add_population(self, class_with_animals):
         """
         Test that adding animals works in all cells with animals.
+        :param class_with_animals: All the landscapes that are livable
         """
         landscapes_with_animals = class_with_animals()
 
@@ -91,6 +94,7 @@ class TestAnimalLandscapes:
     def test_aging(self, class_with_animals):
         """
         Test that animals age, once per called upon
+        :param class_with_animals: All the landscapes that are livable
         """
         landscapes_with_animals = class_with_animals()
         self.add_animals(landscapes_with_animals)
@@ -126,8 +130,9 @@ class TestAnimalLandscapes:
 
     def test_death(self, class_with_animals):
         """
-        Test that when animals die, the get removed.
+        Test that when animals die, they get removed.
         Animals die with certain when weight = 0
+        :param class_with_animals: All the landscapes that are livable
         """
         landscapes_with_animals = class_with_animals()
         self.add_animals(landscapes_with_animals, animals_weight_herb=0, animals_weight_carn=0)
@@ -150,12 +155,14 @@ class TestAnimalLandscapes:
         """
         Test that if there are more than one animal, the number of animals will increase.
         Here all animals will get a child except the last one "the male".
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
         :return:
         """
-        mocker.patch('random.random', return_value=0)  # Makes sure the probability is sett
+        mocker.patch('random.random', return_value=0)  # Sett the prob, so its guaranteed they get children
         landscapes_with_animals = class_with_animals()
         self.add_animals(landscapes_with_animals, animals_weight_herb=50, animals_weight_carn=50)
-        # If the weight is to low the mother cant give birth
+        # Setts a high weight, because if it is to low the mother cant give birth
 
         start_population_herb = landscapes_with_animals.population_sum_herb
         start_population_carn = landscapes_with_animals.population_sum_carn
@@ -174,12 +181,14 @@ class TestAnimalLandscapes:
     def test_procreation_min(self, class_with_animals, mocker):
         """
         Test that if the prob for getting children is 0. That no animals are added
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
         :return:
         """
-        mocker.patch('random.random', return_value=1)  # Makes sure the probability is sett
+        mocker.patch('random.random', return_value=1)  # Sett the prob, so its guaranteed they dont get children
         landscapes_with_animals = class_with_animals()
         self.add_animals(landscapes_with_animals, animals_weight_herb=50, animals_weight_carn=50)
-        # If the weight is to low the mother cant give birth
+        # Setts a high weight, because if it is to low the mother cant give birth
 
         start_population_herb = landscapes_with_animals.population_sum_herb
         start_population_carn = landscapes_with_animals.population_sum_carn
@@ -195,17 +204,17 @@ class TestAnimalLandscapes:
         assert end_population_herb == self.animals_nr_carn
         assert end_population_carn == self.animals_nr_carn
 
-    def test_carnivore_kills_herb_fitness_zero(self, class_with_animals, mocker):
+    def test_carnivore_kills_herb_prob_max(self, class_with_animals, mocker):
         """
         Test that if the kill prob is true. The herbivores are killed and removed
-        :param class_with_animals:
-        :param mocker:
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
         :return:
         """
         mocker.patch('random.random', return_value=0)
         landscapes_with_animals = class_with_animals()
 
-        # Sett high age and weight low, so the fitness on herb is low.
+        # Sett high age and low weight, so the fitness on herb is low.
         self.add_animals(landscapes_with_animals, animals_age_herb=40, animals_weight_herb=1, animals_weight_carn=50)
         start_population_herb = landscapes_with_animals.population_sum_herb
 
@@ -217,17 +226,17 @@ class TestAnimalLandscapes:
         assert start_population_herb == self.animals_nr_herb
         assert end_population_herb == 0
 
-    def test_carnivore_kill_herb_fitness_zero(self, class_with_animals, mocker):
+    def test_carnivore_kill_herb_prob_min(self, class_with_animals, mocker):
         """
-        Test that if the kill prob is False. The herbivores are killed and removed
-        :param class_with_animals:
-        :param mocker:
+        Test that if the kill prob is False. The herbivores are not killed nor removed
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
         :return:
         """
         mocker.patch('random.random', return_value=1)
         landscapes_with_animals = class_with_animals()
 
-        # Sett high age and weight low, so the fitness on herb is low.
+        # Sett high age and low weight, so the fitness on herb is low.
         self.add_animals(landscapes_with_animals, animals_age_herb=40, animals_weight_herb=1, animals_weight_carn=50)
         start_population_herb = landscapes_with_animals.population_sum_herb
 
@@ -245,6 +254,8 @@ class TestAnimalLandscapes:
         carnivores gain weight.
         Checks the average weight, so if just one animal has another value
         we will know
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
         :return:
         """
         mocker.patch('random.random', return_value=0)
@@ -270,7 +281,12 @@ class TestAnimalLandscapes:
 
     def test_migration_prob_max(self, class_with_animals, mocker):
         """
-        Test that the migration works
+        Test that the migration works.
+        From the task, and the fitness formula, we kan calculate that with the sett weight and age value
+        the migration value is calculated: fitness * mu = 0.182765.
+        So any random value lower, vil make all animals migrate, anything over vil stop all animals from migrating
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
         :return:
         """
         mocker.patch('random.random', return_value=0)
@@ -304,9 +320,8 @@ class TestAnimalLandscapes:
     def test_migration_prob_zero(self, class_with_animals, mocker):
         """
         Test that the migration works
-        :return:
-        from the task, and the fitness formula, we kan calculate that the fitness * mu = 0.182765.
-        So any random value lower, vil make all animals migrate, anything over vil stop all animals from migrating.
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
         """
         mocker.patch('random.random', return_value=1)
         landscapes_with_animals = class_with_animals()
@@ -339,6 +354,9 @@ class TestAnimalLandscapes:
 
 @pytest.mark.parametrize('class_with_fodder', [Highland, Lowland])
 class TestFodderLandscapes:
+    """
+    Test the two classes that have fodder
+    """
     params_herb = {
         'w_birth': 8.0,
         'sigma_birth': 1.5,
@@ -385,7 +403,6 @@ class TestFodderLandscapes:
         :param animals_nr_carn: the start number for carnivore
         :param animals_weight_carn:the start weight of carnivore
         :param animals_age_carn:the age weight of carnivore
-
         :return:
         """
         self.animals_nr_herb = animals_nr_herb
@@ -406,7 +423,8 @@ class TestFodderLandscapes:
 
     def test_feeding_herb(self, class_with_fodder):
         """
-        Test that animals gain weight when eating
+        Test that herbivores gain weight when eating
+        :param class_with_fodder: All classes that have available fodder
         """
         landscapes_with_fodder = class_with_fodder()
         self.add_animals(landscapes_with_fodder)
@@ -430,6 +448,7 @@ class TestFodderLandscapes:
     def test_regrowth(self, class_with_fodder):
         """
         Test that regrowth works in right cells
+        :param class_with_fodder: All classes that have available fodder
         """
         landscapes_with_fodder = class_with_fodder()
         self.add_animals(landscapes_with_fodder)
@@ -451,7 +470,8 @@ class TestFodderLandscapes:
     def test_feed_with_fitness_order(self, class_with_fodder):
         """
         Test that they feed by fitness order.
-        Adds 3 animals with different fitness
+        Adds two animals with different fitness
+        :param class_with_fodder: All classes that have available fodder
         :return:
         """
 
@@ -476,49 +496,17 @@ class TestFodderLandscapes:
         landscapes_with_fodder.cell_sum_of_animals()
 
         for animal in landscapes_with_fodder.population_herb:
-            if animal.fitness > 0.5:
+            if animal.fitness > 0.5:  # The animal with high fitness will gain weight
                 assert animal.weight == start_weight_high_fitness + (self.params_herb['F'] * self.params_herb['beta'])
-            else:
+            else:  # The animal with low fitness stay the same
                 assert animal.weight == 1
 
 
 @pytest.mark.parametrize('class_dessert', [Dessert])
 class TestDessert:
-    params_herb = {
-        'w_birth': 8.0,
-        'sigma_birth': 1.5,
-        'beta': 0.9,
-        'eta': 0.05,
-        'a_half': 40.0,
-        'phi_age': 0.6,
-        'w_half': 10.0,
-        'phi_weight': 0.1,
-        'mu': 0.25,
-        'gamma': 0.2,
-        'zeta': 3.5,
-        'xi': 1.2,
-        'omega': 0.4,
-        'F': 10
-    }
-
-    params_carn = {
-        'w_birth': 6.0,
-        'sigma_birth': 1.0,
-        'beta': 0.75,
-        'eta': 0.125,
-        'a_half': 40.0,
-        'phi_age': 0.3,
-        'w_half': 4.0,
-        'phi_weight': 0.4,
-        'mu': 0.4,
-        'gamma': 0.8,
-        'zeta': 3.5,
-        'xi': 1.1,
-        'omega': 0.8,
-        'F': 50,
-        'DeltaPhiMax': 10
-    }
-
+    """
+    Test the dessert landscape
+    """
     def add_animals(self, class_dessert, animals_nr_herb=20, animals_weight_herb=20, animals_age_herb=5,
                     animals_nr_carn=20, animals_weight_carn=20, animals_age_carn=5):
         """
@@ -530,7 +518,6 @@ class TestDessert:
         :param animals_nr_carn: the start number for carnivore
         :param animals_weight_carn:the start weight of carnivore
         :param animals_age_carn:the age weight of carnivore
-
         :return:
         """
         self.animals_nr_herb = animals_nr_herb
@@ -551,7 +538,9 @@ class TestDessert:
 
     def test_feeding_herb(self, class_dessert):
         """
-        Test that animals gain weight when eating
+        Test that animals dont gain weight when eating.
+        Because there are no fodder, so they cant gain weight
+        :param class_dessert: The dessert class
         """
         landscapes_dessert = class_dessert()
         self.add_animals(landscapes_dessert)
@@ -574,7 +563,8 @@ class TestDessert:
 
     def test_regrowth(self, class_dessert):
         """
-        Test that regrowth works in right cells
+        Test that regrowth works in right cells.
+        :param class_dessert: The dessert class
         """
         landscapes_dessert = class_dessert()
         self.add_animals(landscapes_dessert)
@@ -595,41 +585,9 @@ class TestDessert:
 
 @pytest.mark.parametrize('class_water', [Water])
 class TestWater:
-    params_herb = {
-        'w_birth': 8.0,
-        'sigma_birth': 1.5,
-        'beta': 0.9,
-        'eta': 0.05,
-        'a_half': 40.0,
-        'phi_age': 0.6,
-        'w_half': 10.0,
-        'phi_weight': 0.1,
-        'mu': 0.25,
-        'gamma': 0.2,
-        'zeta': 3.5,
-        'xi': 1.2,
-        'omega': 0.4,
-        'F': 10
-    }
-
-    params_carn = {
-        'w_birth': 6.0,
-        'sigma_birth': 1.0,
-        'beta': 0.75,
-        'eta': 0.125,
-        'a_half': 40.0,
-        'phi_age': 0.3,
-        'w_half': 4.0,
-        'phi_weight': 0.4,
-        'mu': 0.4,
-        'gamma': 0.8,
-        'zeta': 3.5,
-        'xi': 1.1,
-        'omega': 0.8,
-        'F': 50,
-        'DeltaPhiMax': 10
-    }
-
+    """
+    Test the water class
+    """
     def add_animals(self, class_water, animals_nr_herb=20, animals_weight_herb=20, animals_age_herb=5,
                     animals_nr_carn=20, animals_weight_carn=20, animals_age_carn=5):
         """
@@ -641,7 +599,6 @@ class TestWater:
         :param animals_nr_carn: the start number for carnivore
         :param animals_weight_carn:the start weight of carnivore
         :param animals_age_carn:the age weight of carnivore
-
         :return:
         """
         self.animals_nr_herb = animals_nr_herb
@@ -662,19 +619,9 @@ class TestWater:
 
     def test_add_population(self, class_water):
         """
-        Test that adding animals works in all cells with animals.
+        Test that adding animals causes an error, because water is not livable.
+        :param class_water: The dessert class
         """
         landscapes_water = class_water()
-
-        self.add_animals(landscapes_water)
-        start_population_herb = landscapes_water.population_sum_herb
-        start_population_carn = landscapes_water.population_sum_carn
-
-        self.add_animals(landscapes_water)
-        end_population_herb = landscapes_water.population_sum_herb
-        end_population_carn = landscapes_water.population_sum_carn
-
-        assert start_population_herb == 0
-        assert start_population_carn == 0
-        assert end_population_herb == 0
-        assert end_population_carn == 0
+        with pytest.raises(Exception):
+            self.add_animals(landscapes_water)
