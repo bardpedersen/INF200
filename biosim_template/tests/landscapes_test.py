@@ -1,4 +1,4 @@
-from biosim.simulation import Lowland, Highland, Dessert, Water
+from biosim.landscapes import Lowland, Highland, Dessert, Water
 import pytest
 
 

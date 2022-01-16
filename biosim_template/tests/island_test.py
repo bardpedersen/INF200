@@ -1,4 +1,4 @@
-from biosim import island_map
+from biosim.island_map import Map
 import pytest
 import textwrap
 
@@ -51,7 +51,7 @@ class TestIslandMap:
         WDDDW
         WWWWW"""
         islandmap = textwrap.dedent(islandmap)
-        self.map = island_map.Map(islandmap)
+        self.map = Map(islandmap)
 
     @pytest.fixture(autouse=True)
     def animals(self):
@@ -68,20 +68,22 @@ class TestIslandMap:
                            'weight': self.animals_weight}
                            for _ in range(self.animals_nr)]}]
 
+    @pytest.fixture(autouse=True)
     def creates_map_and_adds_animals(self):
         self.map.creating_map()
         self.map.island_add_population(self.herb_list)
         self.map.island_add_population(self.carn_list)
         self.map.island_total_herbivores_and_carnivores()
+        self.map.island_total_sum_of_animals()
 
-    def test_validate_map_not_surounded_by_water(self):
+    def test_validate_map_not_surrounded_by_water(self):
         islandmap = """\
                 WL
                 WW"""
         islandmap = textwrap.dedent(islandmap)
-        map = island_map.Map(islandmap)
+        map_test = Map(islandmap)
         with pytest.raises(Exception):
-            map.creating_map()
+            map_test.creating_map()
 
     def test_validate_map_not_right_letter(self):
         islandmap = """\
@@ -89,34 +91,39 @@ class TestIslandMap:
                 WKW
                 WWW"""
         islandmap = textwrap.dedent(islandmap)
-        map = island_map.Map(islandmap)
+        map_test = Map(islandmap)
         with pytest.raises(Exception):
-            map.creating_map()
+            map_test.creating_map()
 
     def test_validate_map_not_right_shape(self):
         islandmap = """\
                 W
                 WW"""
         islandmap = textwrap.dedent(islandmap)
-        map = island_map.Map(islandmap)
+        map_test = Map(islandmap)
         with pytest.raises(Exception):
-            map.creating_map()
+            map_test.creating_map()
 
     def test_creating_map(self):
         self.map.creating_map()
         assert isinstance(self.map.map_dict, dict)
 
     def test_island_add_population(self):
-        self.creates_map_and_adds_animals()
-        self.map.island_total_herbivores_and_carnivores()
-        self.map.island_total_sum_of_animals()
+        """
+        Test that adding animals work
+        :return:
+        """
         assert self.map.island_total_carnivores == self.animals_nr
         assert self.map.island_total_herbivores == self.animals_nr
         assert self.map.island_total_animals == self.animals_nr * 2
 
     def test_island_migration_prob_max(self, mocker):
+        """
+        Test that animals migrate when the prob is max
+        :param mocker: Lets us choose random value
+        :return:
+        """
         mocker.patch('random.random', return_value=0)  # Sett the prob to make sure they migrate
-        self.creates_map_and_adds_animals()
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 animal.migrate()
@@ -126,8 +133,12 @@ class TestIslandMap:
                 assert animal.has_migrated is True
 
     def test_island_migration_prob_min(self, mocker):
+        """
+        Test that animals dont migrate when the prob is zero
+        :param mocker: Lets us choose random value
+        :return:
+        """
         mocker.patch('random.random', return_value=1)  # Sett the prob to make sure they don't migrate
-        self.creates_map_and_adds_animals()
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 animal.migrate()
@@ -139,11 +150,10 @@ class TestIslandMap:
     def test_migration_move_right(self, mocker):
         """
         If the random value is less than 0.25 the animal will move right
-        :param mocker:
+        :param mocker: Lets us choose random value
         :return:
         """
         mocker.patch('random.random', return_value=0.0)
-        self.creates_map_and_adds_animals()
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 animal.has_migrated = True
@@ -170,12 +180,11 @@ class TestIslandMap:
     def test_migration_move_left(self, mocker):
         """
         If the random value is more than 0.25 and less than 0.5
-         the animal will move left
-        :param mocker:
+        the animal will move left
+        :param mocker:Lets us choose random value
         :return:
         """
         mocker.patch('random.random', return_value=0.35)  # This makes the animals move left
-        self.creates_map_and_adds_animals()
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 animal.has_migrated = True
@@ -203,11 +212,10 @@ class TestIslandMap:
         """
         If the random value is more than 0.5 and less than 0.75
         the animals move up
-        :param mocker:
+        :param mocker: Lets us choose random value
         :return:
         """
         mocker.patch('random.random', return_value=0.65)  # This makes the animals move left
-        self.creates_map_and_adds_animals()
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 animal.has_migrated = True
@@ -235,11 +243,10 @@ class TestIslandMap:
         """
         If the random value is more than 0.75
         the animals move down
-        :param mocker:
+        :param mocker: Lets us choose random value
         :return:
         """
         mocker.patch('random.random', return_value=0.9)  # This makes the animals move up
-        self.creates_map_and_adds_animals()
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 animal.has_migrated = True
@@ -264,14 +271,20 @@ class TestIslandMap:
                 assert self.map.map_dict[loc].population_sum_carn == 0
 
     def test_island_weight_loss(self):
-        self.creates_map_and_adds_animals()
+        """
+        Test that animals lose weight every year
+        :return:
+        """
         self.map.island_weight_loss()
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 assert animal.weight == self.animals_weight - (self.animals_weight * self.params_herb['eta'])
 
     def test_island_aging(self):
-        self.creates_map_and_adds_animals()
+        """
+        Test that animals age every year
+        :return:
+        """
         _nr_years = 4
         for _ in range(_nr_years):
             self.map.island_aging()
@@ -281,7 +294,10 @@ class TestIslandMap:
                 assert animal.age == self.animals_age + _nr_years
 
     def test_island_feeding_herb(self):
-        self.creates_map_and_adds_animals()
+        """
+        Test that herbivores gain weight from eating
+        :return:
+        """
         self.map.island_feeding()
         self.map.island_total_sum_of_animals()
         for loc in self.map.map_dict:
@@ -289,9 +305,13 @@ class TestIslandMap:
                 assert animal.weight == self.animals_weight + self.params_herb['F'] * self.params_herb['beta']
 
     def test_island_feeding_carn(self, mocker):
+        """
+        Test that carnivores kills herbivores and the dead
+        animals are removed
+        :param mocker: Lets us choose random value
+        :return:
+        """
         mocker.patch('random.random', return_value=0)  # Makes the kill prob happen
-        self.creates_map_and_adds_animals()
-        self.map.island_total_sum_of_animals()
         total_nr_herb_before = self.map.island_total_herbivores
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
@@ -305,8 +325,10 @@ class TestIslandMap:
         assert total_nr_herb_after == 0
 
     def test_island_death(self):
-        self.creates_map_and_adds_animals()
-        self.map.island_total_sum_of_animals()
+        """
+        Test that dead animals are removed from the island
+        :return:
+        """
         animals_before_death = self.map.island_total_animals
 
         for loc in self.map.map_dict:
@@ -322,9 +344,12 @@ class TestIslandMap:
         assert animals_after_death is None
 
     def test_island_procreation(self, mocker):
+        """
+        Test that animals can get children
+        :param mocker: Lets us choose random value
+        :return:
+        """
         mocker.patch('random.random', return_value=0)
-        self.creates_map_and_adds_animals()
-        self.map.island_total_sum_of_animals()
         animals_before_procreation = self.map.island_total_animals
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
@@ -352,5 +377,3 @@ class TestIslandMap:
         assert callable(self.map.island_total_sum_of_animals)
 
         assert callable(self.map.island_update_one_year)
-
-
