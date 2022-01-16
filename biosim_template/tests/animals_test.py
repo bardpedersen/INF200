@@ -4,19 +4,6 @@ import pytest
 
 @pytest.mark.parametrize('both_species', [Herbivore, Carnivore])
 class TestBothAnimals:
-
-    @pytest.fixture(autouse=True)
-    def create_herbivore(self):
-        self.age_h = 5
-        self.weight_h = 10
-        self.herb = Herbivore(self.age_h, self.weight_h)
-
-    @pytest.fixture(autouse=True)
-    def create_carnivore(self):
-        self.age_c = 5
-        self.weight_c = 20
-        self.carn = Carnivore(self.age_c, self.weight_c)
-
     def test_grow_one_year(self, both_species):
         """
         Test that herbivores age one time per year
@@ -81,12 +68,17 @@ class TestBothAnimals:
 
     def test_migrated(self, both_species, mocker):
         """
-        Test so animals will migrate if the chance is high
+        Test so animals will migrate if the chance is high.
+        Sett low age and high weight to increases fitness
+        as well as high mu
         :param both_species: is both herbivores and carnivores
         :return:
         """
         species = both_species()
         mocker.patch('random.random', return_value=0)
+        species.params['mu'] = 10
+        species.age = 1
+        species.weight = 50
         species.migrate()
         assert species.has_migrated is True
 
@@ -104,13 +96,6 @@ class TestBothAnimals:
 
 @pytest.mark.parametrize('herbivore', [Herbivore])
 class TestHerbivores:
-
-    @pytest.fixture(autouse=True)
-    def create_herbivore(self):
-        self.age_h = 5
-        self.weight_h = 10
-        self.herb = Herbivore(self.age_h, self.weight_h)
-
     def test_calculate_fitness(self, herbivore):
         """
         Tests the fitness calculation.
@@ -187,13 +172,6 @@ class TestHerbivores:
 
 @pytest.mark.parametrize('carnivore', [Carnivore])
 class TestCarnivores:
-
-    @pytest.fixture(autouse=True)
-    def create_carnivore(self):
-        self.age_c = 5
-        self.weight_c = 20
-        self.carn = Carnivore(self.age_c, self.weight_c)
-
     def test_calculate_fitness(self, carnivore):
         """
         Tests the fitness calculation is zero, when weight is zero
