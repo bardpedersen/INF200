@@ -34,10 +34,8 @@ class Visualization:
             self._img_base = None
 
         self._img_fmt = img_fmt if img_fmt is not None else _DEFAULT_FORMAT
-
         self._img_ctr = 0
         self._img_step = 1
-
         self._fig = None
         self._map_ax = None
         self._herb_ax = None
