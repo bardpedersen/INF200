@@ -89,7 +89,6 @@ class Animal:
         if self.weight < 0:
             self.weight = 0
 
-
     def death(self):
         """
         calculates if animal dies using fitness omega.
@@ -111,7 +110,7 @@ class Animal:
         else:
             self.has_migrated = False
 
-    def birth(self,N,species='herb'):
+    def birth(self, N, species='herb'):
         """
         calculates the probabillity for birth of animals and returns a animal
 
@@ -120,8 +119,7 @@ class Animal:
         :param species: selects what kind of animal to return, default is Herbivore
         """
 
-
-        w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
+        w_child = rd.gauss(self.params['w_birth'], self.params['sigma_birth'])
         lost_weight = w_child*self.params['xi']
         zero_conditon = self.params['zeta']*(self.params['w_birth']+self.params['sigma_birth'])
         if self.weight < lost_weight:
@@ -132,14 +130,13 @@ class Animal:
             return None
         else:
             p = rd.random()
-            p_birth = min(1,self.params['gamma']*self.fitness*(N-1))
+            p_birth = min(1, self.params['gamma']*self.fitness*(N-1))
             if p < p_birth:
                 self.weight -= lost_weight
                 if species == 'herb':
-                    return Herbivore(0,w_child)
+                    return Herbivore(0, w_child)
                 elif species == 'carn':
-                    return Carnivore(0,w_child)
-
+                    return Carnivore(0, w_child)
 
 
 class Herbivore(Animal):
@@ -168,11 +165,9 @@ class Herbivore(Animal):
     def __init__(self, age=None, weight=None):
         super().__init__(age, weight)
 
-
     def __repr__(self):
         return f'Herbivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead}, ' \
                f'Has_migrated: {self.has_migrated})'
-
 
 
 class Carnivore(Animal):
@@ -191,16 +186,17 @@ class Carnivore(Animal):
         'xi': 1.1,
         'omega': 0.8,
         'F': 50,
-        'DeltaPhiMax':10
+        'DeltaPhiMax': 10
     }
-    def __init__(self,age=None,weight=None):
+
+    def __init__(self, age=None, weight=None):
         super().__init__(age, weight)
 
     def __repr__(self):
         return f'Carnivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead}, ' \
                f'Has_migrated: {self.has_migrated})'
 
-    def carnivore_kill_prob(self,prey):
+    def carnivore_kill_prob(self, prey):
         """
         Calulates the probabillity if carnivore kills herbivore
 
@@ -220,4 +216,3 @@ class Carnivore(Animal):
 if __name__ == '__main__':
     for _ in range(100):
         print(rd.random())
-
