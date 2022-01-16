@@ -18,7 +18,9 @@ class Animal:
         initiates instance of animal
 
         :param age: the age of the animal
+        :type age: int
         :param weight: the weight of the animal
+        :type weight: float
         """
         if age is None:
             age = 0
@@ -38,7 +40,8 @@ class Animal:
         """
         takes an dictionatry of parameters and replaces default params
 
-        :param: params: a dictionary with parameter values
+        :param params: parameters for the animals
+        :type params: dictionary with parameter as key and value as value
         """
         for parameter in params:
             if parameter in cls.params:
@@ -56,6 +59,7 @@ class Animal:
     def calculate_fitness(self):
         """
         Calculates the fitness of the animal by using the fitness formula given in the task
+
         """
 
         if self.weight <= 0:
@@ -74,15 +78,17 @@ class Animal:
     def weight_gained_from_eating(self, fodder):
         """
         Calculates the gain of weight by an animal eating
+
         :param fodder: food accsessable to the animal
+        :type fodder: float
         """
 
         self.weight += fodder * self.params['beta']
 
     def lose_weight(self):
         """
-        Calulates the loss of weight of an animal
-        :return:
+        Calulates the annual weight lost by individual animal
+
         """
 
         self.weight -= self.weight*self.params['eta']
@@ -112,11 +118,14 @@ class Animal:
 
     def birth(self, N, species='herb'):
         """
-        calculates the probabillity for birth of animals and returns a animal
+        calculates the probability for birth of animals and returns a child if
+        the probability strikes by random.random()
 
 
         :param N: is the number of animals in the cell
+        :param N: integer
         :param species: selects what kind of animal to return, default is Herbivore
+        :type species: string
         """
 
         w_child = rd.gauss(self.params['w_birth'], self.params['sigma_birth'])
@@ -171,6 +180,10 @@ class Herbivore(Animal):
 
 
 class Carnivore(Animal):
+    """
+    Carnivore subclass
+    the params dictionary contains all the "static" parameters of the species
+    """
     params = {
         'w_birth': 6.0,
         'sigma_birth': 1.0,
@@ -198,8 +211,12 @@ class Carnivore(Animal):
 
     def carnivore_kill_prob(self, prey):
         """
-        Calulates the probabillity if carnivore kills herbivore
+        Calculates the probability that carnivore kills herbivore
 
+        :param prey: the prey the animal hunts
+        :type prey: Herbivore, object of animal class
+
+        :return: probalilty of carnivore killing herbivore
         """
 
         difference_fitness = self.fitness - prey.fitness

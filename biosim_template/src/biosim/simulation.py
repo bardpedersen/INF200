@@ -7,7 +7,7 @@ Template for BioSim class.
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
 import textwrap
 
-from biosim.animals import Herbivore,Carnivore
+from biosim.animals import Herbivore, Carnivore
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 from biosim.island_map import Map
 from biosim.visualization import Visualization
@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random as rd
 import textwrap
+
+
 class BioSim:
     def __init__(self, island_map, ini_pop, seed,
                  vis_years=1, ymax_animals=None, cmax_animals=None, hist_specs=None,
@@ -74,7 +76,7 @@ class BioSim:
         self._landscape_types_changeable = {'L': Lowland, 'H': Highland}
         self.map = Map(self.island_map)
         self.map.creating_map()
-        self.visual = Visualization(self.img_dir,self.img_base,self.img_fmt)
+        self.visual = Visualization(self.img_dir, self.img_base, self.img_fmt)
 
     def set_animal_parameters(self, species, params):
         """
@@ -107,6 +109,7 @@ class BioSim:
         Run simulation while visualizing the result.
 
         :param num_years: number of years to simulate
+        :param vis_steps:
         """
 
         self.add_population(self.ini_pop)
