@@ -1,6 +1,6 @@
 """
 Different type of landscapes
-Geogrofi
+Geography
 Migration
 location
 """
@@ -20,25 +20,24 @@ class Map:
 
         :param island_map: a multiline string representing the map
         """
-        self.string_map = island_map  #Information we get from mono_ho
+        self.string_map = island_map  # Information we get from mono_ho
         self.map_dict = None
         self.island_total_carnivores = None
         self.island_total_herbivores = None
         self.island_total_animals = None
 
-
     @staticmethod
     def validate_map(string_map):
         """
-        Checks if the borders of the map is water and all lines have the same lenght
+        Checks if the borders of the map is water and all lines have the same length
 
         :param string_map: a map in string format
         """
-        landscapes = ['W','L','H','D']
+        landscapes = ['W', 'L', 'H', 'D']
 
         for line in string_map.splitlines():
             if len(string_map.splitlines()[0]) != len(line):
-                raise ValueError('Map lines must be of equal lenght')
+                raise ValueError('Map lines must be of equal length')
             if line[0] != 'W':
                 raise ValueError('Boundary must be Water')
             if line[len(line)-1] != 'W':
@@ -53,9 +52,6 @@ class Map:
             if ch != 'W':
                 raise ValueError('Boundary must be water')
 
-
-
-
     def creating_map(self):
         """
         makes string to dictionary with loc as key and landscape cell as value
@@ -67,18 +63,18 @@ class Map:
         for line in self.string_map.splitlines():
             y = 1
             for ch in line:
-                cord = (x,y)
+                cord = (x, y)
                 landcape = {'W': Water(cord), 'L': Lowland(cord), 'H': Highland(cord), 'D': Dessert(cord)}
-                assert landcape[ch] != KeyError, 'Letter dont match landtype'
+                assert landcape[ch] != KeyError, 'Letter dont match land type'
                 self.map_dict[cord] = landcape[ch]
-                y+=1
-            x+=1
+                y += 1
+            x += 1
 
-    def island_add_population(self,ini_herb):
+    def island_add_population(self, ini_herb):
         """
         adds population to the map
 
-        :param ini_herb: is a dictionary containing both locatin and list of animals
+        :param ini_herb: is a dictionary containing both location and list of animals
         """
 
         for d in ini_herb:
@@ -99,7 +95,6 @@ class Map:
                 if self.map_dict[key].population_sum_carn is not None:
                     self.map_dict[key].cell_feeding_carnivore()
 
-
     def island_procreation(self):
         """
         Birth of new animals in each cell
@@ -118,9 +113,6 @@ class Map:
         for key in self.map_dict:
             if self.map_dict[key].livable is True:
                 self.map_dict[key].cell_aging()
-
-
-
 
     def island_migration(self):
         for loc in self.map_dict.keys():
@@ -269,9 +261,9 @@ class Map:
         """
 
         herb_island = {
-            'age':[],
-            'weight':[],
-            'fitness':[]
+            'age': [],
+            'weight': [],
+            'fitness': []
         }
         carn_island = {
             'age': [],
@@ -286,8 +278,6 @@ class Map:
                 carn_island[key].extend(carn[key])
         return herb_island, carn_island
 
-
-
     def island_update_one_year(self):
         """
         updates the island one year
@@ -300,15 +290,6 @@ class Map:
         self.island_death()
         self.island_total_herbivores_and_carnivores()
         self.island_total_sum_of_animals()
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -340,7 +321,7 @@ if __name__ == '__main__':
         for j in range(len(nested_list)):
             y = 1
             for k in range(len(nested_list[0])):
-                if island.map_dict[(x, y)].population_sum_herb == None:
+                if island.map_dict[(x, y)].population_sum_herb is None:
                     nested_list[j][k] = 0
                 else:
                     nested_list[j][k] = island.map_dict[(x, y)].population_sum_herb
