@@ -34,7 +34,6 @@ if __name__ == '__main__':
                WWWHHHHLLLLLLLWWWWWWW
                WWWHHHHHHWWWWWWWWWWWW
                WWWWWWWWWWWWWWWWWWWWW"""
-    geogr = textwrap.dedent(geogr)
 
     ini_herbs = [{'loc': (2, 7),
                   'pop': [{'species': 'Herbivore',
@@ -52,9 +51,9 @@ if __name__ == '__main__':
                              'age': {'max': 60.0, 'delta': 2},
                              'weight': {'max': 60, 'delta': 2}},
                  cmax_animals={'Herbivore': 200, 'Carnivore': 50},
-                 img_dir='results',
+                 img_dir=r'C:\Users\pbuka\Code\JanuarBlokk\biosim-a17-peder-bard\biosim_template\results',
                  img_base='sample')
-    sim.simulate(400)
+    sim.simulate(300)
     sim.make_movie()
 
     input('Press ENTER')

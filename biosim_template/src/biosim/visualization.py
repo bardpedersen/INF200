@@ -10,7 +10,10 @@ Link: https://gitlab.com/nmbu.no/emner/inf200/h2021/inf200-course-materials/-/bl
 _DEFAULT_DIR = os.path.join(r'C:\Users\pbuka\Code\JanuarBlokk\biosim-a17-peder-bard\biosim_template', 'results')
 _DEFAULT_NAME = 'sim'
 _DEFAULT_FORMAT = 'png'
+_DEFAULT_MOVIE_FORMAT = 'mp4'
 
+_FFMPEG_BINARY = 'ffmpeg'
+_MAGICK_BINARY = 'magick'
 
 class Visualization:
     """ Visualizes the results from biosim"""
@@ -154,7 +157,7 @@ class Visualization:
         self._update_herb_map(island_map,cmax)
         self._update_carn_map(island_map,cmax)
         self._update_pop_graph(year, island_map)
-        self._update_age_weight_fitness(island_map,hist_specs=None)
+        self._update_age_weight_fitness(island_map,hist_specs)
         self._fig.canvas.flush_events()
         plt.pause(1e-6)
         self._save_plots(year)
@@ -222,7 +225,7 @@ class Visualization:
             self._carn_plot.set_data(matrix)
 
 
-    def _update_age_weight_fitness(self,island_map,hist_specs=None):
+    def _update_age_weight_fitness(self, island_map, hist_specs=None):
         """
         updates the histograms of age weight and fitness,
 
@@ -230,7 +233,7 @@ class Visualization:
         """
         if hist_specs is None:
             hist_specs = {
-                'weight': {'max': 80, 'delta': 2},
+                'weight': {'max': 20, 'delta': 2},
                 'age': {'max': 40, 'delta': 2},
                 'fitness': {'max': 1, 'delta': 2}
 
@@ -289,6 +292,47 @@ class Visualization:
         self._img_ctr += 1
 
 
+
+    def make_movie(self, movie_fmt=None):
+        """
+                Creates MPEG4 movie from visualization images saved.
+
+                .. :note:
+                    Requires ffmpeg for MP4 and magick for GIF
+
+                The movie is stored as img_base + movie_fmt
+                """
+
+        if self._img_base is None:
+            raise RuntimeError("No filename defined.")
+
+        if movie_fmt is None:
+            movie_fmt = _DEFAULT_MOVIE_FORMAT
+
+        if movie_fmt == 'mp4':
+            try:
+                # Parameters chosen according to http://trac.ffmpeg.org/wiki/Encode/H.264,
+                # section "Compatibility"
+                subprocess.check_call([_FFMPEG_BINARY,
+                                       '-i', '{}_%05d.png'.format(self._img_base),
+                                       '-y',
+                                       '-profile:v', 'baseline',
+                                       '-level', '3.0',
+                                       '-pix_fmt', 'yuv420p',
+                                       '{}.{}'.format(self._img_base, movie_fmt)])
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
+        elif movie_fmt == 'gif':
+            try:
+                subprocess.check_call([_MAGICK_BINARY,
+                                       '-delay', '1',
+                                       '-loop', '0',
+                                       '{}_*.png'.format(self._img_base),
+                                       '{}.{}'.format(self._img_base, movie_fmt)])
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError('ERROR: convert failed with: {}'.format(err))
+        else:
+            raise ValueError('Unknown movie format: ' + movie_fmt)
 
 
 
