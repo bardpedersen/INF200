@@ -501,6 +501,9 @@ class TestFodderLandscapes:
             else:  # The animal with low fitness stay the same
                 assert animal.weight == 1
 
+        Lowland.params['f_max'] = 800
+        Highland.params['f_max'] = 300
+
 
 @pytest.mark.parametrize('class_dessert', [Dessert])
 class TestDessert:

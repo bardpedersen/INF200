@@ -69,6 +69,11 @@ class TestSimulation:
         self.biosim.set_animal_parameters('Carnivore', carn)
         assert Herbivore.params['mu'] == 100
         assert Carnivore.params['beta'] == 0.9
+        herb = {'mu': 0.25}
+        carn = {'beta': 0.75}
+        self.biosim.set_animal_parameters('Herbivore', herb)
+        self.biosim.set_animal_parameters('Carnivore', carn)
+
 
     def test_set_landscape_parameters(self):
         """
@@ -81,6 +86,11 @@ class TestSimulation:
         self.biosim.set_landscape_parameters('H', highland)
         assert Lowland.params['f_max'] == 100
         assert Highland.params['f_max'] == 150
+        lowland = {'f_max': 800}
+        highland = {'f_max': 300}
+        self.biosim.set_landscape_parameters('L', lowland)
+        self.biosim.set_landscape_parameters('H', highland)
+
 
     """
     def test_simulate(self):
