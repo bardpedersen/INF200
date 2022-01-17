@@ -3,7 +3,7 @@ import numpy as np
 import subprocess
 import os
 """
-Inspired by Hans Ekkehard Plesser Grapichs ile from randvis prodject
+Inspired by Hans Ekkehard Plesser Graphics ile from randvis prodject
 Link: https://gitlab.com/nmbu.no/emner/inf200/h2021/inf200-course-materials/-/blob/main/january_block/examples/randvis_project/src/randvis/graphics.py
 """
 _DEFAULT_DIR = os.path.join(r'C:\Users\pbuka\Code\JanuarBlokk\biosim-a17-peder-bard\biosim_template', 'results')
@@ -16,13 +16,12 @@ _MAGICK_BINARY = 'magick'
 
 
 class Visualization:
-    """ Visualizes the results from biosim"""
+    """ visualizes the results from biosim"""
     def __init__(self, img_dir=None, img_name=None, img_fmt=None):
         """
         :param img_dir: directory for image files to be stored
         :param img_name: start of image name
         :param img_fmt: format of image
-
         """
 
         if img_name is None:
@@ -65,14 +64,12 @@ class Visualization:
     def setup(self, island_map, final_year, y_max=500):
         """
         prepares for plotting
-
-        Has to be called before :meth: 'update_plot'
+        has to be called before :meth: 'update_plot'
 
         :param island_map: map object containing all info about island
         :param final_year: the final year of the simulation
         :param y_max: is the maximum of animals given from file
         """
-
         # create new plot window
         if self._fig is None:
             self._fig = plt.figure(figsize=(10, 8))
@@ -112,9 +109,7 @@ class Visualization:
 
         if self._herb_line is None:
             pop_plot = self._pop_ax.plot(np.arange(0, final_year+1), np.full(final_year+1, np.nan))
-
             self._herb_line = pop_plot[0]
-
         else:
             x_data, y_data = self._herb_line.get_data()
             x_new = np.arange(x_data[-1] + 1, final_year + 1)
@@ -132,20 +127,19 @@ class Visualization:
             x_new = np.arange(x_data[-1] + 1, final_year + 1)
             if len(x_new) > 0:
                 y_new = np.full(x_new.shape, np.nan)
-                self._carn_line.set_data(np.hstack((x_data, x_new)),
-                                        np.hstack((y_data, y_new)))
+                self._carn_line.set_data(np.hstack((x_data, x_new)), np.hstack((y_data, y_new)))
 
         self._fig.subplots_adjust(hspace=0.40)
 
-    def update(self, year, island_map, cmax=None, hist_specs=None,y_max=None):
+    def update(self, year, island_map, cmax=None, hist_specs=None, y_max=None):
         """
         updates plot with current year
 
+        :param y_max:
         :param year: is the year the simulation currently is in
         :param island_map: is the island map object to be plotted
         :param cmax: is a dictionary containing colorbar maxes for herbivore and carnivore heat map
         :param hist_specs: is a dictionary containing specifications for histograms of age weight and fitness
-
         """
         if cmax is None:
             cmax = {'Herbivore': 200,
@@ -154,7 +148,7 @@ class Visualization:
         self._fig.suptitle(f'Simulation, Year: {year}', fontsize=16)
         self._update_herb_map(island_map, cmax)
         self._update_carn_map(island_map, cmax)
-        self._update_pop_graph(year, island_map,y_max)
+        self._update_pop_graph(year, island_map, y_max)
         self._update_age_weight_fitness(island_map, hist_specs)
         self._fig.canvas.flush_events()
         plt.pause(1e-6)
@@ -162,12 +156,11 @@ class Visualization:
 
     def _update_herb_map(self, island_map, cmax):
         """
-        plots the population on the map by color
+        plots the population of herbivores on the map by color
 
-        :param island_map: is the island_map object containg info about the simulation
+        :param island_map: is the island_map object containing info about the simulation
         :param cmax: is a dictionary containing colorbar maxes for herbivore and carnivore heat map
         """
-
         nested_list = list(map(list, island_map.string_map.splitlines()))
         x = 1
         for i in range(len(nested_list)):
@@ -191,13 +184,11 @@ class Visualization:
 
     def _update_carn_map(self, island_map, cmax):
         """
-        plotting the
+        plots the population of carnivores on the map by color
 
-        :param island_map: is the island_map object containg info about the simulation
+        :param island_map: is the island_map object containing info about the simulation
         :param cmax: dictionary containing default values for colorbar max
-
         """
-
         nested_list = list(map(list, island_map.string_map.splitlines()))
         x = 1
         for i in range(len(nested_list)):
@@ -220,7 +211,7 @@ class Visualization:
 
     def _update_age_weight_fitness(self, island_map, hist_specs=None):
         """
-        updates the histograms of age weight and fitness,
+        updates the histograms of age, weight and fitness,
 
         :param island_map: island_map object containing all info about island
         :param hist_specs:
@@ -242,7 +233,6 @@ class Visualization:
                           rwidth=hist_specs['age']['delta'])
         self._age_ax.legend(['herb', 'carn'])
 
-
         self._weight_ax.cla()
         self._weight_ax.set_title('Weight')
         self._weight_ax.hist(herb['weight'], histtype='step', range=(0, hist_specs['weight']['max']),
@@ -259,14 +249,13 @@ class Visualization:
                               rwidth=hist_specs['fitness']['delta'])
         self._fitness_ax.legend(['Herb', 'Carn'])
 
-    def _update_pop_graph(self, year, island_map,y_max):
+    def _update_pop_graph(self, year, island_map, y_max):
         """
-        plotting the animals in the cell by years
+        plotting the animals in the animal number graph by years
 
         :param year: what year it is in used for x axis in this case
         :param island_map: island_map object containing all info about island
         """
-
         y_data_herb = self._herb_line.get_ydata()
         y_data_herb[year] = island_map.island_total_herbivores
         self._herb_line.set_ydata(y_data_herb)
@@ -277,7 +266,7 @@ class Visualization:
         plt.pause(1e-6)
 
         if y_max is None:
-            self._pop_ax.set_ylim(0,y_data_herb[year]*2)
+            self._pop_ax.set_ylim(0, y_data_herb[year]*2)
 
     def _save_plots(self, year):
         """
@@ -300,7 +289,6 @@ class Visualization:
 
         The movie is stored as img_base + movie_fmt
         """
-
         if self._img_base is None:
             raise RuntimeError("No filename defined.")
 

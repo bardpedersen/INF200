@@ -2,17 +2,21 @@ from biosim.simulation import BioSim
 from biosim.landscapes import Lowland, Highland
 from biosim.animals import Herbivore, Carnivore
 import pytest
-import textwrap
+import textwrap3
 
 
 class TestSimulation:
+    """
+    Adds more test to the simulation file, the test file test_biosim_interface
+    doesn't test all functions
+    """
     @pytest.fixture(autouse=True)
     def sett_up_simulation(self):
         island_map = """\
            WWW
            WLW
            WWW"""
-        island_map = textwrap.dedent(island_map)
+        island_map = textwrap3.dedent(island_map)
         self.seed = 123
         self.pop = [{'loc': (2, 2),
                      'pop': [{'species': 'Herbivore',
@@ -95,17 +99,3 @@ class TestSimulation:
         highland = {'f_max': 300}
         self.biosim.set_landscape_parameters('L', lowland)
         self.biosim.set_landscape_parameters('H', highland)
-    """
-    def test_simulate(self):
-        pass
-
-    def test_setup_logfile(self):
-        pass
-
-    def test_save_to_file(self):
-        pass
-
-    def test_make_movie(self):
-        pass
-    
-    """

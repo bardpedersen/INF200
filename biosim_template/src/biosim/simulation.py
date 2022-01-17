@@ -7,11 +7,10 @@ Template for BioSim class.
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
 
 from biosim.animals import Herbivore, Carnivore
-from biosim.landscapes import Lowland, Water, Highland, Dessert
+from biosim.landscapes import Lowland, Highland
 from biosim.island_map import Map
 from biosim.visualization import Visualization
-import matplotlib.pyplot as plt
-import numpy as np
+
 import random as rd
 import textwrap3
 
@@ -80,7 +79,7 @@ class BioSim:
 
     def set_animal_parameters(self, species, params):
         """
-        Set parameters for animal species.
+        set parameters for animal species.
 
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
@@ -94,7 +93,7 @@ class BioSim:
 
     def set_landscape_parameters(self, landscape, params):
         """
-        Set parameters for landscape type.
+        set parameters for landscape type.
 
         :param landscape: String, code letter for landscape
         :param params: Dict with valid parameter specification for landscape
@@ -106,11 +105,11 @@ class BioSim:
 
     def simulate(self, num_years, vis_steps=1, img_steps=None):
         """
-        Run simulation while visualizing the result.
+        run simulation while visualizing the result.
 
+        :param img_steps: steps for each image
         :param num_years: number of years to simulate
         :param vis_steps: steps for visualisation
-        :
         """
 
         self.add_population(self.ini_pop)
@@ -119,12 +118,12 @@ class BioSim:
         if img_steps % vis_steps != 0:
             raise ValueError('img_steps must be multiple of vis_steps')
         self._final_year = self._year + num_years
-        self.visual.setup(self.map,self._final_year,self.ymax_animals)
+        self.visual.setup(self.map, self._final_year, self.ymax_animals)
 
         while self._year < self._final_year:
             self.map.island_update_one_year()
             if self._year % vis_steps == 0:
-                self.visual.update(self._year,self.map,self.cmax_animals,self.hist_specs)
+                self.visual.update(self._year, self.map, self.cmax_animals, self.hist_specs)
             if self.log_file is not None:
                 self.save_to_file()
 
@@ -132,7 +131,7 @@ class BioSim:
 
     def add_population(self, population):
         """
-        Add a population to the island
+        add a population to the island
 
         :param population: List of dictionaries specifying population
         """
@@ -140,29 +139,30 @@ class BioSim:
 
     @property
     def year(self):
-        """Last year simulated."""
+        """last year simulated."""
         return self._year
 
     @property
     def num_animals_per_species(self):
         """
-        Number of animals per species in island, as dictionary.
+        number of animals per species in island, as dictionary.
         """
         self.map.island_total_sum_of_animals()
         herb = self.map.island_total_herbivores
         if herb is None:
             herb = 0
+
         carn = self.map.island_total_carnivores
         if carn is None:
             carn = 0
-        return {'Herbivore':herb,'Carnivore':carn}
+
+        return {'Herbivore': herb, 'Carnivore': carn}
 
     @property
     def num_animals(self):
         """
-        Total number of animals on island.
+        total number of animals on island.
         """
-
         pop = self.map.island_total_sum_of_animals()
         if pop is None:
             pop = 0
@@ -171,20 +171,20 @@ class BioSim:
 
     def setup_logfile(self):
         """
-        Writes the first line to logfile
+        writes the first line to logfile
         """
-        logfile = open(self.log_file,"w")
+        logfile = open(self.log_file, "w")
         logfile.write("Year,Total_Herbivores,Total_Carnivores\n")
         logfile.close()
 
     def save_to_file(self):
         """
-        Writes year, total herbivores and total carnivores to file
+        writes year, total herbivores and total carnivores to file
         """
         logfile = open(self.log_file, "a")
         logfile.write(f"{self._year},{self.map.island_total_herbivores},{self.map.island_total_carnivores}\n")
         logfile.close()
 
     def make_movie(self):
-        """Create MPEG4 movie from visualization images saved."""
+        """create MPEG4 movie from visualization images saved."""
         self.visual.make_movie()

@@ -6,7 +6,7 @@ import random as rd
 
 
 class OneGrid:
-    """class describing individual cells of diffrent lanscape types"""
+    """class describing individual cells of different landscape types"""
     def __init__(self, cord):
         self.fodder = 0
         self.cord = cord
@@ -29,13 +29,12 @@ class OneGrid:
     def cell_add_population(self, population=None):
         """
         adds a population to the landscape location, and turns it in to an animal object
+
         :param population: the population to add to the map
         :type population: is a dictionary containing location, and population for given location
-
         """
         if not self.livable:
             raise TypeError('Cannot add animals to water cell')
-
         else:
             for animal in population:
                 if animal['species'] == 'Herbivore':
@@ -56,7 +55,6 @@ class OneGrid:
         to calculate the fitness of each animal in cell
         :return:
         """
-
         for animal in self.population_herb:
             animal.calculate_fitness()
 
@@ -68,20 +66,12 @@ class OneGrid:
 
     def cell_feeding_herbivore(self):
         """
-        Animals residing in a cell eat in descend- ing order of fitness.
-        Each animal tries every year to eat an amount F of fodder,
-        but how much feed the animal obtain depends on fodder available in the cell
-        this function also sets the fooder for
-
-        Here:
-        F = 10
-        f_max = 800
+        herbivores in a cell eat in descending order of fitness.
+        the eat a set amount of fodder every year
         """
-
         self.cell_calculate_fitness()
         self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
         for herbivore in self.population_herb:
-
             if self.fodder == 0:
                 break
             elif self.fodder >= herbivore.params['F']:
@@ -128,11 +118,9 @@ class OneGrid:
 
     def cell_procreation(self):
         """
-        Animals can mate if there are at least two animals of the same species in a cell.
-        Gender plays no role in mating.Each animal can give birth to at most one off- spring per year.
-        At birth, the mother animal loses ξ times the actual birth weight of the baby.
-        If the mother would lose more than her own weight,
-        then no baby is born and the weight of the mother remains unchanged.
+        uses calculation to figure out if an animal receives a child or not.
+        there has to be at least two of the same species to get children.
+        animals can max get one children each year
         """
         self.cell_sum_of_animals()
         new_born_herbs = []
@@ -157,9 +145,8 @@ class OneGrid:
 
     def cell_migration(self):
         """
-        No migration on one cell island
+        check witch animal shall move and witch shall stay
         """
-
         for herb in self.population_herb:
             herb.migrate()
 
@@ -168,7 +155,8 @@ class OneGrid:
 
     def cell_migration_remove(self):
         """
-        removes animals that has migrated
+        removes animals from their previous place to
+        so that animals dont get duplicated
         """
         population_herb = [herb for herb in self.population_herb if herb.has_migrated is False]
         self.population_herb = population_herb
@@ -178,8 +166,8 @@ class OneGrid:
 
     def cell_aging(self):
         """
-        At birth, each animal has age a = 0 .
-        Age increases by one year for each year that passes
+        at birth, each animal has age a = 0 .
+        age increases by one year for each year that passes
         """
         for animal in self.population_herb:
             animal.grow_one_year()
@@ -191,27 +179,29 @@ class OneGrid:
 
     def cell_weight_lost(self):
         """
-        Calculates the weight lost by all animals in cell
+        calculates the weight lost by all animals in cell
         """
         if self.population_herb is not None:
             for herb in self.population_herb:
                 herb.lose_weight()
+
         if self.population_carn is not None:
             for carn in self.population_carn:
                 carn.lose_weight()
 
     def cell_death(self):
         """
-        This func kills and removes both carnivores and herbivores in each cell
+        this func kills and removes both carnivores and herbivores in each cell
         """
-
         for herb in self.population_herb:
             herb.death()
+
         for carn in self.population_carn:
             carn.death()
 
         population_herb = [herb for herb in self.population_herb if herb.is_dead is False]
         self.population_herb = population_herb
+
         population_carn = [carn for carn in self.population_carn if carn.is_dead is False]
         self.population_carn = population_carn
 
@@ -246,7 +236,7 @@ class OneGrid:
 
 
 class Lowland(OneGrid):
-    """Lowland sublcass"""
+    """lowland subclass"""
     params = {
         'f_max': 800
     }
@@ -276,7 +266,7 @@ class Highland(OneGrid):
 
 
 class Dessert(OneGrid):
-    """Dessert sublclass"""
+    """dessert subclass"""
     params = {
         'f_max': 0
     }
@@ -291,7 +281,7 @@ class Dessert(OneGrid):
 
 
 class Water(OneGrid):
-    """Water subclass"""
+    """water subclass"""
     params = {
         'f_max': 0
     }

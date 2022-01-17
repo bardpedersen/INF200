@@ -3,7 +3,6 @@ import pytest
 import textwrap3
 
 
-
 class TestIslandMap:
     """
     Test that the island is working properly

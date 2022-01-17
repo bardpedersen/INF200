@@ -5,6 +5,7 @@ Animals class for biosim
 import random as rd
 import math as m
 
+
 class Animal:
     """Class for animals living on island"""
     def __init__(self, age, weight):
@@ -32,7 +33,7 @@ class Animal:
 
     def set_params(cls, params):
         """
-        takes an dictionatry of parameters and replaces default params
+        takes an dictionary of parameters and replaces default params
 
         :param params: parameters for the animals
         :type params: dictionary with parameter as key and value as value
@@ -52,10 +53,8 @@ class Animal:
 
     def calculate_fitness(self):
         """
-        Calculates the fitness of the animal by using the fitness formula given in the task
-
+        calculates the fitness of the animal by using the fitness formula given in the task
         """
-
         if self.weight <= 0:
             self.fitness = 0
         else:
@@ -65,25 +64,23 @@ class Animal:
 
     def grow_one_year(self):
         """
-        Makes the animal a year older
+        makes the animal a year older
         """
         self.age += 1
 
     def weight_gained_from_eating(self, fodder):
         """
-        Calculates the gain of weight by an animal eating
+        calculates the gain of weight by an animal eating
 
-        :param fodder: food accsessable to the animal
+        :param fodder: food accessible to the animal
         :type fodder: float
         """
-
         self.weight += fodder * self.params['beta']
 
     def lose_weight(self):
         """
-        Calulates the annual weight lost by individual animal
+        calculates the annual weight lost by individual animal
         """
-
         self.weight -= self.weight*self.params['eta']
         if self.weight < 0:
             self.weight = 0
@@ -100,6 +97,9 @@ class Animal:
             self.is_dead = True
 
     def migrate(self):
+        """
+        calculates if animal shall move or stay
+        """
         if not self.has_migrated:
             self.calculate_fitness()
             move_prob = self.params['mu'] * self.fitness
@@ -114,13 +114,11 @@ class Animal:
         calculates the probability for birth of animals and returns a child if
         the probability strikes by random.random()
 
-
         :param N: is the number of animals in the cell
-        :param N: integer
+        :type N: integer
         :param species: selects what kind of animal to return, default is Herbivore
         :type species: string
         """
-
         w_child = rd.gauss(self.params['w_birth'], self.params['sigma_birth'])
         lost_weight = w_child*self.params['xi']
         zero_conditon = self.params['zeta']*(self.params['w_birth']+self.params['sigma_birth'])
@@ -174,7 +172,7 @@ class Herbivore(Animal):
 
 class Carnivore(Animal):
     """
-    Carnivore subclass
+    class containing animals of species carnivore
     the params dictionary contains all the "static" parameters of the species
     """
     params = {
@@ -208,8 +206,7 @@ class Carnivore(Animal):
 
         :param prey: the prey the animal hunts
         :type prey: Herbivore, object of animal class
-
-        :return: probalilty of carnivore killing herbivore
+        :return: probability of carnivore killing herbivore
         """
 
         difference_fitness = self.fitness - prey.fitness
@@ -221,8 +218,3 @@ class Carnivore(Animal):
             prob = 1
 
         return prob
-
-
-if __name__ == '__main__':
-    for _ in range(100):
-        print(rd.random())
