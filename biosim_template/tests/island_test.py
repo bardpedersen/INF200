@@ -138,7 +138,7 @@ class TestIslandMap:
         :param mocker: Lets us choose random value
         :return:
         """
-        mocker.patch('random.random', return_value=1)  # Sett the prob to make sure they don't migrate
+        mocker.patch('random.random', return_value=10)  # Sett the prob to make sure they don't migrate
         for loc in self.map.map_dict:
             for animal in self.map.map_dict[loc].population_herb:
                 animal.migrate()

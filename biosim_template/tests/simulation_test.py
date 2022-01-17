@@ -28,13 +28,12 @@ class TestSimulation:
         """
         assert self.biosim.num_animals == 0
 
-    def test_population(self):
+    def test_add_population(self):
         """
         Test that you can add population
         :return:
         """
         self.biosim.add_population(self.pop)
-        assert self.biosim.num_animals == 20
 
     def test_year_zero(self):
         """
@@ -82,7 +81,6 @@ class TestSimulation:
         self.biosim.set_landscape_parameters('H', highland)
         assert Lowland.params['f_max'] == 100
         assert Highland.params['f_max'] == 150
-
 
     """
     def test_simulate(self):

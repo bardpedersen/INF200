@@ -323,7 +323,7 @@ class TestAnimalLandscapes:
         :param class_with_animals: All the landscapes that are livable
         :param mocker: Lets us control random value
         """
-        mocker.patch('random.random', return_value=1)
+        mocker.patch('random.random', return_value=10)
         landscapes_with_animals = class_with_animals()
         self.add_animals(landscapes_with_animals)
 
