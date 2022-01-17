@@ -4,28 +4,30 @@ import random as rd
 
 class OneGrid:
 
-    def __init__(self,cord):
+    def __init__(self, cord):
         self.fodder = 0
         self.cord = cord
+        self.livable = True
         self.population_herb = []
         self.population_carn = []
         self.population_sum_herb = None
         self.population_sum_carn = None
 
     def cell_set_params(cls, params):
+        """sets the parameters for landscape class"""
         for parameter in params:
             if parameter in cls.params:
-                cls[parameter] = params[parameter]
-
+                cls.params[parameter] = params[parameter]
 
     def cell_add_population(self, population=None):
         """
         adds a population to the landscape location, and turns it in to an animal object
         :param population: the population to add to the map
-        :return:
+        :type population: is a dictionary containing location, and population for given location
+
         """
-        if not self._livable:
-            pass
+        if not self.livable:
+            raise TypeError('Cannot add animals to water cell')
 
         else:
             for animal in population:
@@ -35,6 +37,9 @@ class OneGrid:
                     self.population_carn.append(Carnivore(animal['age'], animal['weight']))
 
     def cell_sum_of_animals(self):
+        """
+        calculates the sum of herbivores and carnivores in the cell
+        """
         self.population_sum_herb = len(self.population_herb)
         self.population_sum_carn = len(self.population_carn)
 
@@ -81,12 +86,12 @@ class OneGrid:
 
     def cell_feeding_carnivore(self):
         """
-        implements feeding of carniores for the cell
+        uses the calculated probability from animals and lets each carnivore kill the herbivores
+        if the herbivore is killed it is removed from the population before the next
+        carnivore eats
         """
         self.cell_calculate_fitness()
         self.population_herb.sort(key=lambda x: x.fitness, reverse=True)
-
-        self.cell_calculate_fitness()
 
         rd.shuffle(self.population_carn)
         for predator in self.population_carn:
@@ -124,28 +129,45 @@ class OneGrid:
         """
         self.cell_sum_of_animals()
         new_born_herbs = []
-        N_H = self.population_sum_herb
+        num_herb = self.population_sum_herb
         for herb in self.population_herb:
             herb.calculate_fitness()
-            new_born_herb = herb.birth(N_H)
+            new_born_herb = herb.birth(num_herb)
             if new_born_herb is not None:
                 new_born_herbs.append(new_born_herb)
-            N_H -= 1
+            num_herb -= 1
         self.population_herb += new_born_herbs
 
         new_born_carns = []
-        N_C = self.population_sum_carn
+        num_carn = self.population_sum_carn
         for carn in self.population_carn:
             carn.calculate_fitness()
-            new_born_carn = carn.birth(N_C, species='carn')
+            new_born_carn = carn.birth(num_carn, species='carn')
             if new_born_carn is not None:
                 new_born_carns.append(new_born_carn)
-            N_C -= 1
+            num_carn -= 1
         self.population_carn += new_born_carns
 
     def cell_migration(self):
-        """No migration on one cell island"""
-        pass
+        """
+        No migration on one cell island
+        """
+
+        for herb in self.population_herb:
+            herb.migrate()
+
+        for carn in self.population_carn:
+            carn.migrate()
+
+    def cell_migration_remove(self):
+        """
+        removes animals that has migrated
+        """
+        population_herb = [herb for herb in self.population_herb if herb.has_migrated is False]
+        self.population_herb = population_herb
+
+        population_carn = [carn for carn in self.population_carn if carn.has_migrated is False]
+        self.population_carn = population_carn
 
     def cell_aging(self):
         """
@@ -154,10 +176,15 @@ class OneGrid:
         """
         for animal in self.population_herb:
             animal.grow_one_year()
+            animal.has_migrated = False
+
+        for animal in self.population_carn:
+            animal.grow_one_year()
+            animal.has_migrated = False
 
     def cell_weight_lost(self):
         """
-        Every year, the weight of the animal decreases.
+        Calculates the weight lost by all animals in cell
         """
         if self.population_herb is not None:
             for herb in self.population_herb:
@@ -181,16 +208,45 @@ class OneGrid:
         population_carn = [carn for carn in self.population_carn if carn.is_dead is False]
         self.population_carn = population_carn
 
+    def cell_age_weight_and_fitness(self):
+        """
+        adds the age weight and fitness for each of the animals into dictionary with list as value
+        """
+        herb_age_weight_fitness = {
+            'age': [],
+            'weight': [],
+            'fitness': []
+        }
+
+        carn_age_weight_fitness = {
+            'age': [],
+            'weight': [],
+            'fitness': []
+
+        }
+
+        for herb in self.population_herb:
+            herb_age_weight_fitness['age'].append(herb.age)
+            herb_age_weight_fitness['weight'].append(herb.weight)
+            herb_age_weight_fitness['fitness'].append(herb.fitness)
+
+        for carn in self.population_carn:
+            carn_age_weight_fitness['age'].append(carn.age)
+            carn_age_weight_fitness['weight'].append(carn.weight)
+            carn_age_weight_fitness['fitness'].append(carn.fitness)
+
+        return herb_age_weight_fitness, carn_age_weight_fitness
+
 
 class Lowland(OneGrid):
     params = {
         'f_max': 800
     }
 
-    def __init__(self,cord):
+    def __init__(self, cord=None):
         super().__init__(cord)
         self.fodder = 0
-        self._livable = True
+        self.livable = True
 
     def __repr__(self):
         return f'Lowland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
@@ -201,12 +257,12 @@ class Highland(OneGrid):
         'f_max': 300
     }
 
-    def __init__(self,cord):
+    def __init__(self, cord=None):
         super().__init__(cord)
         self.fodder = 0
-        self._livable = True
+        self.livable = True
 
-    def __repr__(self,cord):
+    def __repr__(self):
         return f'Highland,Food:{self.fodder},Total animals:{self.population_sum_carn + self.population_sum_herb}'
 
 
@@ -214,10 +270,11 @@ class Dessert(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self,cord):
+
+    def __init__(self, cord=None):
         super().__init__(cord)
-        self._fodder = 0
-        self._livable = True
+        self.fodder = 0
+        self.livable = True
 
     def __repr__(self):
         return f'Dessert,Food:{self.fodder},Total animals:{self.population_sum_herb + self.population_sum_carn}'
@@ -227,12 +284,14 @@ class Water(OneGrid):
     params = {
         'f_max': 0
     }
-    def __init__(self,cord):
+
+    def __init__(self, cord=None):
         super().__init__(cord)
-        self._fodder = 0
-        self._livable = False
+        self.fodder = 0
+        self.livable = False
 
     def __repr__(self):
-        return f'Water,Food:{self._fodder},Uninhabitable'
+        return f'Water,Food:{self.fodder},Uninhabitable'
 
-
+    def cell_add_fodder(self):
+        pas

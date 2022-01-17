@@ -18,12 +18,18 @@ class Animal:
         initiates instance of animal
 
         :param age: the age of the animal
+        :type age: int
         :param weight: the weight of the animal
+        :type weight: float
         """
-        if age < 0:
+        if age is None:
+            age = 0
+        elif age < 0:
             raise ValueError('Age has to be a positive integr')
         self.age = age
-        if weight < 0:
+        if weight is None:
+            weight = 0
+        elif weight < 0:
             raise ValueError('Weight has to be positive interg or zero')
         self.weight = weight
         self.fitness = None
@@ -34,11 +40,12 @@ class Animal:
         """
         takes an dictionatry of parameters and replaces default params
 
-        :param: params: a dictionary with parameter values
+        :param params: parameters for the animals
+        :type params: dictionary with parameter as key and value as value
         """
         for parameter in params:
             if parameter in cls.params:
-                if parameter < 0:
+                if params[parameter] < 0:
                     raise ValueError(f'{parameter} has to be positive, cant be {params[parameter]}')
                 if parameter == 'eta' and params[parameter] > 1:
                     raise ValueError(f'eta has to be smaller than 1 cant be {params[parameter]}')
@@ -52,6 +59,7 @@ class Animal:
     def calculate_fitness(self):
         """
         Calculates the fitness of the animal by using the fitness formula given in the task
+
         """
 
         if self.weight <= 0:
@@ -70,25 +78,22 @@ class Animal:
     def weight_gained_from_eating(self, fodder):
         """
         Calculates the gain of weight by an animal eating
+
         :param fodder: food accsessable to the animal
+        :type fodder: float
         """
 
         self.weight += fodder * self.params['beta']
 
     def lose_weight(self):
         """
-        Calulates the loss of weight of an animal
-        :return:
+        Calulates the annual weight lost by individual animal
+
         """
 
         self.weight -= self.weight*self.params['eta']
         if self.weight < 0:
             self.weight = 0
-
-
-    def migrate(self):
-        pass
-
 
     def death(self):
         """
@@ -101,18 +106,29 @@ class Animal:
         if self.weight == 0 or p < prob_death:
             self.is_dead = True
 
+    def migrate(self):
+        if not self.has_migrated:
+            self.calculate_fitness()
+            move_prob = self.params['mu'] * self.fitness
+            p = rd.random()
+            if p < move_prob:
+                self.has_migrated = True
+        else:
+            self.has_migrated = False
 
-    def birth(self,N,species='herb'):
+    def birth(self, N, species='herb'):
         """
-        calculates the probabillity for birth of animals and returns a animal
+        calculates the probability for birth of animals and returns a child if
+        the probability strikes by random.random()
 
 
-        :param: N: is the number of animals in the cell
-        :param: species: selects what kind of animal to return, default is Herbivore
+        :param N: is the number of animals in the cell
+        :param N: integer
+        :param species: selects what kind of animal to return, default is Herbivore
+        :type species: string
         """
 
-
-        w_child = rd.gauss(self.params['w_birth'],self.params['sigma_birth'])
+        w_child = rd.gauss(self.params['w_birth'], self.params['sigma_birth'])
         lost_weight = w_child*self.params['xi']
         zero_conditon = self.params['zeta']*(self.params['w_birth']+self.params['sigma_birth'])
         if self.weight < lost_weight:
@@ -123,14 +139,13 @@ class Animal:
             return None
         else:
             p = rd.random()
-            p_birth = min(1,self.params['gamma']*self.fitness*(N-1))
+            p_birth = min(1, self.params['gamma']*self.fitness*(N-1))
             if p < p_birth:
                 self.weight -= lost_weight
                 if species == 'herb':
-                    return Herbivore(0,w_child)
+                    return Herbivore(0, w_child)
                 elif species == 'carn':
-                    return Carnivore(0,w_child)
-
+                    return Carnivore(0, w_child)
 
 
 class Herbivore(Animal):
@@ -156,16 +171,19 @@ class Herbivore(Animal):
         'F': 10
         }
 
-    def __init__(self, age, weight):
+    def __init__(self, age=None, weight=None):
         super().__init__(age, weight)
 
-
     def __repr__(self):
-        return f'Herbivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead})'
-
+        return f'Herbivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead}, ' \
+               f'Has_migrated: {self.has_migrated})'
 
 
 class Carnivore(Animal):
+    """
+    Carnivore subclass
+    the params dictionary contains all the "static" parameters of the species
+    """
     params = {
         'w_birth': 6.0,
         'sigma_birth': 1.0,
@@ -181,18 +199,24 @@ class Carnivore(Animal):
         'xi': 1.1,
         'omega': 0.8,
         'F': 50,
-        'DeltaPhiMax':10
+        'DeltaPhiMax': 10
     }
-    def __init__(self,age,weight):
+
+    def __init__(self, age=None, weight=None):
         super().__init__(age, weight)
 
     def __repr__(self):
-        return f'Carnivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead})'
+        return f'Carnivore, (age:{self.age}, Weight:{self.weight}, Is_dead: {self.is_dead}, ' \
+               f'Has_migrated: {self.has_migrated})'
 
-    def carnivore_kill_prob(self,prey):
+    def carnivore_kill_prob(self, prey):
         """
-        Calulates the probabillity if carnivore kills herbivore
+        Calculates the probability that carnivore kills herbivore
 
+        :param prey: the prey the animal hunts
+        :type prey: Herbivore, object of animal class
+
+        :return: probalilty of carnivore killing herbivore
         """
 
         difference_fitness = self.fitness - prey.fitness
@@ -204,9 +228,3 @@ class Carnivore(Animal):
             prob = 1
 
         return prob
-
-
-if __name__ == '__main__':
-    for _ in range(100):
-        print(rd.random())
-

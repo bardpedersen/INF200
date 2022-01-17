@@ -6,15 +6,14 @@ Template for BioSim class.
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
 
-from biosim.animals import Herbivore,Carnivore
-from biosim.landscapes import Lowland, Water, Highland, Dessert
+from biosim.animals import Herbivore, Carnivore
+from biosim.landscapes import Lowland, Highland
 from biosim.island_map import Map
 from biosim.visualization import Visualization
 
-
-import matplotlib.pyplot as plt
-import numpy as np
 import random as rd
+import textwrap
+
 
 class BioSim:
     def __init__(self, island_map, ini_pop, seed,
@@ -56,22 +55,24 @@ class BioSim:
         img_dir and img_base must either be both None or both strings.
         """
         rd.seed(seed)
-        self._islandmap = island_map
-        self.map = Map(island_map)
+        self.island_map = textwrap.dedent(island_map)
         self.ini_pop = ini_pop
         self.vis_years = vis_years
-        self._animal_species = {'Herbivore': Herbivore,'Carnivore':Carnivore}
-        self._landscape_types_changeable = {'L': Lowland,'H':Highland}
+        self.ymax_animals = ymax_animals
+        self.cmax_animals = cmax_animals
+        self.hist_specs = hist_specs
+        self.img_dir = img_dir
+        self.img_base = img_base
+        self.img_fmt = img_fmt
+        self.img_years = img_years
+        self.log_file = log_file
         self._year = 0
         self._final_year = None
-        self.visual = Visualization()
-        self.img_years = img_years
-
-
-
-
-
-
+        self._animal_species = {'Herbivore': Herbivore, 'Carnivore': Carnivore}
+        self._landscape_types_changeable = {'L': Lowland, 'H': Highland}
+        self.map = Map(self.island_map)
+        self.map.creating_map()
+        self.visual = Visualization(self.img_dir, self.img_base, self.img_fmt)
 
     def set_animal_parameters(self, species, params):
         """
@@ -95,41 +96,34 @@ class BioSim:
         :param params: Dict with valid parameter specification for landscape
         """
         if landscape in self._landscape_types_changeable:
-            landscape_class = self._animal_species[landscape]
+            landscape_class = self._landscape_types_changeable[landscape]
             land_type = landscape_class()
-            landscape_class.cell_set_params()
+            land_type.cell_set_params(params)
 
-    def simulate(self, num_years):
+    def simulate(self, num_years, vis_steps=1, img_steps=None):
         """
         Run simulation while visualizing the result.
-
+        :param img_steps: number of steps to save image
         :param num_years: number of years to simulate
+        :param vis_steps:
         """
 
-        self.map.creating_map()
         self.add_population(self.ini_pop)
-        _final_year = self._year + self.img_years
+        if img_steps is None:
+            img_steps = vis_steps
+        if img_steps % vis_steps != 0:
+            raise ValueError('img_steps must be multiple of vis_steps')
+        self._final_year = self._year + num_years
+        self.visual.setup(self.map, self._final_year, self.ymax_animals)
 
+        while self._year < self._final_year:
+            self.map.island_update_one_year()
+            if self._year % vis_steps == 0:
+                self.visual.update(self._year,self.map,self.cmax_animals,self.hist_specs,self.ymax_animals)
+            if self.log_file is not None:
+                self.save_to_file()
 
-        while self._year < num_years:
-            self.map.island_feeding()
-            self.map.island_procreation()
-            self.map.island_migration()
-            self.map.island_aging()
-            self.map.island_weight_loss()
-            self.map.island_death()
-            self.map.island_total_herbivores_and_carnivores()
-            self.visual.update_year(self._year)
-            self.visual.update_animals(self.map)
             self._year += 1
-
-
-        #self.visual.color_map(self.map)
-        #self.visual.herb_map(self.map)
-        #self.visual.carn_map(self.map)
-        self.visual.one_graph()
-
-
 
     def add_population(self, population):
         """
@@ -144,29 +138,48 @@ class BioSim:
         """Last year simulated."""
         return self._year
 
-
-
     @property
     def num_animals_per_species(self):
         """
         Number of animals per species in island, as dictionary.
         """
-
-        self.map.island_total_herbivores_and_carnivores()
-
-
-        return self.map.island_total_herbivores,self.map.island_total_carnivores
+        self.map.island_total_sum_of_animals()
+        herb = self.map.island_total_herbivores
+        if herb is None:
+            herb = 0
+        carn = self.map.island_total_carnivores
+        if carn is None:
+            carn = 0
+        return {'Herbivore': herb, 'Carnivore': carn}
 
     @property
     def num_animals(self):
         """
         Total number of animals on island.
         """
-        animals = 0
-        self.map.island_total_sum_of_animals()
 
-        return self.map.island_total_sum_of_animals
+        pop = self.map.island_total_sum_of_animals()
+        if pop is None:
+            pop = 0
+
+        return pop
+
+    def setup_logfile(self):
+        """
+        Writes the first line to logfile
+        """
+        logfile = open(self.log_file, "w")
+        logfile.write("Year,Total_Herbivores,Total_Carnivores\n")
+        logfile.close()
+
+    def save_to_file(self):
+        """
+        Writes year, total herbivores and total carnivores to file
+        """
+        logfile = open(self.log_file, "a")
+        logfile.write(f"{self._year},{self.map.island_total_herbivores},{self.map.island_total_carnivores}\n")
+        logfile.close()
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
-        pass
+        self.visual.make_movie()

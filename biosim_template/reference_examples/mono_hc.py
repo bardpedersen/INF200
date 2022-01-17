@@ -32,3 +32,4 @@ for seed in range(100, 103):
     sim.simulate(50)
     sim.add_population(ini_carns)
     sim.simulate(251)
+    sim.visual.show_plot()
