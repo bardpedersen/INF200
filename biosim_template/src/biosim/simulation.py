@@ -20,6 +20,7 @@ import textwrap
 
 
 class BioSim:
+    """class for simulation a island"""
     def __init__(self, island_map, ini_pop, seed,
                  vis_years=1, ymax_animals=None, cmax_animals=None, hist_specs=None,
                  img_dir=None, img_base=None, img_fmt='png', img_years=None,

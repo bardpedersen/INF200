@@ -14,6 +14,7 @@ random.seed(101)
 
 
 class Map:
+    """class describing the map"""
     def __init__(self, island_map):
         """
         Creates instance of map class
@@ -115,6 +116,9 @@ class Map:
                 self.map_dict[key].cell_aging()
 
     def island_migration(self):
+        """
+        combines all the steps in the migration process
+        """
         for loc in self.map_dict.keys():
             self.map_dict[loc].cell_migration()
             self.island_migration_carn(loc)
@@ -125,6 +129,10 @@ class Map:
             self.map_dict[loc].cell_sum_of_animals()
 
     def island_migration_herb(self, loc):
+        """
+        decides witch cell the herbivores migrates to
+        :param loc: location of the animal before it moves
+        """
         for animal in self.map_dict[loc].population_herb:
             if animal.has_migrated:
                 rand = random.random()
@@ -138,6 +146,10 @@ class Map:
                     self.migration_move_down_herb(loc, animal)
 
     def island_migration_carn(self, loc):
+        """
+        decides witch cell the  migrates carnivore to
+        :param loc: location of the animal before it moves
+        """
         for animal in self.map_dict[loc].population_carn:
             if animal.has_migrated:
                 rand = random.random()
@@ -151,6 +163,12 @@ class Map:
                     self.migration_move_down_carn(loc, animal)
 
     def migration_move_right_herb(self, loc, animal):
+        """
+        moves a single herbivore right
+
+        :param loc: current location of the animal
+        :param animal: the animal to be moved
+        """
         new_loc = (loc[0], loc[1] + 1)
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_herb.append(animal)
@@ -158,6 +176,12 @@ class Map:
             animal.has_migrated = False
 
     def migration_move_left_herb(self, loc, animal):
+        """
+        moves a single herbivore left
+
+        :param loc: current location of the animal
+        :param animal: the animal to be moved
+        """
         new_loc = (loc[0], loc[1] - 1)
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_herb.append(animal)
@@ -165,6 +189,12 @@ class Map:
             animal.has_migrated = False
 
     def migration_move_up_herb(self, loc, animal):
+        """
+        moves a single animal up
+
+        :param loc: current location of the animal
+        :param animal: the herbivore to be moved
+        """
         new_loc = (loc[0]-1, loc[1])
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_herb.append(animal)
@@ -172,6 +202,12 @@ class Map:
             animal.has_migrated = False
 
     def migration_move_down_herb(self, loc, animal):
+        """
+        moves a single hebivore down
+
+        :param loc: current location of the animal
+        :param animal: the animal to be moved
+        """
         new_loc = (loc[0]+1, loc[1])
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_herb.append(animal)
@@ -179,6 +215,12 @@ class Map:
             animal.has_migrated = False
 
     def migration_move_right_carn(self, loc, animal):
+        """
+        moves a single carnivore right
+
+        :param loc: current location of the animal
+        :param animal: the animal to be moved
+        """
         new_loc = (loc[0], loc[1] + 1)
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_carn.append(animal)
@@ -186,6 +228,12 @@ class Map:
             animal.has_migrated = False
 
     def migration_move_left_carn(self, loc, animal):
+        """
+        moves a single carnivore left
+
+        :param loc: current location of the animal
+        :param animal: the animal to be moved
+        """
         new_loc = (loc[0], loc[1] - 1)
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_carn.append(animal)
@@ -193,6 +241,12 @@ class Map:
             animal.has_migrated = False
 
     def migration_move_up_carn(self, loc, animal):
+        """
+        moves a single carnivore up
+
+        :param loc: current location of the animal
+        :param animal: the animal to be moved
+        """
         new_loc = (loc[0]-1, loc[1])
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_carn.append(animal)
@@ -200,6 +254,12 @@ class Map:
             animal.has_migrated = False
 
     def migration_move_down_carn(self, loc, animal):
+        """
+        moves a single carnivore down
+
+        :param loc: current location of the animal
+        :param animal: the animal to be moved
+        """
         new_loc = (loc[0]+1, loc[1])
         if self.map_dict[new_loc].livable:
             self.map_dict[new_loc].population_carn.append(animal)
@@ -290,46 +350,3 @@ class Map:
         self.island_death()
         self.island_total_herbivores_and_carnivores()
         self.island_total_sum_of_animals()
-
-
-if __name__ == '__main__':
-    geogr = """\
-               WWWW
-               WLLW
-               WLLW
-               WWWW"""
-    geogr = textwrap.dedent(geogr)
-
-    ini_herbs = [{'loc': (5, 5),
-                  'pop': [{'species': 'Herbivore',
-                           'age': 5,
-                           'weight': 20}
-                          for _ in range(1000)]}]
-    ini_carns = [{'loc': (2, 2),
-                  'pop': [{'species': 'Carnivore',
-                           'age': 5,
-                           'weight': 20}
-                          for _ in range(20)]}]
-    island = Map(geogr)
-    island.creating_map()
-    island.island_add_population(ini_herbs)
-    for i in range(2):
-        island.island_migration()
-        island.island_aging()
-        nested_list = list(map(list, island.string_map.splitlines()))
-        x = 1
-        for j in range(len(nested_list)):
-            y = 1
-            for k in range(len(nested_list[0])):
-                if island.map_dict[(x, y)].population_sum_herb is None:
-                    nested_list[j][k] = 0
-                else:
-                    nested_list[j][k] = island.map_dict[(x, y)].population_sum_herb
-                y += 1
-            x += 1
-        matrix = np.array(nested_list)
-        plt.imshow(matrix)
-        plt.colorbar()
-        plt.pause(1e-6)
-        plt.show()
-    island.island_total_herbivores_and_carnivores()

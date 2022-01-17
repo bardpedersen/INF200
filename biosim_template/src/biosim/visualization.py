@@ -1,3 +1,6 @@
+"""
+visual support for biosim class
+"""
 import matplotlib.pyplot as plt
 import numpy as np
 import subprocess

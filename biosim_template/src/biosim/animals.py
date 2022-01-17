@@ -5,14 +5,8 @@ Animals class for biosim
 import random as rd
 import math as m
 
-"""
-Class describing Animals 
-
-:param 
-"""
-
-
 class Animal:
+    """Class for animals living on island"""
     def __init__(self, age, weight):
         """
         initiates instance of animal
