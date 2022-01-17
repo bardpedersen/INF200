@@ -5,16 +5,12 @@ Template for BioSim class.
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
-import textwrap
 
 from biosim.animals import Herbivore, Carnivore
-from biosim.landscapes import Lowland, Water, Highland, Dessert
+from biosim.landscapes import Lowland, Highland
 from biosim.island_map import Map
 from biosim.visualization import Visualization
 
-
-import matplotlib.pyplot as plt
-import numpy as np
 import random as rd
 import textwrap
 
@@ -107,7 +103,7 @@ class BioSim:
     def simulate(self, num_years, vis_steps=1, img_steps=None):
         """
         Run simulation while visualizing the result.
-
+        :param img_steps: number of steps to save image
         :param num_years: number of years to simulate
         :param vis_steps:
         """
@@ -118,12 +114,12 @@ class BioSim:
         if img_steps % vis_steps != 0:
             raise ValueError('img_steps must be multiple of vis_steps')
         self._final_year = self._year + num_years
-        self.visual.setup(self.map,self._final_year,self.ymax_animals)
+        self.visual.setup(self.map, self._final_year, self.ymax_animals)
 
         while self._year < self._final_year:
             self.map.island_update_one_year()
             if self._year % vis_steps == 0:
-                self.visual.update(self._year,self.map,self.cmax_animals,self.hist_specs)
+                self.visual.update(self._year, self.map, self.cmax_animals, self.hist_specs)
             if self.log_file is not None:
                 self.save_to_file()
 
@@ -154,7 +150,7 @@ class BioSim:
         carn = self.map.island_total_carnivores
         if carn is None:
             carn = 0
-        return {'Herbivore':herb,'Carnivore':carn}
+        return {'Herbivore': herb, 'Carnivore': carn}
 
     @property
     def num_animals(self):
@@ -172,7 +168,7 @@ class BioSim:
         """
         Writes the first line to logfile
         """
-        logfile = open(self.log_file,"w")
+        logfile = open(self.log_file, "w")
         logfile.write("Year,Total_Herbivores,Total_Carnivores\n")
         logfile.close()
 

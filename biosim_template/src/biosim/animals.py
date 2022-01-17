@@ -228,8 +228,3 @@ class Carnivore(Animal):
             prob = 1
 
         return prob
-
-
-if __name__ == '__main__':
-    for _ in range(100):
-        print(rd.random())

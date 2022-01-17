@@ -5,12 +5,7 @@ Migration
 location
 """
 from biosim.landscapes import Lowland, Water, Highland, Dessert
-import textwrap
 import random
-import matplotlib.pyplot as plt
-import numpy as np
-
-random.seed(101)
 
 
 class Map:
@@ -290,46 +285,3 @@ class Map:
         self.island_death()
         self.island_total_herbivores_and_carnivores()
         self.island_total_sum_of_animals()
-
-
-if __name__ == '__main__':
-    geogr = """\
-               WWWW
-               WLLW
-               WLLW
-               WWWW"""
-    geogr = textwrap.dedent(geogr)
-
-    ini_herbs = [{'loc': (5, 5),
-                  'pop': [{'species': 'Herbivore',
-                           'age': 5,
-                           'weight': 20}
-                          for _ in range(1000)]}]
-    ini_carns = [{'loc': (2, 2),
-                  'pop': [{'species': 'Carnivore',
-                           'age': 5,
-                           'weight': 20}
-                          for _ in range(20)]}]
-    island = Map(geogr)
-    island.creating_map()
-    island.island_add_population(ini_herbs)
-    for i in range(2):
-        island.island_migration()
-        island.island_aging()
-        nested_list = list(map(list, island.string_map.splitlines()))
-        x = 1
-        for j in range(len(nested_list)):
-            y = 1
-            for k in range(len(nested_list[0])):
-                if island.map_dict[(x, y)].population_sum_herb is None:
-                    nested_list[j][k] = 0
-                else:
-                    nested_list[j][k] = island.map_dict[(x, y)].population_sum_herb
-                y += 1
-            x += 1
-        matrix = np.array(nested_list)
-        plt.imshow(matrix)
-        plt.colorbar()
-        plt.pause(1e-6)
-        plt.show()
-    island.island_total_herbivores_and_carnivores()

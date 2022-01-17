@@ -295,25 +295,3 @@ class Water(OneGrid):
 
     def cell_add_fodder(self):
         pass
-
-
-if __name__ == '__main__':
-
-    low = Lowland(1, 2)
-
-    herb = [{'species': 'Carnivore', 'age': 5, 'weight': 26} for _ in range(10)]
-    carn = [{'species': 'Herbivore', 'age': 5, 'weight': 26} for _ in range(10)]
-    low.cell_add_population(herb)
-    low.cell_add_population(carn)
-    low.cell_sum_of_animals()
-    a = low.population_herb
-    b = low.population_carn
-
-    low.cell_procreation()
-    low.cell_sum_of_animals()
-    c = low.population_herb
-    d = repr(low.population_carn[2])
-    e = d.split(',')[2][7:13]
-    low.cell_aging()
-    j = repr(low.population_carn[2])
-    m = d.split(',')[1][6:7]
