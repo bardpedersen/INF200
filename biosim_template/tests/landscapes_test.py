@@ -71,40 +71,66 @@ class TestAnimalLandscapes:
         landscapes_with_animals.cell_add_population(self.carn_list)
         landscapes_with_animals.cell_sum_of_animals()
 
-    def test_add_population(self, class_with_animals):
+    def test_add_population_herbivores(self, class_with_animals):
         """
-        Test that adding animals works in all cells with animals.
+        Test that adding animals works in all cells with herbivores.
         :param class_with_animals: All the landscapes that are livable
         """
         landscapes_with_animals = class_with_animals()
 
-        self.add_animals(landscapes_with_animals)
         start_population_herb = landscapes_with_animals.population_sum_herb
-        start_population_carn = landscapes_with_animals.population_sum_carn
-
         self.add_animals(landscapes_with_animals)
         end_population_herb = landscapes_with_animals.population_sum_herb
-        end_population_carn = landscapes_with_animals.population_sum_carn
+        assert start_population_herb is None
+        assert end_population_herb == self.animals_nr_herb
 
-        assert start_population_herb == self.animals_nr_herb
-        assert start_population_carn == self.animals_nr_carn
-        assert end_population_herb == self.animals_nr_herb * 2
-        assert end_population_carn == self.animals_nr_carn * 2
-
-    def test_aging(self, class_with_animals):
+    def test_add_population_carnivores(self, class_with_animals):
         """
-        Test that animals age, once per called upon
+        Test that adding animals works in all cells with carnivores.
+        :param class_with_animals: All the landscapes that are livable
+        """
+        landscapes_with_animals = class_with_animals()
+
+        start_population_carn = landscapes_with_animals.population_sum_carn
+        self.add_animals(landscapes_with_animals)
+        end_population_carn = landscapes_with_animals.population_sum_carn
+        assert start_population_carn is None
+        assert end_population_carn == self.animals_nr_carn
+
+    def test_aging_herbivore(self, class_with_animals):
+        """
+        Test that herbivore age, once per called upon
         :param class_with_animals: All the landscapes that are livable
         """
         landscapes_with_animals = class_with_animals()
         self.add_animals(landscapes_with_animals)
 
         total_age_before_herb = 0
-        total_age_before_carn = 0
         for animal in landscapes_with_animals.population_herb:
             total_age_before_herb += animal.age
         average_age_before_herb = total_age_before_herb / self.animals_nr_herb
 
+        _nr_years = 2
+        for _ in range(_nr_years):
+            landscapes_with_animals.cell_aging()
+
+        total_age_after_herb = 0
+        for animal in landscapes_with_animals.population_herb:
+            total_age_after_herb += animal.age
+        average_age_after_herb = total_age_after_herb / self.animals_nr_herb
+
+        assert average_age_before_herb == self.animals_age_herb
+        assert average_age_after_herb == self.animals_age_herb + _nr_years
+
+    def test_aging_carnivore(self, class_with_animals):
+        """
+        Test that carnivore age, once per called upon
+        :param class_with_animals: All the landscapes that are livable
+        """
+        landscapes_with_animals = class_with_animals()
+        self.add_animals(landscapes_with_animals)
+
+        total_age_before_carn = 0
         for animal in landscapes_with_animals.population_carn:
             total_age_before_carn += animal.age
         average_age_before_carn = total_age_before_carn / self.animals_nr_carn
@@ -113,24 +139,17 @@ class TestAnimalLandscapes:
         for _ in range(_nr_years):
             landscapes_with_animals.cell_aging()
 
-        total_age_after_herb = 0
         total_age_after_carn = 0
-        for animal in landscapes_with_animals.population_herb:
-            total_age_after_herb += animal.age
-        average_age_after_herb = total_age_after_herb / self.animals_nr_herb
-
         for animal in landscapes_with_animals.population_carn:
             total_age_after_carn += animal.age
         average_age_after_carn = total_age_after_carn / self.animals_nr_carn
 
-        assert average_age_before_herb == self.animals_age_herb
         assert average_age_before_carn == self.animals_age_carn
-        assert average_age_after_herb == self.animals_age_herb + _nr_years
         assert average_age_after_carn == self.animals_age_carn + _nr_years
 
-    def test_death(self, class_with_animals):
+    def test_death_herbivore(self, class_with_animals):
         """
-        Test that when animals die, they get removed.
+        Test that when herbivore die, they get removed.
         Animals die with certain when weight = 0
         :param class_with_animals: All the landscapes that are livable
         """
@@ -138,20 +157,31 @@ class TestAnimalLandscapes:
         self.add_animals(landscapes_with_animals, animals_weight_herb=0, animals_weight_carn=0)
 
         start_population_herb = landscapes_with_animals.population_sum_herb
-        start_population_carn = landscapes_with_animals.population_sum_carn
-
         landscapes_with_animals.cell_death()
         landscapes_with_animals.cell_sum_of_animals()
-
         end_population_herb = landscapes_with_animals.population_sum_herb
-        end_population_carn = landscapes_with_animals.population_sum_carn
 
         assert start_population_herb == self.animals_nr_herb
-        assert start_population_carn == self.animals_nr_carn
         assert end_population_herb == 0
+
+    def test_death_carnivore(self, class_with_animals):
+        """
+        Test that when carnivore die, they get removed.
+        Animals die with certain when weight = 0
+        :param class_with_animals: All the landscapes that are livable
+        """
+        landscapes_with_animals = class_with_animals()
+        self.add_animals(landscapes_with_animals, animals_weight_herb=0, animals_weight_carn=0)
+
+        start_population_carn = landscapes_with_animals.population_sum_carn
+        landscapes_with_animals.cell_death()
+        landscapes_with_animals.cell_sum_of_animals()
+        end_population_carn = landscapes_with_animals.population_sum_carn
+
+        assert start_population_carn == self.animals_nr_carn
         assert end_population_carn == 0
 
-    def test_procreation_max(self, class_with_animals, mocker):
+    def test_procreation_max_herbivore(self, class_with_animals, mocker):
         """
         Test that if there are more than one animal, the number of animals will increase.
         Here all animals will get a child except the last one "the male".
@@ -165,20 +195,35 @@ class TestAnimalLandscapes:
         # Setts a high weight, because if it is to low the mother cant give birth
 
         start_population_herb = landscapes_with_animals.population_sum_herb
-        start_population_carn = landscapes_with_animals.population_sum_carn
-
         landscapes_with_animals.cell_procreation()
         landscapes_with_animals.cell_sum_of_animals()
-
         end_population_herb = landscapes_with_animals.population_sum_herb
-        end_population_carn = landscapes_with_animals.population_sum_carn
 
         assert start_population_herb == self.animals_nr_herb
-        assert start_population_carn == self.animals_nr_carn
-        assert end_population_herb == self.animals_nr_herb*2 - 1
-        assert end_population_carn == self.animals_nr_carn*2 - 1
+        assert end_population_herb == self.animals_nr_herb*2 - 1  # There has to be one "male" that can't give birth
 
-    def test_procreation_min(self, class_with_animals, mocker):
+    def test_procreation_max_carnivore(self, class_with_animals, mocker):
+        """
+        Test that if there are more than one animal, the number of animals will increase.
+        Here all animals will get a child except the last one "the male".
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
+        :return:
+        """
+        mocker.patch('random.random', return_value=0)  # Sett the prob, so its guaranteed they get children
+        landscapes_with_animals = class_with_animals()
+        self.add_animals(landscapes_with_animals, animals_weight_herb=50, animals_weight_carn=50)
+        # Setts a high weight, because if it is to low the mother cant give birth
+
+        start_population_carn = landscapes_with_animals.population_sum_carn
+        landscapes_with_animals.cell_procreation()
+        landscapes_with_animals.cell_sum_of_animals()
+        end_population_carn = landscapes_with_animals.population_sum_carn
+
+        assert start_population_carn == self.animals_nr_carn
+        assert end_population_carn == self.animals_nr_carn*2 - 1  # There has to be one "male" that can't give birth
+
+    def test_procreation_min_herbivore(self, class_with_animals, mocker):
         """
         Test that if the prob for getting children is 0. That no animals are added
         :param class_with_animals: All the landscapes that are livable
@@ -191,17 +236,31 @@ class TestAnimalLandscapes:
         # Setts a high weight, because if it is to low the mother cant give birth
 
         start_population_herb = landscapes_with_animals.population_sum_herb
-        start_population_carn = landscapes_with_animals.population_sum_carn
-
         landscapes_with_animals.cell_procreation()
         landscapes_with_animals.cell_sum_of_animals()
-
         end_population_herb = landscapes_with_animals.population_sum_herb
-        end_population_carn = landscapes_with_animals.population_sum_carn
 
         assert start_population_herb == self.animals_nr_herb
-        assert start_population_carn == self.animals_nr_herb
-        assert end_population_herb == self.animals_nr_carn
+        assert end_population_herb == self.animals_nr_herb
+
+    def test_procreation_min_carnivore(self, class_with_animals, mocker):
+        """
+        Test that if the prob for getting children is 0. That no animals are added
+        :param class_with_animals: All the landscapes that are livable
+        :param mocker: Lets us control random value
+        :return:
+        """
+        mocker.patch('random.random', return_value=1)  # Sett the prob, so its guaranteed they dont get children
+        landscapes_with_animals = class_with_animals()
+        self.add_animals(landscapes_with_animals, animals_weight_herb=50, animals_weight_carn=50)
+        # Setts a high weight, because if it is to low the mother cant give birth
+
+        start_population_carn = landscapes_with_animals.population_sum_carn
+        landscapes_with_animals.cell_procreation()
+        landscapes_with_animals.cell_sum_of_animals()
+        end_population_carn = landscapes_with_animals.population_sum_carn
+
+        assert start_population_carn == self.animals_nr_carn
         assert end_population_carn == self.animals_nr_carn
 
     def test_carnivore_kills_herb_prob_max(self, class_with_animals, mocker):
@@ -213,14 +272,12 @@ class TestAnimalLandscapes:
         """
         mocker.patch('random.random', return_value=0)
         landscapes_with_animals = class_with_animals()
-
-        # Sett high age and low weight, so the fitness on herb is low.
         self.add_animals(landscapes_with_animals, animals_age_herb=40, animals_weight_herb=1, animals_weight_carn=50)
-        start_population_herb = landscapes_with_animals.population_sum_herb
+        # Sett high age and low weight, so the fitness on herb is low.
 
+        start_population_herb = landscapes_with_animals.population_sum_herb
         landscapes_with_animals.cell_feeding_carnivore()
         landscapes_with_animals.cell_sum_of_animals()
-
         end_population_herb = landscapes_with_animals.population_sum_herb
 
         assert start_population_herb == self.animals_nr_herb
@@ -235,14 +292,12 @@ class TestAnimalLandscapes:
         """
         mocker.patch('random.random', return_value=1)
         landscapes_with_animals = class_with_animals()
-
-        # Sett high age and low weight, so the fitness on herb is low.
         self.add_animals(landscapes_with_animals, animals_age_herb=40, animals_weight_herb=1, animals_weight_carn=50)
-        start_population_herb = landscapes_with_animals.population_sum_herb
+        # Sett high age and low weight, so the fitness on herb is low.
 
+        start_population_herb = landscapes_with_animals.population_sum_herb
         landscapes_with_animals.cell_feeding_carnivore()
         landscapes_with_animals.cell_sum_of_animals()
-
         end_population_herb = landscapes_with_animals.population_sum_herb
 
         assert start_population_herb == self.animals_nr_herb
@@ -314,8 +369,7 @@ class TestAnimalLandscapes:
 
         assert animals_migrating == self.animals_nr_herb + self.animals_nr_carn
         assert animals_not_migrating == (self.animals_nr_herb + self.animals_nr_carn) - animals_migrating
-        assert landscapes_with_animals.population_sum_herb == 0
-        assert landscapes_with_animals.population_sum_carn == 0
+        assert landscapes_with_animals.population_sum_herb + landscapes_with_animals.population_sum_carn == 0
 
     def test_migration_prob_zero(self, class_with_animals, mocker):
         """
@@ -503,6 +557,7 @@ class TestFodderLandscapes:
 
         Lowland.params['f_max'] = 800
         Highland.params['f_max'] = 300
+
 
 @pytest.mark.parametrize('class_dessert', [Dessert])
 class TestDessert:
