@@ -5,11 +5,7 @@ Migration
 location
 """
 from biosim.landscapes import Lowland, Water, Highland, Dessert
-import textwrap
 import random
-import matplotlib.pyplot as plt
-import numpy as np
-
 random.seed(101)
 
 
@@ -131,6 +127,7 @@ class Map:
     def island_migration_herb(self, loc):
         """
         decides witch cell the herbivores migrates to
+
         :param loc: location of the animal before it moves
         """
         for animal in self.map_dict[loc].population_herb:
@@ -148,6 +145,7 @@ class Map:
     def island_migration_carn(self, loc):
         """
         decides witch cell the  migrates carnivore to
+
         :param loc: location of the animal before it moves
         """
         for animal in self.map_dict[loc].population_carn:

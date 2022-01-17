@@ -5,22 +5,21 @@ Template for BioSim class.
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2021 Hans Ekkehard Plesser / NMBU
-import textwrap
 
 from biosim.animals import Herbivore, Carnivore
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 from biosim.island_map import Map
 from biosim.visualization import Visualization
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 import random as rd
-import textwrap
+import textwrap3
 
 
 class BioSim:
-    """class for simulation a island"""
+    """
+    class for simulation an island
+    """
     def __init__(self, island_map, ini_pop, seed,
                  vis_years=1, ymax_animals=None, cmax_animals=None, hist_specs=None,
                  img_dir=None, img_base=None, img_fmt='png', img_years=None,
@@ -60,7 +59,7 @@ class BioSim:
         img_dir and img_base must either be both None or both strings.
         """
         rd.seed(seed)
-        self.island_map = textwrap.dedent(island_map)
+        self.island_map = textwrap3.dedent(island_map)
         self.ini_pop = ini_pop
         self.vis_years = vis_years
         self.ymax_animals = ymax_animals
@@ -110,7 +109,8 @@ class BioSim:
         Run simulation while visualizing the result.
 
         :param num_years: number of years to simulate
-        :param vis_steps:
+        :param vis_steps: steps for visualisation
+        :
         """
 
         self.add_population(self.ini_pop)

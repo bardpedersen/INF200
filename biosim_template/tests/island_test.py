@@ -1,6 +1,7 @@
 from biosim.island_map import Map
 import pytest
-import textwrap
+import textwrap3
+
 
 
 class TestIslandMap:
@@ -50,7 +51,7 @@ class TestIslandMap:
         WLHHW
         WDDDW
         WWWWW"""
-        islandmap = textwrap.dedent(islandmap)
+        islandmap = textwrap3.dedent(islandmap)
         self.map = Map(islandmap)
 
     @pytest.fixture(autouse=True)
@@ -80,7 +81,7 @@ class TestIslandMap:
         islandmap = """\
                 WL
                 WW"""
-        islandmap = textwrap.dedent(islandmap)
+        islandmap = textwrap3.dedent(islandmap)
         map_test = Map(islandmap)
         with pytest.raises(Exception):
             map_test.creating_map()
@@ -90,7 +91,7 @@ class TestIslandMap:
                 WWW
                 WKW
                 WWW"""
-        islandmap = textwrap.dedent(islandmap)
+        islandmap = textwrap3.dedent(islandmap)
         map_test = Map(islandmap)
         with pytest.raises(Exception):
             map_test.creating_map()
@@ -99,7 +100,7 @@ class TestIslandMap:
         islandmap = """\
                 W
                 WW"""
-        islandmap = textwrap.dedent(islandmap)
+        islandmap = textwrap3.dedent(islandmap)
         map_test = Map(islandmap)
         with pytest.raises(Exception):
             map_test.creating_map()

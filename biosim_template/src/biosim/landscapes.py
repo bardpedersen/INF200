@@ -17,7 +17,11 @@ class OneGrid:
         self.population_sum_carn = None
 
     def cell_set_params(cls, params):
-        """sets the parameters for landscape class"""
+        """
+        sets the parameters for landscape class
+
+        :param params: dictionary containing f_max value
+        """
         for parameter in params:
             if parameter in cls.params:
                 cls.params[parameter] = params[parameter]
@@ -299,7 +303,3 @@ class Water(OneGrid):
 
     def __repr__(self):
         return f'Water,Food:{self.fodder},Uninhabitable'
-
-    def cell_add_fodder(self):
-        pass
-

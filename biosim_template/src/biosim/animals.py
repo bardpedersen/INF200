@@ -82,7 +82,6 @@ class Animal:
     def lose_weight(self):
         """
         Calulates the annual weight lost by individual animal
-
         """
 
         self.weight -= self.weight*self.params['eta']
