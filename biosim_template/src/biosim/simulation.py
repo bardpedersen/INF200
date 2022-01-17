@@ -119,7 +119,7 @@ class BioSim:
         while self._year < self._final_year:
             self.map.island_update_one_year()
             if self._year % vis_steps == 0:
-                self.visual.update(self._year, self.map, self.cmax_animals, self.hist_specs)
+                self.visual.update(self._year,self.map,self.cmax_animals,self.hist_specs,self.ymax_animals)
             if self.log_file is not None:
                 self.save_to_file()
 
