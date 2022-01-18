@@ -1,13 +1,35 @@
 """
 Landscape class for biosim
+
+This class creates and applies function that
+make up for the behavior for the landscapes.
+So if animals can go there, how much vegetation, etc.
+
+.. note:: All params for landscapes can be found under their class,
+          as well as in the task file.
+
 """
 from biosim.animals import Herbivore, Carnivore
 import random as rd
 
 
 class OneGrid:
-    """class describing individual cells of different landscape types"""
+    """
+    Class describing individual cells of different landscape types.
+    As well as storing animals and their params in the cell
+    """
     def __init__(self, cord):
+        """
+        Initiates instance for one cell
+        :param cord: the coordinates for the cell
+
+        :param fodder: the amount of available fodder
+        :param livavle: checks whether an cell is livable or not
+        :param population_herb: all herbivores in that cell
+        :param population_carn: all carnivores in that cell
+        :param population_sum_herb: number of herbivores in that cell
+        :param population_sum_carn: number of carnivores in that cell
+        """
         self.fodder = 0
         self.cord = cord
         self.livable = True
@@ -18,7 +40,7 @@ class OneGrid:
 
     def cell_set_params(cls, params):
         """
-        sets the parameters for landscape class
+        Takes an dictionary of parameters and replaces default param
 
         :param params: dictionary containing f_max value
         """
@@ -28,7 +50,7 @@ class OneGrid:
 
     def cell_add_population(self, population=None):
         """
-        adds a population to the landscape location, and turns it in to an animal object
+        Adds a population to the landscape location, and turns it in to an animal object
 
         :param population: the population to add to the map
         :type population: is a dictionary containing location, and population for given location
@@ -44,16 +66,15 @@ class OneGrid:
 
     def cell_sum_of_animals(self):
         """
-        calculates the sum of herbivores and carnivores in the cell
+        Calculates the sum of herbivores and carnivores in the cell
         """
         self.population_sum_herb = len(self.population_herb)
         self.population_sum_carn = len(self.population_carn)
 
     def cell_calculate_fitness(self):
         """
-        uses the calculate fitness function from animals
+        Uses the calculate fitness function from animals
         to calculate the fitness of each animal in cell
-        :return:
         """
         for animal in self.population_herb:
             animal.calculate_fitness()
@@ -66,7 +87,7 @@ class OneGrid:
 
     def cell_feeding_herbivore(self):
         """
-        herbivores in a cell eat in descending order of fitness.
+        Herbivores in a cell eat in descending order of fitness.
         the eat a set amount of fodder every year
         """
         self.cell_calculate_fitness()
@@ -83,7 +104,7 @@ class OneGrid:
 
     def cell_feeding_carnivore(self):
         """
-        uses the calculated probability from animals and lets each carnivore kill the herbivores
+        Uses the calculated probability from animals and lets each carnivore kill the herbivores
         if the herbivore is killed it is removed from the population before the next
         carnivore eats
         """
@@ -118,7 +139,7 @@ class OneGrid:
 
     def cell_procreation(self):
         """
-        uses calculation to figure out if an animal receives a child or not.
+        Uses calculation to figure out if an animal receives a child or not.
         there has to be at least two of the same species to get children.
         animals can max get one children each year
         """
@@ -143,7 +164,7 @@ class OneGrid:
 
     def cell_migration(self):
         """
-        check witch animal shall move and witch shall stay
+        Check witch animal shall move and which shall stay
         """
         for herb in self.population_herb:
             herb.migrate()
@@ -153,7 +174,7 @@ class OneGrid:
 
     def cell_migration_remove(self):
         """
-        removes animals from their previous place to
+        Removes animals from their previous place to
         so that animals dont get duplicated
         """
         population_herb = [herb for herb in self.population_herb if herb.has_migrated is False]
@@ -164,7 +185,7 @@ class OneGrid:
 
     def cell_aging(self):
         """
-        at birth, each animal has age a = 0 .
+        At birth, each animal has age a = 0 .
         age increases by one year for each year that passes
         """
         for animal in self.population_herb:
@@ -177,7 +198,7 @@ class OneGrid:
 
     def cell_weight_lost(self):
         """
-        calculates the weight lost by all animals in cell
+        Calculates the weight lost by all animals in cell
         """
         if self.population_herb is not None:
             for herb in self.population_herb:
@@ -189,7 +210,7 @@ class OneGrid:
 
     def cell_death(self):
         """
-        this func kills and removes both carnivores and herbivores in each cell
+        This func kills and removes both carnivores and herbivores in each cell
         """
         for herb in self.population_herb:
             herb.death()
@@ -205,7 +226,7 @@ class OneGrid:
 
     def cell_age_weight_and_fitness(self):
         """
-        adds the age weight and fitness for each of the animals into dictionary with list as value
+        Adds the age weight and fitness for each of the animals into dictionary with list as value
         """
         herb_age_weight_fitness = {
             'age': [],
@@ -234,7 +255,11 @@ class OneGrid:
 
 
 class Lowland(OneGrid):
-    """lowland subclass"""
+    """
+    lowland subclass
+
+    .. note:: params = {'f_max': 800}
+    """
     params = {
         'f_max': 800
     }
@@ -249,7 +274,11 @@ class Lowland(OneGrid):
 
 
 class Highland(OneGrid):
-    """highland subclass"""
+    """
+    highland subclass
+
+    .. note:: params = {'f_max': 300}
+    """
     params = {
         'f_max': 300
     }
@@ -264,7 +293,11 @@ class Highland(OneGrid):
 
 
 class Dessert(OneGrid):
-    """dessert subclass"""
+    """
+    dessert subclass
+
+    .. note:: params = {'f_max': 0}
+    """
     params = {
         'f_max': 0
     }
@@ -279,7 +312,11 @@ class Dessert(OneGrid):
 
 
 class Water(OneGrid):
-    """water subclass"""
+    """
+    water subclass
+
+    .. note:: params = {'f_max': 0}
+    """
     params = {
         'f_max': 0
     }

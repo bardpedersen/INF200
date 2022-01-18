@@ -1,5 +1,13 @@
 """
-Animals class for biosim
+This class creates and applies function that
+make up for the behavior for the animals.
+So whether the animal shall move or not and makes
+sure they ages each year.
+
+.. note:: All params for animals can be found under their class,
+          as well as in the task file.
+          All formulas can also be found in the task
+
 """
 
 import random as rd
@@ -7,10 +15,10 @@ import math as m
 
 
 class Animal:
-    """Class for animals living on island"""
+    """Class for all functions the animals have in common"""
     def __init__(self, age, weight):
         """
-        initiates instance of animal
+        Initiates instance of animal
 
         :param age: the age of the animal
         :type age: int
@@ -33,7 +41,7 @@ class Animal:
 
     def set_params(cls, params):
         """
-        takes an dictionary of parameters and replaces default params
+        Takes an dictionary of parameters and replaces default params
 
         :param params: parameters for the animals
         :type params: dictionary with parameter as key and value as value
@@ -53,7 +61,7 @@ class Animal:
 
     def calculate_fitness(self):
         r"""
-        calculates the fitness of the animal by using the fitness formula given in the task
+        Calculates the fitness of the animal by the given formula
 
         .. math::
             \Phi = \begin{cases}
@@ -71,6 +79,7 @@ class Animal:
         .. math::
             0\leq\Phi\leq1
 
+
         """
         if self.weight <= 0:
             self.fitness = 0
@@ -81,22 +90,28 @@ class Animal:
 
     def grow_one_year(self):
         """
-        makes the animal a year older
+        Makes the animal one year older
         """
         self.age += 1
 
     def weight_gained_from_eating(self, fodder):
-        """
-        calculates the gain of weight by an animal eating
+        r"""
+        Calculates the gain of weight by an animal eating
 
         :param fodder: food accessible to the animal
         :type fodder: float
+
+        .. math::
+                \beta\times F
         """
         self.weight += fodder * self.params['beta']
 
     def lose_weight(self):
-        """
-        calculates the annual weight lost by individual animal
+        r"""
+        Calculates the weight after the annual weight lost
+
+        .. math::
+                \eta\times w
         """
         self.weight -= self.weight*self.params['eta']
         if self.weight < 0:
@@ -104,7 +119,11 @@ class Animal:
 
     def death(self):
         r"""
-        calculates if animal dies using fitness omega.
+        Calculates if animal dies using formula below.
+
+        :return: returns 1 if the animal dies and 0 if it lives
+
+        Formula to calculate if they die or survive
 
         .. math::
                 w(1-\Phi)
@@ -114,7 +133,6 @@ class Animal:
         .. math::
                 w\leq0
 
-        :return: returns 1 if the animal dies and 0 if it lives
         """
         p = rd.random()
         self.calculate_fitness()
@@ -123,8 +141,12 @@ class Animal:
             self.is_dead = True
 
     def migrate(self):
-        """
-        calculates if animal shall move or stay
+        r"""
+        Calculates if animal shall move or stay
+        with this formula
+
+        .. math::
+                \mu\times\Phi
         """
         if not self.has_migrated:
             self.calculate_fitness()
@@ -137,8 +159,15 @@ class Animal:
 
     def birth(self, n, species='herb'):
         r"""
-        calculates the probability for birth of animals and returns a child if
+        Calculates the probability for birth of animals and returns a child if
         the probability strikes by random.random()
+
+        :param n: is the number of animals in the cell
+        :type n: integer
+        :param species: selects what kind of animal to return, default is Herbivore
+        :type species: string
+
+        This is the equation witch calculate the probability:
 
         .. math::
                 min(1,\gamma\times\Phi\times(N-1))
@@ -148,10 +177,11 @@ class Animal:
         .. math::
                 w<\zeta(w_{birth} + \sigma_{birth})
 
-        :param n: is the number of animals in the cell
-        :type n: integer
-        :param species: selects what kind of animal to return, default is Herbivore
-        :type species: string
+        Newborn are born with the weight:
+
+        .. math::
+                w \sim N(w_{birth}, \sigma_{birth})
+
         """
         self.calculate_fitness()
         w_child = rd.gauss(self.params['w_birth'], self.params['sigma_birth'])
@@ -176,8 +206,24 @@ class Animal:
 
 class Herbivore(Animal):
     """
-    class containing animals of species herbivores
-    the params dictionary contains all the "static" parameters of the species
+    Class containing animals of species herbivores
+    The params dictionary contains all the "static" parameters of the species
+
+    .. note:: params = {
+              'w_birth': 8.0,
+              'sigma_birth': 1.5,
+              'beta': 0.9,
+              'eta': 0.05,
+              'a_half': 40.0,
+              'phi_age': 0.6,
+              'w_half': 10.0,
+              'phi_weight': 0.1,
+              'mu': 0.25,
+              'gamma': 0.2,
+              'zeta': 3.5,
+              'xi': 1.2,
+              'omega': 0.4,
+              'F': 10}
     """
 
     params = {
@@ -207,8 +253,25 @@ class Herbivore(Animal):
 
 class Carnivore(Animal):
     """
-    class containing animals of species carnivore
-    the params dictionary contains all the "static" parameters of the species
+    Class containing animals of species carnivore
+    The params dictionary contains all the "static" parameters of the species
+
+    .. note:: params = {
+              'w_birth': 6.0,
+              'sigma_birth': 1.0,
+              'beta': 0.75,
+              'eta': 0.125,
+              'a_half': 40.0,
+              'phi_age': 0.3,
+              'w_half': 4.0,
+              'phi_weight': 0.4,
+              'mu': 0.4,
+              'gamma': 0.8,
+              'zeta': 3.5,
+              'xi': 1.1,
+              'omega': 0.8,
+              'F': 50,
+              'DeltaPhiMax': 10}
     """
     params = {
         'w_birth': 6.0,
@@ -239,16 +302,18 @@ class Carnivore(Animal):
         r"""
         Calculates the probability that carnivore kills herbivore
 
+        :param prey: the prey the animal hunts
+        :type prey: Herbivore, object of animal class
+        :return: probability of carnivore killing herbivore
+
+        Calculate the kill prob with this formula:
+
         .. math::
                 p = \begin{cases}
                     0 & \text{if } \Phi_{carn} \leq \Phi_{herb} \\
                     \frac{\Phi_{carn} - \Phi_{herb}}{\Delta\Phi_{max}} & \text{if } 0<\Phi_{carn} - \Phi_{herb}<\Delta\Phi_{max}\\
                     1 & \text{otherwise}
                     \end{cases}
-
-        :param prey: the prey the animal hunts
-        :type prey: Herbivore, object of animal class
-        :return: probability of carnivore killing herbivore
         """
 
         difference_fitness = self.fitness - prey.fitness

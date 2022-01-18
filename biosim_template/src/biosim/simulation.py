@@ -1,5 +1,51 @@
 """
-Template for BioSim class.
+:mod:`biosim.simulation` provides the user interface to the package.
+
+Each simulation is represented by a :class:`BioSim` instance. for each
+year in the simulation the animals will feed, procreate, migrate, age,
+los weight and some will die.
+
+The number of animals, as well as their age, fitness, weight and where they are
+are plotted and showed in an mp.4 file. This way you can fast-forward or backwards
+to extract the information you need.
+
+Example
+-------
+::
+
+    Import textwrap
+
+    geogr=WWW
+          WLW
+          WWW
+    geogr = textwrap.dedent(geogr)
+
+    start_animals = [{'loc': (2, 2),'pop':
+    [{'species': 'Herbivore','age': 5,'weight': 20}
+    for _ in range(50)]}]
+
+    sim = BioSim(geogr, start_animals,seed=1,
+                 img_dir='results',
+                 img_base=f'mono_ho_{seed:05d}',
+                 img_years=300)
+
+    sim.simulate(301) # The years you want to simulate
+    sim.make_movie()
+
+This code
+
+#. Creates an island with matching geography as the user
+   inserted. This island (geogr) has one cell that is lowland as landscape
+#. Puts the animals where the user specified. With the coordinates (2,2)
+   the animals are put on the small singel cell og island
+#. Sets an seed, so the simulation returns the same result each time
+#. Creates and saves images according to user specification. Her
+   in the file 'results', with the name mono_ho_000001, and one number
+   up for each year. Specifies also that there shall be 300 images.
+#. Run the simulation
+#. Returns a movie that shows animals, their weight, fitness and age per year
+
+
 """
 
 # The material in this file is licensed under the BSD 3-clause license
@@ -41,21 +87,24 @@ class BioSim:
         If ymax_animals is None, the y-axis limit should be adjusted automatically.
         If cmax_animals is None, sensible, fixed default values should be used.
         cmax_animals is a dict mapping species names to numbers, e.g.,
+
         {'Herbivore': 50, 'Carnivore': 20}
 
         hist_specs is a dictionary with one entry per property for which a histogram shall be shown.
         For each property, a dictionary providing the maximum value and the bin width must be
         given, e.g.,
+
         {'weight': {'max': 80, 'delta': 2}, 'fitness': {'max': 1.0, 'delta': 0.05}}
         Permitted properties are 'weight', 'age', 'fitness'.
 
         If img_dir is None, no figures are written to file. Filenames are formed as
 
-            f'{os.path.join(img_dir, img_base}_{img_number:05d}.{img_fmt}'
+        f'{os.path.join(img_dir, img_base}_{img_number:05d}.{img_fmt}'
 
         where img_number are consecutive image numbers starting from 0.
 
         img_dir and img_base must either be both None or both strings.
+
         """
         rd.seed(seed)
         self.island_map = textwrap3.dedent(island_map)
@@ -79,7 +128,7 @@ class BioSim:
 
     def set_animal_parameters(self, species, params):
         """
-        set parameters for animal species.
+        Set parameters for animal species.
 
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
@@ -93,7 +142,7 @@ class BioSim:
 
     def set_landscape_parameters(self, landscape, params):
         """
-        set parameters for landscape type.
+        Set parameters for landscape type.
 
         :param landscape: String, code letter for landscape
         :param params: Dict with valid parameter specification for landscape
@@ -105,7 +154,7 @@ class BioSim:
 
     def simulate(self, num_years):
         """
-        run simulation while visualizing the result.
+        Run simulation while visualizing the result.
 
         :param num_years: number of years to simulate
         """
@@ -137,19 +186,21 @@ class BioSim:
         """
         add a population to the island
 
-        :param population: List of dictionaries specifying population
+        :param population: List of dictionaries specifying population and location
         """
         self.map.island_add_population(population)
 
     @property
     def year(self):
-        """last year simulated."""
+        """
+        last year simulated.
+        """
         return self._year
 
     @property
     def num_animals_per_species(self):
         """
-        number of animals per species in island, as dictionary.
+        Number of animals per species in island, as dictionary.
         """
         self.map.island_total_sum_of_animals()
         herb = self.map.island_total_herbivores
@@ -165,7 +216,7 @@ class BioSim:
     @property
     def num_animals(self):
         """
-        total number of animals on island.
+        Total number of animals on island.
         """
         pop = self.map.island_total_sum_of_animals()
         if pop is None:
@@ -175,7 +226,7 @@ class BioSim:
 
     def setup_logfile(self):
         """
-        writes the first line to logfile
+        Writes the first line to logfile
         """
         logfile = open(self.log_file, "w")
         logfile.write("Year,Total_Herbivores,Total_Carnivores\n")
@@ -183,12 +234,15 @@ class BioSim:
 
     def save_to_file(self):
         """
-        writes year, total herbivores and total carnivores to file
+        Writes year, total herbivores and total carnivores to file
         """
         logfile = open(self.log_file, "a")
         logfile.write(f"{self._year},{self.map.island_total_herbivores},{self.map.island_total_carnivores}\n")
         logfile.close()
 
     def make_movie(self):
-        """create MPEG4 movie from visualization images saved."""
+        """
+        create MP4 movie from visualization images saved.
+        The movie is stores in img_dir
+        """
         self.visual.make_movie()
