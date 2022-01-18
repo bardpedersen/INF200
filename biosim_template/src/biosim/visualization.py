@@ -302,7 +302,7 @@ class Visualization:
         if y_max is None:
             self._pop_ax.set_ylim(0, y_data_herb[year]*2)
 
-    def save_plots(self, year):
+    def save_plots(self):
         """
         Saves plot to file if filename given
         """

@@ -176,7 +176,7 @@ class BioSim:
                     self.visual.update(self._year, self.map, self.cmax_animals, self.hist_specs)
             if self.vis_years != 0:
                 if self._year % self.img_years == 0:
-                    self.visual.save_plots(self._year)
+                    self.visual.save_plots()
             if self.log_file is not None:
                 self.save_to_file()
 

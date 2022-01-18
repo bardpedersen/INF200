@@ -311,7 +311,8 @@ class Carnivore(Animal):
         .. math::
                 p = \begin{cases}
                     0 & \text{if } \Phi_{carn} \leq \Phi_{herb} \\
-                    \frac{\Phi_{carn} - \Phi_{herb}}{\Delta\Phi_{max}} & \text{if } 0<\Phi_{carn} - \Phi_{herb}<\Delta\Phi_{max}\\
+                    \frac{\Phi_{carn} - \Phi_{herb}}{\Delta\Phi_{max}} & \text{if } 0<\Phi_{carn} -
+                    \Phi_{herb}<\Delta\Phi_{max}\\
                     1 & \text{otherwise}
                     \end{cases}
         """
