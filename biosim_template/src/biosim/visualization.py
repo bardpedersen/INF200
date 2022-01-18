@@ -285,8 +285,8 @@ class Visualization:
         Creates MPEG4 movie from visualization images saved.
 
         .. :note:
-        Requires ffmpeg for MP4 and magick for GIF
 
+        Requires ffmpeg for MP4 and magick for GIF
         The movie is stored as img_base + movie_fmt
         """
         if self._img_base is None:
