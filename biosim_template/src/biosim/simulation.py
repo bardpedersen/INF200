@@ -145,6 +145,7 @@ class BioSim:
     def year(self):
         """last year simulated."""
         return self._year
+
     @property
     def num_animals_per_species(self):
         """

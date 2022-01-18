@@ -126,7 +126,6 @@ class OneGrid:
         new_born_herbs = []
         num_herb = self.population_sum_herb
         for herb in self.population_herb:
-            herb.calculate_fitness()
             new_born_herb = herb.birth(num_herb)
             if new_born_herb is not None:
                 new_born_herbs.append(new_born_herb)
@@ -136,7 +135,6 @@ class OneGrid:
         new_born_carns = []
         num_carn = self.population_sum_carn
         for carn in self.population_carn:
-            carn.calculate_fitness()
             new_born_carn = carn.birth(num_carn, species='carn')
             if new_born_carn is not None:
                 new_born_carns.append(new_born_carn)

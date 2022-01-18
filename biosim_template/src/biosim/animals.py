@@ -135,7 +135,7 @@ class Animal:
         else:
             self.has_migrated = False
 
-    def birth(self, N, species='herb'):
+    def birth(self, n, species='herb'):
         r"""
         calculates the probability for birth of animals and returns a child if
         the probability strikes by random.random()
@@ -148,11 +148,12 @@ class Animal:
         .. math::
                 w<\zeta(w_{birth} + \sigma_{birth})
 
-        :param N: is the number of animals in the cell
-        :type N: integer
+        :param n: is the number of animals in the cell
+        :type n: integer
         :param species: selects what kind of animal to return, default is Herbivore
         :type species: string
         """
+        self.calculate_fitness()
         w_child = rd.gauss(self.params['w_birth'], self.params['sigma_birth'])
         lost_weight = w_child*self.params['xi']
         zero_conditon = self.params['zeta']*(self.params['w_birth']+self.params['sigma_birth'])
@@ -164,7 +165,7 @@ class Animal:
             return None
         else:
             p = rd.random()
-            p_birth = min(1, self.params['gamma']*self.fitness*(N-1))
+            p_birth = min(1, self.params['gamma']*self.fitness*(n-1))
             if p < p_birth:
                 self.weight -= lost_weight
                 if species == 'herb':

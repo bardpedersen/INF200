@@ -6,7 +6,7 @@ import os
 Inspired by Hans Ekkehard Plesser Graphics ile from randvis prodject
 Link: https://gitlab.com/nmbu.no/emner/inf200/h2021/inf200-course-materials/-/blob/main/january_block/examples/randvis_project/src/randvis/graphics.py
 """
-_DEFAULT_DIR = os.path.join(r'C:\Users\pbuka\Code\JanuarBlokk\biosim-a17-peder-bard\biosim_template', 'results')
+_DEFAULT_DIR = os.path.join('../results')
 _DEFAULT_NAME = 'sim'
 _DEFAULT_FORMAT = 'png'
 _DEFAULT_MOVIE_FORMAT = 'mp4'
@@ -225,8 +225,6 @@ class Visualization:
                 'fitness': {'max': 1, 'delta': 2}
             }
 
-
-
         herb, carn = island_map.island_age_weight_fitness()
         self._age_ax.cla()
         self._age_ax.set_title('Age')
@@ -248,9 +246,9 @@ class Visualization:
         self._fitness_ax.cla()
         self._fitness_ax.set_title('Fitness')
         self._fitness_ax.hist(herb['fitness'], histtype='step', bins=np.arange(0, hist_specs['fitness']['max'],
-                                                                       hist_specs['fitness']['delta']))
+                                                                               hist_specs['fitness']['delta']))
         self._fitness_ax.hist(carn['fitness'], histtype='step', bins=np.arange(0, hist_specs['fitness']['max'],
-                                                                       hist_specs['fitness']['delta']))
+                                                                               hist_specs['fitness']['delta']))
 
         self._fitness_ax.legend(['Herb', 'Carn'])
 
