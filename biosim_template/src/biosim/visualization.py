@@ -300,7 +300,7 @@ class Visualization:
         plt.pause(1e-6)
 
         if y_max is None:
-            self._pop_ax.set_ylim(0, y_data_herb[year]*2)
+            self._pop_ax.set_ylim(0, max(y_data_herb)+500)
 
     def save_plots(self):
         """
