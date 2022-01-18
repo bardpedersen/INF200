@@ -113,17 +113,21 @@ class BioSim:
         self.add_population(self.ini_pop)
         if self.img_years is None:
             self.img_years = self.vis_years
-        if self.img_years % self.vis_years != 0:
-            raise ValueError('img_steps must be multiple of vis_steps')
+        if self.vis_years != 0:
+            if self.img_years % self.vis_years != 0:
+                raise ValueError('img_steps must be multiple of vis_steps')
         self._final_year = self._year + num_years
-        self.visual.setup(self.map, self._final_year, self.ymax_animals)
+        if self.vis_years != 0:
+            self.visual.setup(self.map, self._final_year, self.ymax_animals)
 
         while self._year < self._final_year:
             self.map.island_update_one_year()
-            if self._year % self.vis_years == 0:
-                self.visual.update(self._year, self.map, self.cmax_animals, self.hist_specs)
-            if self._year % self.img_years == 0:
-                self.visual.save_plots(self._year)
+            if self.vis_years != 0:
+                if self._year % self.vis_years == 0:
+                    self.visual.update(self._year, self.map, self.cmax_animals, self.hist_specs)
+            if self.vis_years != 0:
+                if self._year % self.img_years == 0:
+                    self.visual.save_plots(self._year)
             if self.log_file is not None:
                 self.save_to_file()
 
@@ -141,7 +145,6 @@ class BioSim:
     def year(self):
         """last year simulated."""
         return self._year
-
     @property
     def num_animals_per_species(self):
         """
