@@ -1,11 +1,20 @@
+"""
+Visualization class for biosim.
+This class has all the functions needed
+to get graphs and picture from the date
+that simulation makes. This class
+creates an easy way of reading data.
+
+
+Inspired by Hans Ekkehard Plesser Graphics ile from randvis prodject
+Link: https://gitlab.com/nmbu.no/emner/inf200/h2021/inf200-course-materials/-/blob/main/january_block/examples/randvis_project/src/randvis/graphics.py
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import subprocess
 import os
-"""
-Inspired by Hans Ekkehard Plesser Graphics ile from randvis prodject
-Link: https://gitlab.com/nmbu.no/emner/inf200/h2021/inf200-course-materials/-/blob/main/january_block/examples/randvis_project/src/randvis/graphics.py
-"""
+
 _DEFAULT_DIR = os.path.join('../results')
 _DEFAULT_NAME = 'sim'
 _DEFAULT_FORMAT = 'png'
@@ -16,12 +25,38 @@ _MAGICK_BINARY = 'magick'
 
 
 class Visualization:
-    """ visualizes the results from biosim"""
+    """ Visualizes the results from biosim"""
     def __init__(self, img_dir=None, img_name=None, img_fmt=None):
         """
         :param img_dir: directory for image files to be stored
         :param img_name: start of image name
         :param img_fmt: format of image
+
+        self._img_ctr: updates picture nr
+
+        self._fig: Figure containing all the subplots
+
+        self._map_ax: The subplot for map
+
+        self._herb_ax: The place of subplot containing number of herbivore per cell
+
+        self._herb_plot: The subplot containing number of herbivore per cell
+
+        self._carn_ax: The place subplot containing number of carnivores per cell
+
+        self_carn_plot: The subplot containing number of herbivore per cell
+
+        self._pop_ax: The subplot containing number of animals
+
+        self._herb_line: The line in population graph represented by number of herbivores
+
+        self_carn_line: The line in population graph represented by number of carnivores
+
+        self._fitness_ax: The subplot containing fitness
+
+        self._weight_ax: The subplot containing weight
+
+        self._age_ax: The subplot containing age
         """
 
         if img_name is None:
@@ -50,7 +85,7 @@ class Visualization:
 
     def _color_map(self, island_map):
         """
-        makes a colour map of the string map
+        Makes a colour map of the string map
         """
         colour = {'W': (0.0, 0.0, 1.0),
                   'L': (0.0, 0.6, 0.0),
@@ -63,7 +98,7 @@ class Visualization:
 
     def setup(self, island_map, final_year, y_max=500):
         """
-        prepares for plotting
+        Prepares for plotting
         has to be called before :meth: 'update_plot'
 
         :param island_map: map object containing all info about island
@@ -133,9 +168,9 @@ class Visualization:
 
     def update(self, year, island_map, cmax, hist_specs, y_max=None):
         """
-        updates plot with current year
+        Updates plot with current year
 
-        :param y_max:
+        :param y_max: the range y-value is sett to in the graph
         :param year: is the year the simulation currently is in
         :param island_map: is the island map object to be plotted
         :param cmax: is a dictionary containing colorbar maxes for herbivore and carnivore heat map
@@ -155,7 +190,7 @@ class Visualization:
 
     def _update_herb_map(self, island_map, cmax):
         """
-        plots the population of herbivores on the map by color
+        Plots the population of herbivores on the map by color
 
         :param island_map: is the island_map object containing info about the simulation
         :param cmax: is a dictionary containing colorbar maxes for herbivore and carnivore heat map
@@ -183,7 +218,7 @@ class Visualization:
 
     def _update_carn_map(self, island_map, cmax):
         """
-        plots the population of carnivores on the map by color
+        Plots the population of carnivores on the map by color
 
         :param island_map: is the island_map object containing info about the simulation
         :param cmax: dictionary containing default values for colorbar max
@@ -210,7 +245,7 @@ class Visualization:
 
     def _update_age_weight_fitness(self, island_map, hist_specs=None):
         """
-        updates the histograms of age, weight and fitness,
+        Updates the histograms of age, weight and fitness,
 
         :param island_map: island_map object containing all info about island
         :param hist_specs:
@@ -251,7 +286,7 @@ class Visualization:
 
     def _update_pop_graph(self, year, island_map, y_max):
         """
-        plotting the animals in the animal number graph by years
+        Plotting the animals in the animal number graph by years
 
         :param year: what year it is in used for x axis in this case
         :param island_map: island_map object containing all info about island
@@ -270,7 +305,7 @@ class Visualization:
 
     def save_plots(self, year):
         """
-        saves plot to file if filename given
+        Saves plot to file if filename given
         """
         if self._img_base is None:
             return
@@ -282,9 +317,7 @@ class Visualization:
 
     def make_movie(self, movie_fmt=None):
         """
-        Creates MPEG4 movie from visualization images saved.
-
-        .. :note:
+        Creates MP4 movie from visualization images saved.
 
         Requires ffmpeg for MP4 and magick for GIF
         The movie is stored as img_base + movie_fmt

@@ -23,12 +23,17 @@ class OneGrid:
         Initiates instance for one cell
         :param cord: the coordinates for the cell
 
-        :param fodder: the amount of available fodder
-        :param livavle: checks whether an cell is livable or not
-        :param population_herb: all herbivores in that cell
-        :param population_carn: all carnivores in that cell
-        :param population_sum_herb: number of herbivores in that cell
-        :param population_sum_carn: number of carnivores in that cell
+        self.fodder: the amount of available fodder
+
+        self.livable: checks whether an cell is livable or not
+
+        self.population_herb: all herbivores in that cell
+
+        self.population_carn: all carnivores in that cell
+
+        self.population_sum_herb: number of herbivores in that cell
+
+        self.population_sum_carn: number of carnivores in that cell
         """
         self.fodder = 0
         self.cord = cord
@@ -258,7 +263,7 @@ class Lowland(OneGrid):
     """
     lowland subclass
 
-    .. note:: params = {'f_max': 800}
+    params = {'f_max': 800}
     """
     params = {
         'f_max': 800
@@ -277,7 +282,7 @@ class Highland(OneGrid):
     """
     highland subclass
 
-    .. note:: params = {'f_max': 300}
+    params = {'f_max': 300}
     """
     params = {
         'f_max': 300
@@ -296,7 +301,7 @@ class Dessert(OneGrid):
     """
     dessert subclass
 
-    .. note:: params = {'f_max': 0}
+    params = {'f_max': 0}
     """
     params = {
         'f_max': 0
@@ -315,7 +320,7 @@ class Water(OneGrid):
     """
     water subclass
 
-    .. note:: params = {'f_max': 0}
+    params = {'f_max': 0}
     """
     params = {
         'f_max': 0

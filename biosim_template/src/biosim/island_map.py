@@ -1,20 +1,34 @@
 """
-Different type of landscapes
-Geography
-Migration
-location
+Island class for biosim
+
+This class creates and applies function that
+make up for the hole island.
+So where animals are in respect of each other as well as
+migration
+
 """
 from biosim.landscapes import Lowland, Water, Highland, Dessert
 import random
 
 
 class Map:
-    """class describing the map"""
+    """Class describing the map"""
     def __init__(self, island_map):
         """
-        creates instance of map class
+        Creates instance of map class
 
         :param island_map: a multiline string representing the map
+
+        self.string_map: Map represented by string
+
+        self.map_dict: dictionary containing each coordinate with corresponding landscape
+
+        self.island_total_carnivores: Total number of carnivores on island
+
+        self.island_total_herbivores: Total number of herbivore on island
+
+        self.island_total_animals: Total number of animals on island
+
         """
         self.string_map = island_map  # Information we get from mono_ho
         self.map_dict = None
@@ -25,7 +39,9 @@ class Map:
     @staticmethod
     def validate_map(string_map):
         """
-        checks if the borders of the map is water and all lines have the same length
+        Checks if the borders of the map is water, that the
+        map is square and that no strange letter are introduced to
+        in the string
 
         :param string_map: a map in string format
         """
@@ -50,7 +66,7 @@ class Map:
 
     def creating_map(self):
         """
-        makes string to dictionary with loc as key and landscape cell as value
+        Makes string to dictionary with loc as key and landscape cell as value
         """
         self.validate_map(self.string_map)
 
@@ -68,7 +84,7 @@ class Map:
 
     def island_add_population(self, ini_herb):
         """
-        adds population to the map
+        Adds population to the map
 
         :param ini_herb: is a dictionary containing both location and list of animals
         """
@@ -78,7 +94,7 @@ class Map:
 
     def island_feeding(self):
         """
-        feeds all the animals on the island
+        Feeds all the animals on the island
         """
         for key in self.map_dict:
             if self.map_dict[key].livable is True:
@@ -91,7 +107,7 @@ class Map:
 
     def island_procreation(self):
         """
-        birth of new animals in each cell
+        Birth of new animals in each cell
         """
         for key in self.map_dict:
             if self.map_dict[key].livable is True:
@@ -100,7 +116,7 @@ class Map:
 
     def island_aging(self):
         """
-        ages all the animals on the island
+        Ages all the animals on the island
         """
         for key in self.map_dict:
             if self.map_dict[key].livable is True:
@@ -108,7 +124,7 @@ class Map:
 
     def island_migration(self):
         """
-        combines all the steps in the migration process
+        Combines all the steps in the migration process
         """
         for loc in self.map_dict.keys():
             self.map_dict[loc].cell_migration()
@@ -121,7 +137,7 @@ class Map:
 
     def island_migration_herb(self, loc):
         """
-        decides witch cell the herbivores migrates to
+        Decides witch cell the herbivores migrates to
 
         :param loc: location of the animal before it moves
         """
@@ -139,7 +155,7 @@ class Map:
 
     def island_migration_carn(self, loc):
         """
-        decides witch cell the carnivores migrates carnivore to
+        Decides witch cell the carnivores migrates carnivore to
 
         :param loc: location of the animal before it moves
         """
@@ -157,7 +173,7 @@ class Map:
 
     def migration_move_right_herb(self, loc, animal):
         """
-        moves a single herbivore right
+        Moves a single herbivore right
 
         :param loc: current location of the animal
         :param animal: the animal to be moved
@@ -170,7 +186,7 @@ class Map:
 
     def migration_move_left_herb(self, loc, animal):
         """
-        moves a single herbivore left
+        Moves a single herbivore left
 
         :param loc: current location of the animal
         :param animal: the animal to be moved
@@ -183,7 +199,7 @@ class Map:
 
     def migration_move_up_herb(self, loc, animal):
         """
-        moves a single herbivore up
+        Moves a single herbivore up
 
         :param loc: current location of the animal
         :param animal: the herbivore to be moved
@@ -196,7 +212,7 @@ class Map:
 
     def migration_move_down_herb(self, loc, animal):
         """
-        moves a single herbivore down
+        Moves a single herbivore down
 
         :param loc: current location of the animal
         :param animal: the animal to be moved
@@ -209,7 +225,7 @@ class Map:
 
     def migration_move_right_carn(self, loc, animal):
         """
-        moves a single carnivore right
+        Moves a single carnivore right
 
         :param loc: current location of the animal
         :param animal: the animal to be moved
@@ -222,7 +238,7 @@ class Map:
 
     def migration_move_left_carn(self, loc, animal):
         """
-        moves a single carnivore left
+        Moves a single carnivore left
 
         :param loc: current location of the animal
         :param animal: the animal to be moved
@@ -235,7 +251,7 @@ class Map:
 
     def migration_move_up_carn(self, loc, animal):
         """
-        moves a single carnivore up
+        Moves a single carnivore up
 
         :param loc: current location of the animal
         :param animal: the animal to be moved
@@ -248,7 +264,7 @@ class Map:
 
     def migration_move_down_carn(self, loc, animal):
         """
-        moves a single carnivore down
+        Moves a single carnivore down
 
         :param loc: current location of the animal
         :param animal: the animal to be moved
@@ -261,7 +277,7 @@ class Map:
 
     def island_weight_loss(self):
         """
-        calculates the weight loss for each cell in simulation
+        Calculates the weight loss for each cell in simulation
         """
         for key in self.map_dict:
             if self.map_dict[key].livable is True:
@@ -269,7 +285,7 @@ class Map:
 
     def island_death(self):
         """
-        kills (by probability see animals.py) and removes the dead animal in each cells
+        Kills (by probability see animals.py) and removes the dead animal in each cells
         """
         for key in self.map_dict:
             if self.map_dict[key].livable is True:
@@ -278,7 +294,7 @@ class Map:
 
     def island_total_herbivores_and_carnivores(self):
         """
-        calculates the total of each species in the island
+        Calculates the total of each species in the island
         """
         self.island_total_herbivores = 0
         self.island_total_carnivores = 0
@@ -291,7 +307,7 @@ class Map:
 
     def island_total_sum_of_animals(self):
         """
-        calculates the total number of animals in each cell
+        Calculates the total number of animals in each cell
         """
         self.island_total_herbivores_and_carnivores()
 
@@ -310,7 +326,7 @@ class Map:
 
     def island_age_weight_fitness(self):
         """
-        adds the all of the ages weights of the animals into a dict
+        Adds the all of the ages weights of the animals into a dict
         """
         herb_island = {
             'age': [],
@@ -332,7 +348,8 @@ class Map:
 
     def island_update_one_year(self):
         """
-        updates the island one year
+        Updates the island one year. Calls on all
+        function that represent one year on the island
         """
         self.island_feeding()
         self.island_procreation()
