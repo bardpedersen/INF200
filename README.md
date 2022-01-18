@@ -1,70 +1,35 @@
 # BioSim A17 Peder Bård
 
 # Description
-January project for INF200 January 2022. This program is simulating the ecosystem on an island with one species of carnivores and one spice of herbivores. The island has three types of land dessert, low land and high land. The island is surrounded by water so no animals can migrate. To read the full task look in INF200_H21_BioSimJan_v1.pdf.
+January project for INF200 January 2022. This program is simulating the 
+ecosystem on an island named Rossumøya. The island contains of two species,
+herbivores that eats fodder and carnivores, that eat herbivores. 
+The island has three types of land dessert, lowland and highland, and is 
+surrounded by water. So the island is completely isolated. 
+The full task can be found here: 
+https://gitlab.com/nmbu.no/emner/inf200/h2021/inf200-course-materials/-/blob/main/january_block/lectures/INF200_H21_BioSimJan_Ja01.pdf
+
+This project simulates this by splitting the things happening to 
+different functions and classes. Each file contains a different aspect 
+of the island. Like animals contain the animal behavior as well as
+all the prefixed parameters for them. All the classes and files are
+nested or linked to the simulation file. 
+
+To read the full documentation 
 
 
 # Testing
-The testing can be found in the tests directory 
+The testing can be found in the tests directory. 
 
-# Visuals
 
+# License 
+MIT License,
+see LICENSE for more information
 
 # Needs
 We used Inf200 Enviorment, put together by Hans Ekkehard Plesser.
-The Enviorment consist of: 
-name: inf200
-channels:
-  - defaults
-dependencies:
-  - python>=3.8
-  - appdirs
-  - coverage
-  - cython
-  - distlib
-  - ffmpeg
-  - flake8
-  - filelock
-  - ipython
-  - jupyter
-  - jupyterlab
-  - line_profiler
-  - matplotlib
-  - nodejs
-  - numba
-  - numpy
-  - numpydoc
-  - openpyxl
-  - pandas
-  - pandoc
-  - pip
-  - pycodestyle
-  - pytest
-  - pytest-cov
-  - pytest-mock
-  - pytest-timeout
-  - pytest-xdist
-  - pyyaml
-  - scikit-learn
-  - scipy
-  - seaborn
-  - sphinx
-  - sphinx_rtd_theme
-  - statsmodels
-  - sympy
-  - tabulate
-  - twine
-  - unidecode
-  - virtualenv
-  - wheel
-  - xlrd
-  - pip:
-    - build
-    - pytest-randomly
-    - tox
-
 
 
 # Authors and acknowledgment
-Hans Ekkehard Plesser made the frame work on the code. 
+Hans Ekkehard Plesser made the framework on this code.
 
