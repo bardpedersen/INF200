@@ -160,6 +160,8 @@ class BioSim:
         """
 
         self.add_population(self.ini_pop)
+        if self.log_file is not None:
+            self.setup_logfile()
         if self.img_years is None:
             self.img_years = self.vis_years
         if self.vis_years != 0:
@@ -237,7 +239,9 @@ class BioSim:
         Writes year, total herbivores and total carnivores to file
         """
         logfile = open(self.log_file, "a")
-        logfile.write(f"{self._year},{self.map.island_total_herbivores},{self.map.island_total_carnivores}\n")
+        tot_herb = self.map.island_total_herbivores
+        tot_carn = self.map.island_total_carnivores
+        logfile.write(f"{self._year},{tot_herb},{tot_carn}\n")
         logfile.close()
 
     def make_movie(self):

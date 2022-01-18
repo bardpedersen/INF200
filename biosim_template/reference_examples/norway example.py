@@ -71,7 +71,7 @@ if __name__ == '__main__':
                  img_dir='../results',
                  img_base='norway',
                  vis_years=1)
-    sim.simulate(300)
+    sim.simulate(100)
     sim.make_movie()
 
     input('Press ENTER')

@@ -253,7 +253,7 @@ class Visualization:
             hist_specs = {
                 'weight': {'max': 20, 'delta': 2},
                 'age': {'max': 40, 'delta': 2},
-                'fitness': {'max': 1, 'delta': 2}
+                'fitness': {'max': 1, 'delta': 0.05}
             }
 
         herb, carn = island_map.island_age_weight_fitness()
