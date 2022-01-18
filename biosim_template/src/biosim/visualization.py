@@ -131,8 +131,6 @@ class Visualization:
 
         self._fig.subplots_adjust(hspace=0.40)
 
-
-
     def update(self, year, island_map, cmax, hist_specs, y_max=None):
         """
         updates plot with current year
@@ -154,7 +152,6 @@ class Visualization:
         self._update_age_weight_fitness(island_map, hist_specs)
         self._fig.canvas.flush_events()
         plt.pause(1e-6)
-
 
     def _update_herb_map(self, island_map, cmax):
         """
@@ -228,27 +225,27 @@ class Visualization:
         herb, carn = island_map.island_age_weight_fitness()
         self._age_ax.cla()
         self._age_ax.set_title('Age')
-        self._age_ax.hist(herb['age'], histtype='step', bins=np.arange(0, hist_specs['age']['max'],
-                                                                       hist_specs['age']['delta']))
-        self._age_ax.hist(carn['age'], histtype='step', bins=np.arange(0, hist_specs['age']['max'],
-                                                                       hist_specs['age']['delta']))
+        self._age_ax.hist(herb['age'], histtype='step',
+                          bins=np.arange(0, hist_specs['age']['max'], hist_specs['age']['delta']))
+        self._age_ax.hist(carn['age'], histtype='step',
+                          bins=np.arange(0, hist_specs['age']['max'], hist_specs['age']['delta']))
         self._age_ax.legend(['herb', 'carn'])
 
         self._weight_ax.cla()
         self._weight_ax.set_title('Weight')
-        self._weight_ax.hist(herb['weight'], histtype='step', bins=np.arange(0, hist_specs['weight']['max'],
-                                                                       hist_specs['weight']['delta']))
-        self._weight_ax.hist(carn['weight'], histtype='step', bins=np.arange(0, hist_specs['weight']['max'],
-                                                                       hist_specs['weight']['delta']))
+        self._weight_ax.hist(herb['weight'], histtype='step',
+                             bins=np.arange(0, hist_specs['weight']['max'], hist_specs['weight']['delta']))
+        self._weight_ax.hist(carn['weight'], histtype='step',
+                             bins=np.arange(0, hist_specs['weight']['max'], hist_specs['weight']['delta']))
 
         self._weight_ax.legend(['Herb', 'Carn'])
 
         self._fitness_ax.cla()
         self._fitness_ax.set_title('Fitness')
-        self._fitness_ax.hist(herb['fitness'], histtype='step', bins=np.arange(0, hist_specs['fitness']['max'],
-                                                                               hist_specs['fitness']['delta']))
-        self._fitness_ax.hist(carn['fitness'], histtype='step', bins=np.arange(0, hist_specs['fitness']['max'],
-                                                                               hist_specs['fitness']['delta']))
+        self._fitness_ax.hist(herb['fitness'], histtype='step',
+                              bins=np.arange(0, hist_specs['fitness']['max'], hist_specs['fitness']['delta']))
+        self._fitness_ax.hist(carn['fitness'], histtype='step',
+                              bins=np.arange(0, hist_specs['fitness']['max'], hist_specs['fitness']['delta']))
 
         self._fitness_ax.legend(['Herb', 'Carn'])
 
