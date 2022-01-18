@@ -69,7 +69,6 @@ class Visualization:
 
         self._img_fmt = img_fmt if img_fmt is not None else _DEFAULT_FORMAT
         self._img_ctr = 0
-        self._img_step = 1
         self._fig = None
         self._map_ax = None
         self._herb_ax = None
@@ -308,8 +307,6 @@ class Visualization:
         Saves plot to file if filename given
         """
         if self._img_base is None:
-            return
-        elif year % self._img_step != 0:
             return
 
         self._fig.savefig('{base}_{num:05d}.{type}'.format(base=self._img_base, num=self._img_ctr, type=self._img_fmt))
