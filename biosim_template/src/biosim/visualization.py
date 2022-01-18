@@ -131,7 +131,9 @@ class Visualization:
 
         self._fig.subplots_adjust(hspace=0.40)
 
-    def update(self, year, island_map, cmax=None, hist_specs=None, y_max=None):
+
+
+    def update(self, year, island_map, cmax, hist_specs, y_max=None):
         """
         updates plot with current year
 
@@ -143,7 +145,7 @@ class Visualization:
         """
         if cmax is None:
             cmax = {'Herbivore': 200,
-                    'Carnivore': 200}
+                    'Carnivore': 50}
 
         self._fig.suptitle(f'Simulation, Year: {year}', fontsize=16)
         self._update_herb_map(island_map, cmax)
@@ -152,7 +154,7 @@ class Visualization:
         self._update_age_weight_fitness(island_map, hist_specs)
         self._fig.canvas.flush_events()
         plt.pause(1e-6)
-        self._save_plots(year)
+
 
     def _update_herb_map(self, island_map, cmax):
         """
@@ -221,32 +223,35 @@ class Visualization:
                 'weight': {'max': 20, 'delta': 2},
                 'age': {'max': 40, 'delta': 2},
                 'fitness': {'max': 1, 'delta': 2}
-
             }
+
+
 
         herb, carn = island_map.island_age_weight_fitness()
         self._age_ax.cla()
         self._age_ax.set_title('Age')
-        self._age_ax.hist(herb['age'], histtype='step', range=(0, hist_specs['age']['max']),
-                          rwidth=hist_specs['age']['delta'])
-        self._age_ax.hist(carn['age'], histtype='step', range=(0, hist_specs['age']['max']),
-                          rwidth=hist_specs['age']['delta'])
+        self._age_ax.hist(herb['age'], histtype='step', bins=np.arange(0, hist_specs['age']['max'],
+                                                                       hist_specs['age']['delta']))
+        self._age_ax.hist(carn['age'], histtype='step', bins=np.arange(0, hist_specs['age']['max'],
+                                                                       hist_specs['age']['delta']))
         self._age_ax.legend(['herb', 'carn'])
 
         self._weight_ax.cla()
         self._weight_ax.set_title('Weight')
-        self._weight_ax.hist(herb['weight'], histtype='step', range=(0, hist_specs['weight']['max']),
-                             rwidth=hist_specs['weight']['delta'])
-        self._weight_ax.hist(carn['weight'], histtype='step', range=(0, hist_specs['weight']['max']),
-                             rwidth=hist_specs['weight']['delta'])
+        self._weight_ax.hist(herb['weight'], histtype='step', bins=np.arange(0, hist_specs['weight']['max'],
+                                                                       hist_specs['weight']['delta']))
+        self._weight_ax.hist(carn['weight'], histtype='step', bins=np.arange(0, hist_specs['weight']['max'],
+                                                                       hist_specs['weight']['delta']))
+
         self._weight_ax.legend(['Herb', 'Carn'])
 
         self._fitness_ax.cla()
         self._fitness_ax.set_title('Fitness')
-        self._fitness_ax.hist(herb['fitness'], histtype='step', range=(0, hist_specs['fitness']['max']),
-                              rwidth=hist_specs['fitness']['delta'])
-        self._fitness_ax.hist(carn['fitness'], histtype='step', range=(0, hist_specs['fitness']['max']),
-                              rwidth=hist_specs['fitness']['delta'])
+        self._fitness_ax.hist(herb['fitness'], histtype='step', bins=np.arange(0, hist_specs['fitness']['max'],
+                                                                       hist_specs['fitness']['delta']))
+        self._fitness_ax.hist(carn['fitness'], histtype='step', bins=np.arange(0, hist_specs['fitness']['max'],
+                                                                       hist_specs['fitness']['delta']))
+
         self._fitness_ax.legend(['Herb', 'Carn'])
 
     def _update_pop_graph(self, year, island_map, y_max):
@@ -268,7 +273,7 @@ class Visualization:
         if y_max is None:
             self._pop_ax.set_ylim(0, y_data_herb[year]*2)
 
-    def _save_plots(self, year):
+    def save_plots(self, year):
         """
         saves plot to file if filename given
         """

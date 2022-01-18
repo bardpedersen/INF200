@@ -103,27 +103,27 @@ class BioSim:
             land_type = landscape_class()
             land_type.cell_set_params(params)
 
-    def simulate(self, num_years, vis_steps=1, img_steps=None):
+    def simulate(self, num_years):
         """
         run simulation while visualizing the result.
 
-        :param img_steps: steps for each image
         :param num_years: number of years to simulate
-        :param vis_steps: steps for visualisation
         """
 
         self.add_population(self.ini_pop)
-        if img_steps is None:
-            img_steps = vis_steps
-        if img_steps % vis_steps != 0:
+        if self.img_years is None:
+            self.img_years = self.vis_years
+        if self.img_years % self.vis_years != 0:
             raise ValueError('img_steps must be multiple of vis_steps')
         self._final_year = self._year + num_years
         self.visual.setup(self.map, self._final_year, self.ymax_animals)
 
         while self._year < self._final_year:
             self.map.island_update_one_year()
-            if self._year % vis_steps == 0:
+            if self._year % self.vis_years == 0:
                 self.visual.update(self._year, self.map, self.cmax_animals, self.hist_specs)
+            if self._year % self.img_years == 0:
+                self.visual.save_plots(self._year)
             if self.log_file is not None:
                 self.save_to_file()
 
