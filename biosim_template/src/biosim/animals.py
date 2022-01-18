@@ -52,8 +52,25 @@ class Animal:
                 raise KeyError(f'{parameter} is not a accepted parameter')
 
     def calculate_fitness(self):
-        """
+        r"""
         calculates the fitness of the animal by using the fitness formula given in the task
+
+        .. math::
+            \Phi = \begin{cases}
+                    0 & w \leq 0 \\
+                    q^+ (a,a_{\frac{1}{2}},\phi_{age}) \times q^-(w,w_{\frac{1}{2}},\phi_{weight})  & \text{ else}
+                    \end{cases}
+
+        where
+
+        .. math::
+            q^\pm(x,x_{\frac{1}{2}},\phi) = \frac{1}{(1+e^{\pm \phi(x-x_{\frac{1}{2}})})}
+
+        Note that
+
+        .. math::
+            0\leq\Phi\leq1
+
         """
         if self.weight <= 0:
             self.fitness = 0
@@ -86,8 +103,17 @@ class Animal:
             self.weight = 0
 
     def death(self):
-        """
+        r"""
         calculates if animal dies using fitness omega.
+
+        .. math::
+                w(1-\Phi)
+
+        They also die when weight is zero:
+
+        .. math::
+                w\leq0
+
         :return: returns 1 if the animal dies and 0 if it lives
         """
         p = rd.random()
@@ -110,9 +136,17 @@ class Animal:
             self.has_migrated = False
 
     def birth(self, N, species='herb'):
-        """
+        r"""
         calculates the probability for birth of animals and returns a child if
         the probability strikes by random.random()
+
+        .. math::
+                min(1,\gamma\times\Phi\times(N-1))
+
+        The probability is also zero when:
+
+        .. math::
+                w<\zeta(w_{birth} + \sigma_{birth})
 
         :param N: is the number of animals in the cell
         :type N: integer
@@ -201,8 +235,15 @@ class Carnivore(Animal):
                f'Has_migrated: {self.has_migrated})'
 
     def carnivore_kill_prob(self, prey):
-        """
+        r"""
         Calculates the probability that carnivore kills herbivore
+
+        .. math::
+                p = \begin{cases}
+                    0 & \text{if } \Phi_{carn} \leq \Phi_{herb} \\
+                    \frac{\Phi_{carn} - \Phi_{herb}}{\Delta\Phi_{max}} & \text{if } 0<\Phi_{carn} - \Phi_{herb}<\Delta\Phi_{max}\\
+                    1 & \text{otherwise}
+                    \end{cases}
 
         :param prey: the prey the animal hunts
         :type prey: Herbivore, object of animal class
