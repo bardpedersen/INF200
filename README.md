@@ -15,11 +15,9 @@ of the island. Like animals contain the animal behavior as well as
 all the prefixed parameters for them. All the classes and files are
 nested or linked to the simulation file. 
 
-To read the full documentation 
-
 
 # Testing
-The testing can be found in the tests directory. 
+The testing can be found in the test directory. 
 
 
 # License 
@@ -27,7 +25,11 @@ MIT License,
 see LICENSE for more information
 
 # Needs
-We used Inf200 Enviorment, put together by Hans Ekkehard Plesser.
+We used Inf200 Conda enviorment, put together by Hans Ekkehard Plesser.
+Numpy
+textwrap3
+matplotlib
+subprocesses
 
 
 # Authors and acknowledgment
